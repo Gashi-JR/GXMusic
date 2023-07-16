@@ -4,23 +4,18 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 
-class DataItem(var text: String) {
 
+/**
+ * 轮播图数据
+ */
+data class BannerData(
+    val imageUrl: String,
+    val linkUrl: String
+)
 
-}
-
-
-class ListviewModel : ViewModel() {
-    private val _listData = mutableStateListOf<DataItem>()
-    val listData: SnapshotStateList<DataItem> get() = _listData
-
-    fun add(item: DataItem) {
-        listData.add(item)
-    }
-
-    fun remove(item: DataItem) {
-        listData.remove(item)
-    }
+class DataviewModel : ViewModel() {
+    private val _BannerdataData = mutableStateListOf<BannerData>()
+    val bannerdata: SnapshotStateList<BannerData> get() = _BannerdataData
 
 
 }
