@@ -1,3 +1,6 @@
+import android.annotation.SuppressLint
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
@@ -16,6 +19,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.annotation.ExperimentalCoilApi
+import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import com.example.viewmodellist.ui.screens.find.BannerData
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -38,14 +42,15 @@ fun Banner(
     timeMillis: Long = 3000,
     @DrawableRes loadImage: Int,
     indicatorAlignment: Alignment = Alignment.BottomCenter,
-    onClick: (link: String) -> Unit = {}
+    onClick: (link: String) -> Unit = {},
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
 ) {
-
+    Log.d(TAG, "list:$list ")
     Box(
-        modifier = Modifier
+        modifier = modifier
             .background(MaterialTheme.colors.background)
             .fillMaxWidth()
-            .height(220.dp)
+            .height(180.dp)
     ) {
 
         if (list == null) {
@@ -93,7 +98,7 @@ fun Banner(
                                 val dragEvent = event.changes.firstOrNull()
                                 when {
                                     //当前移动手势是否已被消费
-                                    dragEvent!!.positionChangeConsumed() -> {
+                                    dragEvent!!.isConsumed -> {
                                         return@awaitPointerEventScope
                                     }
                                     //是否已经按下(忽略按下手势已消费标记)
@@ -118,7 +123,7 @@ fun Banner(
                     .fillMaxSize(),
             ) { page ->
                 Image(
-                    painter = rememberImagePainter(list[page].imageUrl),
+                    painter = rememberAsyncImagePainter(list[page].imageUrl),
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop,
                     contentDescription = null
@@ -143,7 +148,7 @@ fun Banner(
 
                         //颜色
                         val color =
-                            if (pagerState.currentPage == i) MaterialTheme.colors.primary else Color.Gray
+                            if (pagerState.currentPage == i) Color.White else Color.Gray
 
                         Box(
                             modifier = Modifier
