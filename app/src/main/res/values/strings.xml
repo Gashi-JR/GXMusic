@@ -5,5 +5,6 @@
     <string name="app_top">排行榜</string>
     <string name="app_mine">我的</string>
     <string name="app_search">请输入关键字</string>
-
+    <string name="find_recommendsonglist">推荐歌单</string>
+    <string name="find_nomore">没有更多了…</string>
 </resources>

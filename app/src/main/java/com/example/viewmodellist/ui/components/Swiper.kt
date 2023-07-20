@@ -2,7 +2,15 @@ import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.keyframes
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -40,12 +48,25 @@ import kotlinx.coroutines.delay
 fun Banner(
     list: List<BannerData>?,
     timeMillis: Long = 3000,
-    @DrawableRes loadImage: Int,
     indicatorAlignment: Alignment = Alignment.BottomCenter,
     onClick: (link: String) -> Unit = {},
     @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
 ) {
-    Log.d(TAG, "list:$list ")
+    val infinateTransition = rememberInfiniteTransition()
+    val alpha by infinateTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = keyframes {
+                durationMillis = 2000
+                0.7f at 1000
+            },
+            repeatMode = RepeatMode.Reverse
+        )
+    )
+    if (list != null) {
+        Log.d(TAG, "list:${list.size} ")
+    }
     Box(
         modifier = modifier
             .background(MaterialTheme.colors.background)
@@ -53,13 +74,13 @@ fun Banner(
             .height(180.dp)
     ) {
 
-        if (list == null) {
-            //加载中的图片
-            Image(
-                painterResource(loadImage),
-                modifier = Modifier.fillMaxSize(),
-                contentDescription = null,
-                contentScale = ContentScale.Crop
+        if (list.isNullOrEmpty()) {
+            //加载动画
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth()
+                    .background(Color.Gray.copy(alpha = alpha))
             )
         } else {
             val pagerState = rememberPagerState(
