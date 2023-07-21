@@ -1,5 +1,6 @@
 package com.example.viewmodellist.ui.theme
 
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
 val Purple80 = Color(0xFFD0BCFF)
@@ -9,3 +10,20 @@ val Pink80 = Color(0xFFEFB8C8)
 val Purple40 = Color(0xFF6650a4)
 val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
+
+
+val cardGradient = Brush.horizontalGradient(
+    colors = listOf(Color(217, 220, 253), Color(244, 216, 239)), // 渐变色列表
+    startX = 0f,
+    endX = 1000f
+)
+val borderGradient = Brush.horizontalGradient(
+    colors = listOf(Color.Blue.copy(alpha = 0.15f), Color.Red.copy(alpha = 0.15f)), // 渐变色列表
+    startX = 0f,
+    endX = 1000f
+)
+val findcardGradient = Brush.verticalGradient(
+    colors = listOf(Color(244, 216, 239), Color.White), // 渐变色列表
+    startY = 0f,
+    endY = 700f
+)

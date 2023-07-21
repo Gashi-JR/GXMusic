@@ -35,10 +35,9 @@ fun SonglistCover(
     title: String,
     playCount: Long,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit = {}
 ) {
     Column(
-        modifier = modifier
+        modifier = Modifier
             .width(120.dp)
     ) {
         Row() {
@@ -46,7 +45,7 @@ fun SonglistCover(
                 Box() {
                     Image(
                         painter = rememberAsyncImagePainter(imageUrl),
-                        modifier = Modifier.size(120.dp),
+                        modifier = modifier.size(120.dp),
                         contentScale = ContentScale.Crop,
                         contentDescription = null
                     )

@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.viewmodellist.ui.components.SongItem
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
@@ -31,6 +32,23 @@ class FindviewModel(private val repository: Repository = Repository()) : ViewMod
 //    val bannerData: List<BannerData>? get() = _BannerData.value
     private val _bannerData = mutableStateOf<MutableList<BannerData>>(mutableStateListOf())
     val bannerData: List<BannerData> get() = _bannerData.value
+
+    fun createSongItems(): List<SongItem> {
+        val songItems = mutableListOf<SongItem>()
+        repeat(18) {
+            songItems.add(
+                SongItem(
+                    imageUrl = "https://p2.music.126.net/R2zySKjiX_hG8uFn1aCRcw==/109951165187830237.jpg",
+                    title = "阿发发发疯阿发复旦复华",
+                    playCount = 6346363636
+                )
+            )
+        }
+        return songItems
+    }
+
+    val songItems = createSongItems()
+
 
     fun fetchBannerData() {
         viewModelScope.launch {

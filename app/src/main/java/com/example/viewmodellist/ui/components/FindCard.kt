@@ -30,43 +30,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.viewmodellist.R
+import com.example.viewmodellist.ui.screens.find.FindviewModel
 
 data class SongItem(val imageUrl: String, val title: String, val playCount: Long)
 
 @Composable
-fun FindCard(@StringRes title: Int, modifier: Modifier = Modifier) {
-    val songItems = listOf(
-        SongItem(
-            imageUrl = "https://p2.music.126.net/R2zySKjiX_hG8uFn1aCRcw==/109951165187830237.jpg",
-            title = "阿发发发疯阿发复旦复华",
-            playCount = 6346363636
-        ),
-        SongItem(
-            imageUrl = "https://p2.music.126.net/R2zySKjiX_hG8uFn1aCRcw==/109951165187830237.jpg",
-            title = "阿发发发疯阿发复旦复华",
-            playCount = 6346363636
-        ),
-        SongItem(
-            imageUrl = "https://p2.music.126.net/R2zySKjiX_hG8uFn1aCRcw==/109951165187830237.jpg",
-            title = "阿发发发疯阿发复旦复华",
-            playCount = 6346363636
-        ),
-        SongItem(
-            imageUrl = "https://p2.music.126.net/R2zySKjiX_hG8uFn1aCRcw==/109951165187830237.jpg",
-            title = "阿发发发疯阿发复旦复华",
-            playCount = 6346363636
-        ),
-        SongItem(
-            imageUrl = "https://p2.music.126.net/R2zySKjiX_hG8uFn1aCRcw==/109951165187830237.jpg",
-            title = "阿发发发疯阿发复旦复华",
-            playCount = 6346363636
-        ),
-        SongItem(
-            imageUrl = "https://p2.music.126.net/R2zySKjiX_hG8uFn1aCRcw==/109951165187830237.jpg",
-            title = "阿发发发疯阿发复旦复华",
-            playCount = 6346363636
-        ),
-    )
+fun FindCard(
+    @StringRes title: Int,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -104,22 +78,8 @@ fun FindCard(@StringRes title: Int, modifier: Modifier = Modifier) {
             }
 
         }
-        LazyRow(
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            items(songItems) { item ->
-                Spacer(modifier = Modifier.width(5.dp)) // 添加左侧边距
-                SonglistCover(
-                    imageUrl = item.imageUrl,
-                    title = item.title,
-                    playCount = item.playCount,
-                    onClick = {}
-                )
-                Spacer(modifier = Modifier.width(5.dp)) // 添加右侧边距
-            }
+        content()
 
-        }
         Spacer(modifier = Modifier.height(30.dp))
         Divider(thickness = 0.2.dp, color = Color.Gray.copy(alpha = 0.3f))
     }
@@ -129,5 +89,21 @@ fun FindCard(@StringRes title: Int, modifier: Modifier = Modifier) {
 @Preview
 @Composable
 fun FindCardPreview() {
-    FindCard(R.string.find_recommendsonglist)
+
+    FindCard(R.string.find_recommendsonglist) {
+        LazyRow(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            items(FindviewModel().songItems) { item ->
+                Spacer(modifier = Modifier.width(5.dp)) // 添加左侧边距
+                SonglistCover(
+                    imageUrl = item.imageUrl,
+                    title = item.title,
+                    playCount = item.playCount,
+                )
+                Spacer(modifier = Modifier.width(5.dp)) // 添加右侧边距
+            }
+        }
+    }
 }
