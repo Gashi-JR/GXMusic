@@ -102,7 +102,7 @@ fun SongCover(
 }
 
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun SongcoverPreview() {
     SongCover(
