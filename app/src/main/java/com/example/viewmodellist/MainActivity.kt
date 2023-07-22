@@ -4,12 +4,13 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.view.Gravity
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -21,10 +22,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import com.example.viewmodellist.ui.components.BottomBar
 import com.example.viewmodellist.ui.navigation.NavGraph
+import com.example.viewmodellist.ui.navigation.NavGraph.selectedTabIndex
+import com.example.viewmodellist.ui.screens.find.Find
+import com.example.viewmodellist.ui.screens.find.FindviewModel
+import com.example.viewmodellist.ui.screens.songlist.SongList
+import com.example.viewmodellist.ui.screens.top.Top
 import com.example.viewmodellist.ui.theme.ViewModelListTheme
 
 
@@ -48,7 +55,7 @@ class MainActivity : ComponentActivity() {
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun Myapp(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
@@ -93,6 +100,14 @@ fun Myapp(modifier: Modifier = Modifier) {
         countDownTimer.start()
     })
 
+
+    val pagerState = rememberPagerState(initialPage = selectedTabIndex)
+    val titles = listOf(
+        stringResource(id = R.string.app_find),
+        stringResource(id = R.string.app_songlist),
+        stringResource(id = R.string.app_top)
+    )
+
     Scaffold(
         bottomBar = {
             BottomBar(
@@ -105,8 +120,14 @@ fun Myapp(modifier: Modifier = Modifier) {
         }
     ) {
 
-        NavGraph.create(navHostController = navController)
-
+        //   NavGraph.create(navHostController = navController)
+        HorizontalPager(state = pagerState, pageCount = titles.size) { page ->
+            when (page) {
+                0 -> Find(FindviewModel())
+                1 -> SongList()
+                2 -> Top()
+            }
+        }
 
     }
 }

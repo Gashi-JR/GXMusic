@@ -1,7 +1,6 @@
 package com.example.viewmodellist.ui.screens.find
 
 import Banner
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -10,8 +9,6 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.indication
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -19,17 +16,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material.Surface
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -37,9 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,10 +39,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.annotation.ExperimentalCoilApi
 import com.example.viewmodellist.R
-import com.example.viewmodellist.ui.components.FindCard
-import com.example.viewmodellist.ui.components.SongCover
-import com.example.viewmodellist.ui.components.SonglistCover
-import com.example.viewmodellist.ui.components.TopAppBar
+import com.example.viewmodellist.ui.components.find.FindCard
+import com.example.viewmodellist.ui.components.find.SongCover
+import com.example.viewmodellist.ui.components.find.SonglistCover
+import com.example.viewmodellist.ui.components.find.SonglistPreview
+import com.example.viewmodellist.ui.components.find.TopAppBar
+import com.example.viewmodellist.ui.components.find.TopCard
 import com.example.viewmodellist.ui.theme.ViewModelListTheme
 import com.example.viewmodellist.ui.theme.cardGradient
 import com.example.viewmodellist.ui.theme.findcardGradient
@@ -166,35 +158,32 @@ fun Find(findviewModel: FindviewModel, modifier: Modifier = Modifier) {
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     items(findviewModel.songItems) { item ->
-
-                        SonglistCover(
-                            imageUrl = item.imageUrl,
-                            title = item.title,
-                            playCount = item.playCount,
-                            modifier = Modifier.clickable(onClick = {}),
-                        )
-
+                        TopCard("云音乐说唱榜")
                     }
                 }
+
             }
         }
         item {
+
             FindCard(
-                title = R.string.find_recommendsonglist,
+                R.string.find_mysub,
+                //   modifier = Modifier.background(findcardGradient)
             ) {
                 LazyRow(
-                    horizontalArrangement = Arrangement.Center,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalAlignment = Alignment.CenterVertically,
+                    contentPadding = PaddingValues(horizontal = 15.dp)
                 ) {
                     items(findviewModel.songItems) { item ->
-                        Spacer(modifier = Modifier.width(5.dp)) // 添加左侧边距
-                        SonglistCover(
-                            imageUrl = item.imageUrl,
-                            title = item.title,
-                            playCount = item.playCount,
-                            modifier = Modifier.clickable(onClick = {}),
+
+                        SonglistPreview(
+                            "https://p2.music.126.net/R2zySKjiX_hG8uFn1aCRcw==/109951165187830237.jpg",
+                            "阿发发发疯阿发复旦复华",
+                            "aaa",
+                            listOf("aaa", "bbb")
                         )
-                        Spacer(modifier = Modifier.width(5.dp)) // 添加右侧边距
+
                     }
                 }
             }
