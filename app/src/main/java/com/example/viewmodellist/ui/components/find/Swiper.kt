@@ -29,7 +29,9 @@ import androidx.compose.ui.unit.dp
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
-import com.example.viewmodellist.ui.screens.find.BannerData
+import com.example.viewmodellist.ui.components.LoadingAnimation
+import com.example.viewmodellist.utils.Datamodels
+
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
@@ -46,24 +48,14 @@ import kotlinx.coroutines.delay
 @ExperimentalPagerApi
 @Composable
 fun Banner(
-    list: List<BannerData>?,
+    list: List<Datamodels.BannerData>?,
     timeMillis: Long = 3000,
     indicatorAlignment: Alignment = Alignment.BottomCenter,
     onClick: (link: String) -> Unit = {},
     @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
 ) {
-    val infinateTransition = rememberInfiniteTransition()
-    val alpha by infinateTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = keyframes {
-                durationMillis = 2000
-                0.7f at 1000
-            },
-            repeatMode = RepeatMode.Reverse
-        )
-    )
+
+
     if (list != null) {
         Log.d(TAG, "list:${list.size} ")
     }
@@ -76,11 +68,10 @@ fun Banner(
 
         if (list.isNullOrEmpty()) {
             //加载动画
-            Box(
+            LoadingAnimation(
                 modifier = Modifier
                     .fillMaxHeight()
                     .fillMaxWidth()
-                    .background(Color.Gray.copy(alpha = alpha))
             )
         } else {
             val pagerState = rememberPagerState(

@@ -33,22 +33,24 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.example.viewmodellist.R
+import com.example.viewmodellist.utils.Datamodels.TopSongItem
 
 
 @Composable
 fun TopCard(
     title: String,
+    topid: Long,
+    topsong: List<TopSongItem>,
     modifier: Modifier = Modifier,
-
-    ) {
+) {
     Card(
-        colors = CardDefaults.cardColors(containerColor = Color(245, 245, 245)),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
         modifier = modifier
             .padding(horizontal = 15.dp)
             .width(350.dp)
             .background(Color(0, 0, 0, 0)),
         shape = MaterialTheme.shapes.medium,
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 5.dp)
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 1.5.dp)
     ) {
         Column(
             modifier = modifier
@@ -86,174 +88,73 @@ fun TopCard(
                 color = Color.Red.copy(alpha = 0.15f),
                 modifier = Modifier.padding(horizontal = 15.dp)
             )
-            Row(
-                modifier = modifier
-                    .height(90.dp)
-                    .padding(15.dp)
-                    .fillMaxWidth()
-                    .clip(shape = MaterialTheme.shapes.small)
-                    .clickable { },
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            topsong.forEachIndexed { index, item ->
+                Row(
+                    modifier = modifier
+                        .height(90.dp)
+                        .padding(15.dp)
+                        .fillMaxWidth()
+                        .clip(shape = MaterialTheme.shapes.small)
+                        .clickable { },
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
 
-            ) {
-
-                Card(shape = MaterialTheme.shapes.small) {
-
-                    Image(
-                        painter = rememberAsyncImagePainter("http://pic-bucket.ws.126.net/photo/0003/2021-11-16/GOTKEOOU00AJ0003NOS.jpg"),
-                        modifier = Modifier.size(60.dp),
-                        contentScale = ContentScale.Crop,
-                        contentDescription = null
-                    )
-
-
-                }
-
-                Icon(
-                    painter = painterResource(id = R.drawable.one),
-                    contentDescription = null,
-                    tint = Color(255, 215, 0),
-                    modifier = Modifier.size(15.dp)
-                )
-                Column(
-                    modifier = Modifier
-                        .fillMaxHeight(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(
-                        text = title,
-                        fontSize = 16.sp,
-                        maxLines = 1,
-                        modifier = Modifier.width(120.dp)
-                    )
-                    Spacer(modifier = Modifier.height(5.dp))
-                    Text(
-                        text = title,
-                        fontSize = 12.sp,
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1,
-                        modifier = Modifier.width(120.dp),
-                        color = Color.Gray
-                    )
 
+                    Card(
+                        shape = MaterialTheme.shapes.small,
+                        colors = CardDefaults.cardColors(containerColor = Color(0, 0, 0, 0)),
+                    ) {
+
+                        Image(
+                            painter = rememberAsyncImagePainter(item.picUrl),
+                            modifier = Modifier.size(60.dp),
+                            contentScale = ContentScale.Crop,
+                            contentDescription = null
+                        )
+
+
+                    }
+
+                    Icon(
+                        painter = painterResource(id = if (index == 0) R.drawable.one else if (index == 1) R.drawable.two else R.drawable.three),
+                        contentDescription = null,
+                        tint = if (index == 0) Color(255, 215, 0) else if (index == 1) Color(
+                            192,
+                            192,
+                            192
+                        ) else Color(205, 133, 63),
+                        modifier = Modifier.size(15.dp)
+                    )
+                    Column(
+                        modifier = Modifier
+                            .fillMaxHeight(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = item.name,
+                            fontSize = 16.sp,
+                            maxLines = 1,
+                            modifier = Modifier.width(120.dp)
+                        )
+                        Spacer(modifier = Modifier.height(5.dp))
+                        Text(
+                            text = item.artist,
+                            fontSize = 12.sp,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1,
+                            modifier = Modifier.width(120.dp),
+                            color = Color.Gray
+                        )
+
+
+                    }
 
                 }
-
             }
-            Row(
-                modifier = modifier
-                    .height(90.dp)
-                    .padding(15.dp)
-                    .fillMaxWidth()
-                    .clip(shape = MaterialTheme.shapes.small)
-                    .clickable { },
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-
-            ) {
-
-                Card(shape = MaterialTheme.shapes.small) {
-
-                    Image(
-                        painter = rememberAsyncImagePainter("http://pic-bucket.ws.126.net/photo/0003/2021-11-16/GOTKEOOU00AJ0003NOS.jpg"),
-                        modifier = Modifier.size(60.dp),
-                        contentScale = ContentScale.Crop,
-                        contentDescription = null
-                    )
 
 
-                }
-
-                Icon(
-                    painter = painterResource(id = R.drawable.two),
-                    contentDescription = null,
-                    tint = Color(192, 192, 192),
-                    modifier = Modifier.size(15.dp)
-                )
-                Column(
-                    modifier = Modifier
-                        .fillMaxHeight(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = title,
-                        fontSize = 16.sp,
-                        maxLines = 1,
-                        modifier = Modifier.width(120.dp)
-                    )
-                    Spacer(modifier = Modifier.height(5.dp))
-                    Text(
-                        text = title,
-                        fontSize = 12.sp,
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1,
-                        modifier = Modifier.width(120.dp),
-                        color = Color.Gray
-                    )
-
-
-                }
-
-            }
-            Row(
-                modifier = modifier
-                    .height(90.dp)
-                    .padding(15.dp)
-                    .fillMaxWidth()
-                    .clip(shape = MaterialTheme.shapes.small)
-                    .clickable { },
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-
-            ) {
-
-                Card(shape = MaterialTheme.shapes.small) {
-
-                    Image(
-                        painter = rememberAsyncImagePainter("http://pic-bucket.ws.126.net/photo/0003/2021-11-16/GOTKEOOU00AJ0003NOS.jpg"),
-                        modifier = Modifier.size(60.dp),
-                        contentScale = ContentScale.Crop,
-                        contentDescription = null
-                    )
-
-
-                }
-
-                Icon(
-                    painter = painterResource(id = R.drawable.three),
-                    contentDescription = null,
-                    tint = Color(205, 133, 63),
-                    modifier = Modifier.size(15.dp)
-                )
-                Column(
-                    modifier = Modifier
-                        .fillMaxHeight(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = title,
-                        fontSize = 16.sp,
-                        maxLines = 1,
-                        modifier = Modifier.width(120.dp)
-                    )
-                    Spacer(modifier = Modifier.height(5.dp))
-                    Text(
-                        text = title,
-                        fontSize = 12.sp,
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1,
-                        modifier = Modifier.width(120.dp),
-                        color = Color.Gray
-                    )
-
-
-                }
-
-            }
             Spacer(modifier = Modifier.height(20.dp))
 
         }
@@ -266,6 +167,14 @@ fun TopCard(
 @Composable
 fun TopCardPreview() {
 
-    TopCard("云音乐说唱榜")
+    TopCard(
+        "云音乐说唱榜",
+        424,
+        listOf(
+            TopSongItem(15, "adad", "ada", "adad"),
+            TopSongItem(15, "adad", "ada", "adad"),
+            TopSongItem(15, "adad", "ada", "adad")
+        )
+    )
 }
 

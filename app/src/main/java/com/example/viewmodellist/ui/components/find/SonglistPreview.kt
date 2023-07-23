@@ -117,7 +117,7 @@ fun SonglistPreview(
 
             }
             Text(
-                text = "twte三个事实上事实上少时诵诗书是撒是撒是撒是撒是撒是撒是撒是撒是撒是撒是撒是撒是撒是撒是撒是撒是撒是撒是撒是撒个光个人各阿荣灌灌灌灌灌嘎嘎嘎嘎嘎嘎嘎嘎嘎嘎嘎嘎嘎嘎嘎嘎嘎嘎嘎嘎嘎嘎嘎嘎",
+                text = intro,
                 fontSize = 13.sp,
                 lineHeight = 17.sp,
                 modifier = Modifier.fillMaxWidth(), color = Color.White

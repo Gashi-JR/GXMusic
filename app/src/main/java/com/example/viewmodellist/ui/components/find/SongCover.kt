@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -28,13 +30,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.example.viewmodellist.R
+import com.google.gson.JsonObject
 
 
 @Composable
 fun SongCover(
-    imageUrl: String,
-    title: String,
-    intro: String,
+    id: Long,
+    picUrl: String,
+    mvid: Long,
+    name: String,
+    artist: String,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -44,10 +49,13 @@ fun SongCover(
 
     ) {
 
-        Card(shape = MaterialTheme.shapes.small) {
+        Card(
+            shape = MaterialTheme.shapes.small,
+            colors = CardDefaults.cardColors(containerColor = Color(0, 0, 0, 0)),
+        ) {
 
             Image(
-                painter = rememberAsyncImagePainter(imageUrl),
+                painter = rememberAsyncImagePainter(picUrl),
                 modifier = Modifier.size(60.dp),
                 contentScale = ContentScale.Crop,
                 contentDescription = null
@@ -67,21 +75,21 @@ fun SongCover(
                     .fillMaxHeight()
                     .padding(start = 10.dp),
                 verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.Start
             ) {
                 Text(
-                    text = title,
+                    text = name,
                     fontSize = 16.sp,
                     maxLines = 1,
                     modifier = Modifier.width(120.dp)
                 )
                 Spacer(modifier = Modifier.height(5.dp))
                 Text(
-                    text = intro,
+                    text = artist,
                     fontSize = 12.sp,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
-                    modifier = Modifier.width(120.dp),
+                    modifier = Modifier.width(150.dp),
                     color = Color.Gray
                 )
             }
@@ -102,8 +110,10 @@ fun SongCover(
 @Composable
 fun SongcoverPreview() {
     SongCover(
+        1313,
         "http://pic-bucket.ws.126.net/photo/0003/2021-11-16/GOTKEOOU00AJ0003NOS.jpg",
-        "阿发发发疯阿华",
-        "adadadadw"
+        64412,
+        "adadadadw",
+        "adadad"
     )
 }

@@ -2,6 +2,7 @@ package com.example.viewmodellist.ui.components.find
 
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,7 +30,7 @@ import androidx.compose.ui.unit.sp
 import com.example.viewmodellist.R
 import com.example.viewmodellist.ui.screens.find.FindviewModel
 
-data class SongItem(val imageUrl: String, val title: String, val playCount: Long)
+
 
 @Composable
 fun FindCard(
@@ -92,12 +93,17 @@ fun FindCardPreview() {
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            items(FindviewModel().songItems) { item ->
+            items(FindviewModel().songlistData) { item ->
                 Spacer(modifier = Modifier.width(5.dp)) // 添加左侧边距
                 SonglistCover(
-                    imageUrl = item.imageUrl,
-                    title = item.title,
-                    playCount = item.playCount,
+                    imageUrl = item.picUrl,
+                    title = item.name,
+                    playCount = item.playcount,
+                    id = item.id,
+                    copywriter = item.copywriter,
+                    modifier = Modifier
+                        .clickable(onClick = {})
+
                 )
                 Spacer(modifier = Modifier.width(5.dp)) // 添加右侧边距
             }

@@ -18,17 +18,6 @@ import com.example.viewmodellist.ui.screens.songlist.SongList
 import com.example.viewmodellist.ui.screens.top.Top
 
 object NavGraph {
-    // TODO:把底部导航栏的依赖变量抽出
-
-    // 初始化选中的选项卡索引
- var selectedTabIndex by mutableStateOf(0)
-
-    init {
-        // 在 init 块中设置初始值
-        selectedTabIndex = 0
-    }
-
-
 
 
     fun toSingleInstance(controller: NavHostController, route: String) {

@@ -1,14 +1,22 @@
 package com.example.viewmodellist.ui.components.find
 
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.Chip
+import androidx.compose.material.ChipDefaults
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -26,14 +34,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.example.viewmodellist.R
+import com.example.viewmodellist.ui.components.LoadingAnimation
 import com.example.viewmodellist.utils.formatter
 
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SonglistCover(
     imageUrl: String,
     title: String,
     playCount: Long,
+    id: Long,
+    copywriter: String,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -42,13 +54,38 @@ fun SonglistCover(
     ) {
         Row() {
             Card(shape = MaterialTheme.shapes.small) {
-                Box() {
+
+                Box {
+
                     Image(
                         painter = rememberAsyncImagePainter(imageUrl),
                         modifier = modifier.size(120.dp),
                         contentScale = ContentScale.Crop,
                         contentDescription = null
                     )
+                    if (copywriter != "") {
+                        Chip(
+                            onClick = {},
+                            colors = ChipDefaults.chipColors(
+                                backgroundColor = Color(
+                                    247,
+                                    231,
+                                    232
+                                )
+                            ),
+                            shape = MaterialTheme.shapes.extraSmall,
+                            modifier = Modifier
+                                .height(14.dp)
+                                .align(Alignment.BottomStart)
+                        ) {
+                            Text(
+                                text = copywriter,
+                                color = Color(250, 65, 64),
+                                fontSize = 8.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
                     Icon(
                         painter = painterResource(id = R.drawable.baseline_play_arrow_40),
                         contentDescription = null,
@@ -78,10 +115,11 @@ fun SonglistCover(
 
                 }
 
-
             }
 
         }
+
+
 
         Text(
             text = title,
@@ -91,16 +129,20 @@ fun SonglistCover(
             maxLines = 2,
             modifier = Modifier.width(120.dp)
         )
+
+
     }
 }
 
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun SonglistcoverPreview() {
     SonglistCover(
         "https://p2.music.126.net/R2zySKjiX_hG8uFn1aCRcw==/109951165187830237.jpg",
         "阿发发发疯阿发复旦复华",
-        6346363636
+        6346363636,
+        1515455,
+        "播放过万"
     )
 }

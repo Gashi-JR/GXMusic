@@ -11,11 +11,13 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,9 +29,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import com.example.viewmodellist.ui.components.BottomBar
 import com.example.viewmodellist.ui.navigation.NavGraph
-import com.example.viewmodellist.ui.navigation.NavGraph.selectedTabIndex
+
 import com.example.viewmodellist.ui.screens.find.Find
 import com.example.viewmodellist.ui.screens.find.FindviewModel
+import com.example.viewmodellist.ui.screens.mine.Mine
 import com.example.viewmodellist.ui.screens.songlist.SongList
 import com.example.viewmodellist.ui.screens.top.Top
 import com.example.viewmodellist.ui.theme.ViewModelListTheme
@@ -54,7 +57,7 @@ class MainActivity : ComponentActivity() {
 }
 
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun Myapp(modifier: Modifier = Modifier) {
@@ -100,35 +103,33 @@ fun Myapp(modifier: Modifier = Modifier) {
         countDownTimer.start()
     })
 
+    var selectedTabIndex by remember { mutableStateOf(0) }
 
-    val pagerState = rememberPagerState(initialPage = selectedTabIndex)
-    val titles = listOf(
-        stringResource(id = R.string.app_find),
-        stringResource(id = R.string.app_songlist),
-        stringResource(id = R.string.app_top)
-    )
 
     Scaffold(
         bottomBar = {
             BottomBar(
-                toFind = { NavGraph.toSingleInstance(navController, "find") },
-                toMine = { NavGraph.toSingleInstance(navController, "mine") },
-                toSongList = { NavGraph.toSingleInstance(navController, "songlist") },
-                toTop = { NavGraph.toSingleInstance(navController, "top") },
-                navHostController = navController
+                toFind = { selectedTabIndex = 0 },
+                toSongList = { selectedTabIndex = 1 },
+                toTop = { selectedTabIndex = 2 },
+                toMine = { selectedTabIndex = 3 },
+                selectedTabIndex = selectedTabIndex
             )
         }
     ) {
 
-        //   NavGraph.create(navHostController = navController)
-        HorizontalPager(state = pagerState, pageCount = titles.size) { page ->
+     val pagerState = rememberPagerState(initialPage = selectedTabIndex)
+        LaunchedEffect(selectedTabIndex) {
+            pagerState.animateScrollToPage(selectedTabIndex)
+        }
+        HorizontalPager(state = pagerState, pageCount = 4) { page ->
             when (page) {
                 0 -> Find(FindviewModel())
                 1 -> SongList()
                 2 -> Top()
+                3 -> Mine()
             }
         }
-
     }
 }
 

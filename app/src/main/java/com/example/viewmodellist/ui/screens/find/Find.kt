@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -39,6 +40,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.annotation.ExperimentalCoilApi
 import com.example.viewmodellist.R
+import com.example.viewmodellist.ui.components.LoadingAnimation
 import com.example.viewmodellist.ui.components.find.FindCard
 import com.example.viewmodellist.ui.components.find.SongCover
 import com.example.viewmodellist.ui.components.find.SonglistCover
@@ -48,7 +50,9 @@ import com.example.viewmodellist.ui.components.find.TopCard
 import com.example.viewmodellist.ui.theme.ViewModelListTheme
 import com.example.viewmodellist.ui.theme.cardGradient
 import com.example.viewmodellist.ui.theme.findcardGradient
+import com.example.viewmodellist.utils.Datamodels
 import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.gson.JsonObject
 
 
 @OptIn(ExperimentalPagerApi::class, ExperimentalCoilApi::class, ExperimentalFoundationApi::class)
@@ -56,12 +60,15 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 fun Find(findviewModel: FindviewModel, modifier: Modifier = Modifier) {
 
 
-    var isFixed = rememberSaveable {
+    val isFixed = rememberSaveable {
         mutableStateOf(false)
     }
 
     LaunchedEffect(Unit) {
         findviewModel.fetchBannerData()
+        findviewModel.fetchRecommendSonglistData()
+        findviewModel.fetchNewSongData()
+        findviewModel.fetchTopCardData()
         isFixed.value = true
     }
 
@@ -107,21 +114,24 @@ fun Find(findviewModel: FindviewModel, modifier: Modifier = Modifier) {
             ) {
                 LazyRow(
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    verticalAlignment = Alignment.CenterVertically,
+                    verticalAlignment = Alignment.Top,
                     contentPadding = PaddingValues(horizontal = 15.dp)
                 ) {
-                    items(findviewModel.songItems) { item ->
+
+                    items(findviewModel.songlistData) { item ->
 
                         SonglistCover(
-                            imageUrl = item.imageUrl,
-                            title = item.title,
-                            playCount = item.playCount,
+                            imageUrl = item.picUrl,
+                            title = item.name,
+                            playCount = if (item.playcount > 0) item.playcount else item.playCount,
+                            id = item.id,
+                            copywriter = item.copywriter,
                             modifier = Modifier
                                 .clickable(onClick = {})
 
                         )
-
                     }
+
                 }
             }
         }
@@ -137,11 +147,13 @@ fun Find(findviewModel: FindviewModel, modifier: Modifier = Modifier) {
                     horizontalArrangement = Arrangement.spacedBy(60.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(findviewModel.songItems) { item ->
+                    items(findviewModel.newsongData) { item ->
                         SongCover(
-                            imageUrl = item.imageUrl,
-                            title = item.title,
-                            intro = item.playCount.toString(),
+                            picUrl = item.picUrl,
+                            name = item.name,
+                            id = item.id,
+                            mvid = item.mvid,
+                            artist = item.artist,
                             modifier = Modifier.clickable(onClick = {}),
                         )
                     }
@@ -155,10 +167,16 @@ fun Find(findviewModel: FindviewModel, modifier: Modifier = Modifier) {
                 ) {
                 LazyRow(
                     horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
+                    verticalAlignment = Alignment.Top,
                 ) {
-                    items(findviewModel.songItems) { item ->
-                        TopCard("云音乐说唱榜")
+                    items(findviewModel.topcardData) { item ->
+                        TopCard(
+                            item.name, item.id, listOf(
+                                Datamodels.TopSongItem(15, "adad", "ada", "adad"),
+                                Datamodels.TopSongItem(15, "adad", "ada", "adad"),
+                                Datamodels.TopSongItem(15, "adad", "ada", "adad")
+                            )
+                        )
                     }
                 }
 
@@ -175,7 +193,7 @@ fun Find(findviewModel: FindviewModel, modifier: Modifier = Modifier) {
                     verticalAlignment = Alignment.CenterVertically,
                     contentPadding = PaddingValues(horizontal = 15.dp)
                 ) {
-                    items(findviewModel.songItems) { item ->
+                    items(findviewModel.songlistData) { item ->
 
                         SonglistPreview(
                             "https://p2.music.126.net/R2zySKjiX_hG8uFn1aCRcw==/109951165187830237.jpg",
