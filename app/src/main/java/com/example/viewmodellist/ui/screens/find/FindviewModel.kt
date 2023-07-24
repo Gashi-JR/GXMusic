@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 
 
 class FindviewModel(private val repository: Repository = Repository()) : ViewModel() {
-    //创建一个 MutableLiveData 对象来存储列表数据。
+    //创建 MutableList 对象来存储列表数据。
     @SuppressLint("MutableCollectionMutableState")
     private val _bannerData =
         mutableStateOf<MutableList<BannerData>>(mutableStateListOf())
@@ -34,6 +34,9 @@ class FindviewModel(private val repository: Repository = Repository()) : ViewMod
         mutableStateOf<MutableList<TopcardItem>>(mutableStateListOf())
     val topcardData: List<TopcardItem> get() = _topcardData.value
 
+    private val _topsongData =
+        mutableStateOf<MutableList<TopSongItem>>(mutableStateListOf())
+    val topsongData: List<TopSongItem> get() = _topsongData.value
 
 
     fun fetchBannerData() {
@@ -88,14 +91,31 @@ class FindviewModel(private val repository: Repository = Repository()) : ViewMod
                 val topcard = repository.getTopCardData()
                 _topcardData.value = topcard.toMutableList()
 
+
             } catch (e: Exception) {
                 // 处理异常情况
                 Log.e(TAG, "fetchTopCardDataError: $e")
             }
         }
+
     }
 
+    fun fetchTopSongData(topcardData: List<TopcardItem>) {
+        viewModelScope.launch {
+            try {
+                topcardData.forEach {
+                    val topsong = repository.getTopSongData(it.id)
+                    _topsongData.value.addAll(topsong.toMutableList())
+                }
+
+            } catch (e: Exception) {
+                // 处理异常情况
+                Log.e(TAG, "fetchTopSongDataError: $e")
+            }
+        }
+    }
 }
+
 
 class Repository() {
     val gson = Gson()
@@ -168,6 +188,48 @@ class Repository() {
             gson.fromJson(JsonArray, object : TypeToken<List<TopcardItem>>() {}.type)
 
 
-        return topcards.subList(0,5)
+        return topcards.subList(0, 5)
+    }
+
+    suspend fun getTopSongData(id: Long): List<TopSongItem> {
+
+        val alltopsongs = mutableListOf<TopSongItem>()
+            val result = NetworkUtils.https("/playlist/detail?id=${id}", "GET")
+            val response = gson.fromJson(result, JsonObject::class.java)
+
+            val playlist = response.getAsJsonObject("playlist")
+            val tracks = playlist.getAsJsonArray("tracks")
+            val topsongs: List<TopSongItem> =
+                gson.fromJson(tracks, object : TypeToken<List<TopSongItem>>() {}.type)
+
+
+            for (i in 0 until 3) {
+
+                val SongJson = tracks[i].asJsonObject
+
+                val arJsonArray = SongJson.getAsJsonArray("ar")
+                val artist = arJsonArray[0].asJsonObject.get("name").asString
+                Log.d(TAG, "artist: $artist")
+
+                val albumJsonObject = SongJson.getAsJsonObject("al")
+                val picUrl = albumJsonObject.get("picUrl").asString
+
+                Log.d(TAG, "picUrl: $picUrl")
+
+
+
+                topsongs[i].artist = artist
+                topsongs[i].picUrl = picUrl
+
+                alltopsongs.addAll(listOf(topsongs[i]))
+
+
+
+
+        }
+
+
+        //Log.d(TAG, "alltopsongs: $alltopsongs")
+        return alltopsongs
     }
 }

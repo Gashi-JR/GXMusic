@@ -51,6 +51,7 @@ fun SonglistCover(
     Column(
         modifier = Modifier
             .width(120.dp)
+
     ) {
         Row() {
             Card(shape = MaterialTheme.shapes.small) {

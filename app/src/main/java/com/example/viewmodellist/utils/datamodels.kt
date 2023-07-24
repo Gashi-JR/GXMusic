@@ -41,7 +41,7 @@ class Datamodels {
 
     data class TopSongItem(
         val id: Long,
-        val picUrl: String,
+        var picUrl: String,
         val name: String,
         var artist: String
     )

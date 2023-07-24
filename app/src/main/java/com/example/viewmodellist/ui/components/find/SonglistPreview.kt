@@ -58,6 +58,7 @@ fun SonglistPreview(
         modifier = modifier
             .padding(horizontal = 15.dp)
             .width(350.dp)
+            .height(630.dp)
             .background(Color(0, 0, 0, 0)),
         shape = MaterialTheme.shapes.medium,
         // elevation = CardDefaults.elevatedCardElevation(defaultElevation = 5.dp)
@@ -100,6 +101,7 @@ fun SonglistPreview(
         Column(
             modifier = modifier
                 .fillMaxWidth()
+                .fillMaxHeight()
                 .padding(15.dp),
             verticalArrangement = Arrangement.spacedBy(5.dp),
         ) {
@@ -120,11 +122,11 @@ fun SonglistPreview(
                 text = intro,
                 fontSize = 13.sp,
                 lineHeight = 17.sp,
+                overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.fillMaxWidth(), color = Color.White
             )
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
 
     }
 }
@@ -137,7 +139,9 @@ fun SonglistPre() {
     SonglistPreview(
         "https://p2.music.126.net/R2zySKjiX_hG8uFn1aCRcw==/109951165187830237.jpg",
         "阿发发发疯阿发复旦复华",
-        "aaa",
+        "阿发发发疯阿发复旦复华阿发发" +
+                "阿发发发疯阿发复旦复华发疯阿发复旦\"阿发发发疯阿发复\"阿发发发疯阿发复旦复华发疯阿发复旦复华阿发发发疯阿发复旦复华阿发发发疯阿\"\"阿发发发疯阿发复旦复华发疯阿发复旦复华阿发发发疯阿发复旦复华阿发发发疯阿\"\"阿发发发疯阿发复旦复华发疯阿发复旦复华阿发发发疯阿发复旦复华阿发发发疯阿\"旦复华发疯阿发复旦复华阿发发发疯阿发复旦复华阿发发发疯阿\"复华阿发发发疯阿发复旦复华阿发发发疯阿" +
+                "发复旦复华阿发发发疯阿发阿发发发疯阿发复旦复华复旦复华阿发发发疯阿发复旦复华",
         listOf("aaa", "bbb")
     )
 }

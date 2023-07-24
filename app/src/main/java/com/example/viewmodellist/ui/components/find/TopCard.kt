@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.example.viewmodellist.R
+import com.example.viewmodellist.ui.components.LoadingAnimation
 import com.example.viewmodellist.utils.Datamodels.TopSongItem
 
 
@@ -48,6 +49,7 @@ fun TopCard(
         modifier = modifier
             .padding(horizontal = 15.dp)
             .width(350.dp)
+            .height(380.dp)
             .background(Color(0, 0, 0, 0)),
         shape = MaterialTheme.shapes.medium,
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 1.5.dp)
@@ -88,71 +90,83 @@ fun TopCard(
                 color = Color.Red.copy(alpha = 0.15f),
                 modifier = Modifier.padding(horizontal = 15.dp)
             )
-            topsong.forEachIndexed { index, item ->
-                Row(
-                    modifier = modifier
-                        .height(90.dp)
-                        .padding(15.dp)
-                        .fillMaxWidth()
-                        .clip(shape = MaterialTheme.shapes.small)
-                        .clickable { },
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+            if (topsong.isNotEmpty())
+                topsong.forEachIndexed { index, item ->
+                    Row(
+                        modifier = modifier
+                            .height(90.dp)
+                            .padding(15.dp)
+                            .fillMaxWidth()
+                            .clip(shape = MaterialTheme.shapes.small)
+                            .clickable { },
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
 
-                ) {
-
-                    Card(
-                        shape = MaterialTheme.shapes.small,
-                        colors = CardDefaults.cardColors(containerColor = Color(0, 0, 0, 0)),
                     ) {
 
-                        Image(
-                            painter = rememberAsyncImagePainter(item.picUrl),
-                            modifier = Modifier.size(60.dp),
-                            contentScale = ContentScale.Crop,
-                            contentDescription = null
+                        Card(
+                            shape = MaterialTheme.shapes.small,
+                            colors = CardDefaults.cardColors(containerColor = Color(0, 0, 0, 0)),
+                        ) {
+
+                            Image(
+                                painter = rememberAsyncImagePainter(item.picUrl),
+                                modifier = Modifier.size(60.dp),
+                                contentScale = ContentScale.Crop,
+                                contentDescription = null
+                            )
+
+
+                        }
+
+                        Icon(
+                            painter = painterResource(id = if (index == 0) R.drawable.one else if (index == 1) R.drawable.two else R.drawable.three),
+                            contentDescription = null,
+                            tint = if (index == 0) Color(255, 215, 0) else if (index == 1) Color(
+                                192,
+                                192,
+                                192
+                            ) else Color(205, 133, 63),
+                            modifier = Modifier.size(15.dp)
                         )
+                        Column(
+                            modifier = Modifier
+                                .fillMaxHeight(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = item.name,
+                                fontSize = 16.sp,
+                                maxLines = 1,
+                                modifier = Modifier.width(120.dp)
+                            )
+                            Spacer(modifier = Modifier.height(5.dp))
+                            Text(
+                                text = item.artist,
+                                fontSize = 12.sp,
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1,
+                                modifier = Modifier.width(120.dp),
+                                color = Color.Gray
+                            )
 
 
-                    }
-
-                    Icon(
-                        painter = painterResource(id = if (index == 0) R.drawable.one else if (index == 1) R.drawable.two else R.drawable.three),
-                        contentDescription = null,
-                        tint = if (index == 0) Color(255, 215, 0) else if (index == 1) Color(
-                            192,
-                            192,
-                            192
-                        ) else Color(205, 133, 63),
-                        modifier = Modifier.size(15.dp)
-                    )
-                    Column(
-                        modifier = Modifier
-                            .fillMaxHeight(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = item.name,
-                            fontSize = 16.sp,
-                            maxLines = 1,
-                            modifier = Modifier.width(120.dp)
-                        )
-                        Spacer(modifier = Modifier.height(5.dp))
-                        Text(
-                            text = item.artist,
-                            fontSize = 12.sp,
-                            overflow = TextOverflow.Ellipsis,
-                            maxLines = 1,
-                            modifier = Modifier.width(120.dp),
-                            color = Color.Gray
-                        )
-
+                        }
 
                     }
 
                 }
-            }
+            else
+                listOf(1, 2, 3).forEach { _ ->
+                    LoadingAnimation(
+                        modifier = modifier
+                            .height(90.dp)
+                            .padding(15.dp)
+                            .fillMaxWidth()
+                            .clip(shape = MaterialTheme.shapes.small)
+                    )
+                }
 
 
             Spacer(modifier = Modifier.height(20.dp))
