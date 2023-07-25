@@ -1,5 +1,6 @@
 package com.example.viewmodellist
 
+
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Bundle
@@ -9,9 +10,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.absoluteOffset
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -22,14 +26,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.example.viewmodellist.ui.components.BottomBar
-import com.example.viewmodellist.ui.navigation.NavGraph
-
+import com.example.viewmodellist.ui.components.PlayButton
 import com.example.viewmodellist.ui.screens.find.Find
 import com.example.viewmodellist.ui.screens.find.FindviewModel
 import com.example.viewmodellist.ui.screens.mine.Mine
@@ -117,11 +122,14 @@ fun Myapp(modifier: Modifier = Modifier) {
             )
         }
     ) {
-
-     val pagerState = rememberPagerState(initialPage = selectedTabIndex)
+        var extended by remember {
+            mutableStateOf(false)
+        }
+        val pagerState = rememberPagerState(initialPage = selectedTabIndex)
         LaunchedEffect(selectedTabIndex) {
             pagerState.animateScrollToPage(selectedTabIndex)
         }
+
         HorizontalPager(state = pagerState, pageCount = 4) { page ->
             when (page) {
                 0 -> Find(FindviewModel())
@@ -130,6 +138,12 @@ fun Myapp(modifier: Modifier = Modifier) {
                 3 -> Mine()
             }
         }
+        PlayButton(
+            extended = extended,
+            onClick = { extended = !extended },
+            modifier = Modifier.absoluteOffset(x = 15.dp, y = 660.dp)
+        )
+
     }
 }
 
