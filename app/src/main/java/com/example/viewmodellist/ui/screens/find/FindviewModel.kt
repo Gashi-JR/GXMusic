@@ -4,8 +4,10 @@ import NetworkUtils
 import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
 import android.util.Log
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.viewmodellist.utils.Datamodels.*
@@ -37,6 +39,8 @@ class FindviewModel(private val repository: Repository = Repository()) : ViewMod
     private val _topsongData =
         mutableStateOf<MutableList<TopSongItem>>(mutableStateListOf())
     val topsongData: List<TopSongItem> get() = _topsongData.value
+
+    var currentMusic = mutableStateOf(CurrentMusic())
 
 
     fun fetchBannerData() {
@@ -114,6 +118,18 @@ class FindviewModel(private val repository: Repository = Repository()) : ViewMod
             }
         }
     }
+
+    fun fetchCurrentMusicUrl(id: Long) {
+        viewModelScope.launch {
+            try {
+                currentMusic.value.url = repository.getCurrentMusicUrl(id)
+            } catch (e: Exception) {
+                // 处理异常情况
+                Log.e(TAG, "fetchCurrentMusicUrlError: $e")
+            }
+        }
+    }
+
 }
 
 
@@ -194,36 +210,34 @@ class Repository() {
     suspend fun getTopSongData(id: Long): List<TopSongItem> {
 
         val alltopsongs = mutableListOf<TopSongItem>()
-            val result = NetworkUtils.https("/playlist/detail?id=${id}", "GET")
-            val response = gson.fromJson(result, JsonObject::class.java)
+        val result = NetworkUtils.https("/playlist/detail?id=${id}", "GET")
+        val response = gson.fromJson(result, JsonObject::class.java)
 
-            val playlist = response.getAsJsonObject("playlist")
-            val tracks = playlist.getAsJsonArray("tracks")
-            val topsongs: List<TopSongItem> =
-                gson.fromJson(tracks, object : TypeToken<List<TopSongItem>>() {}.type)
-
-
-            for (i in 0 until 3) {
-
-                val SongJson = tracks[i].asJsonObject
-
-                val arJsonArray = SongJson.getAsJsonArray("ar")
-                val artist = arJsonArray[0].asJsonObject.get("name").asString
-                Log.d(TAG, "artist: $artist")
-
-                val albumJsonObject = SongJson.getAsJsonObject("al")
-                val picUrl = albumJsonObject.get("picUrl").asString
-
-                Log.d(TAG, "picUrl: $picUrl")
+        val playlist = response.getAsJsonObject("playlist")
+        val tracks = playlist.getAsJsonArray("tracks")
+        val topsongs: List<TopSongItem> =
+            gson.fromJson(tracks, object : TypeToken<List<TopSongItem>>() {}.type)
 
 
+        for (i in 0 until 3) {
 
-                topsongs[i].artist = artist
-                topsongs[i].picUrl = picUrl
+            val SongJson = tracks[i].asJsonObject
 
-                alltopsongs.addAll(listOf(topsongs[i]))
+            val arJsonArray = SongJson.getAsJsonArray("ar")
+            val artist = arJsonArray[0].asJsonObject.get("name").asString
+            Log.d(TAG, "artist: $artist")
+
+            val albumJsonObject = SongJson.getAsJsonObject("al")
+            val picUrl = albumJsonObject.get("picUrl").asString
+
+            Log.d(TAG, "picUrl: $picUrl")
 
 
+
+            topsongs[i].artist = artist
+            topsongs[i].picUrl = picUrl
+
+            alltopsongs.addAll(listOf(topsongs[i]))
 
 
         }
@@ -231,5 +245,18 @@ class Repository() {
 
         //Log.d(TAG, "alltopsongs: $alltopsongs")
         return alltopsongs
+    }
+
+    suspend fun getCurrentMusicUrl(id: Long): String {
+
+        val result = NetworkUtils.https("/song/url/v1?id=$id&level=standard", "GET")
+        val response = gson.fromJson(result, JsonObject::class.java)
+        val JsonArray = response.getAsJsonArray("data")
+        val songJsonObject = JsonArray[0].asJsonObject
+
+
+
+
+        return songJsonObject.get("url").asString
     }
 }

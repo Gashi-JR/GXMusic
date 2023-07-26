@@ -18,6 +18,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 
@@ -39,7 +40,10 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,10 +57,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.example.viewmodellist.R
+import com.example.viewmodellist.ui.components.find.MediaPlayerViewModel
 import com.example.viewmodellist.ui.components.find.MusicPlayer
+import com.example.viewmodellist.ui.screens.find.FindviewModel
 
 @Composable
-fun PlayButton(onClick: () -> Unit = {}, extended: Boolean, modifier: Modifier = Modifier) {
+fun PlayButton(
+    onClick: () -> Unit = {},
+    extended: Boolean,
+    findviewModel: FindviewModel,
+    mediaPlayerViewModel: MediaPlayerViewModel,
+    modifier: Modifier = Modifier
+) {
     val infiniteTransition = rememberInfiniteTransition()
     val rotation by infiniteTransition.animateFloat(
         initialValue = 0f,
@@ -66,8 +78,10 @@ fun PlayButton(onClick: () -> Unit = {}, extended: Boolean, modifier: Modifier =
             repeatMode = RepeatMode.Restart
         )
     )
+
+
     FloatingActionButton(
-        onClick = onClick,
+        onClick = { },
         modifier = modifier,
         shape = CircleShape,
         contentColor = Color.White,
@@ -79,37 +93,44 @@ fun PlayButton(onClick: () -> Unit = {}, extended: Boolean, modifier: Modifier =
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (extended)
-                Icon(
-                    painter = painterResource(id = R.drawable.baseline_chevron_left_24),
-                    contentDescription = null,
-                    modifier = Modifier.size(35.dp)
-                )
-            else {
-                Box(
-                    modifier = Modifier
-                        .size(60.dp)
-                        .graphicsLayer(
-                            rotationZ = rotation
-                        )
+
+            Box(
+                modifier = Modifier
+                    .size(60.dp)
+                    .graphicsLayer(
+                        rotationZ = rotation
+                    )
+            ) {
+                Card(
+                    shape = CircleShape,
+                    colors = CardDefaults.cardColors(containerColor = Color(0, 0, 0, 0)),
                 ) {
-                    Card(
-                        shape = CircleShape,
-                        colors = CardDefaults.cardColors(containerColor = Color(0, 0, 0, 0)),
-                    ) {
-                        Image(
-                            painter = rememberAsyncImagePainter("https://p2.music.126.net/R2zySKjiX_hG8uFn1aCRcw==/109951165187830237.jpg"),
-                            modifier = Modifier.size(60.dp),
-                            contentScale = ContentScale.Crop,
-                            contentDescription = null
-                        )
-                    }
+                    Image(
+                        painter = rememberAsyncImagePainter(findviewModel.currentMusic.value.picUrl),
+                        modifier = Modifier
+                            .size(60.dp)
+                            .clickable { onClick() },
+                        contentScale = ContentScale.Crop,
+                        contentDescription = null
+                    )
+                }
+                if (extended)
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_chevron_left_24),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(35.dp)
+                            .align(Alignment.Center)
+
+                    )
+                else {
                     Icon(
                         painter = painterResource(id = R.drawable.baseline_chevron_right_24),
                         contentDescription = null,
                         modifier = Modifier
                             .size(35.dp)
                             .align(Alignment.Center)
+
                     )
                 }
 
@@ -118,7 +139,12 @@ fun PlayButton(onClick: () -> Unit = {}, extended: Boolean, modifier: Modifier =
             AnimatedVisibility(
                 visible = extended,
             ) {
-                MusicPlayer(url = "http://m8.music.126.net/20230725192642/60423efede2a309bcb1541641a924a36/ymusic/397d/2039/9488/c3500e9cfdfd0bf3a0e15e04413c8deb.mp3")
+                MusicPlayer(
+                    url = findviewModel.currentMusic.value.url,
+                    findviewModel.currentMusic.value.name,
+                    findviewModel.currentMusic.value.artist,
+                    mediaPlayerViewModel
+                )
             }
         }
     }
@@ -128,6 +154,6 @@ fun PlayButton(onClick: () -> Unit = {}, extended: Boolean, modifier: Modifier =
 @Preview
 @Composable
 fun PlayButtonPreview() {
-    PlayButton(onClick = {}, true)
+    PlayButton(onClick = {}, true, FindviewModel(), MediaPlayerViewModel())
 }
 

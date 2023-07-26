@@ -25,6 +25,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.example.viewmodellist.ui.components.BottomBar
 import com.example.viewmodellist.ui.components.PlayButton
+import com.example.viewmodellist.ui.components.find.MediaPlayerViewModel
 import com.example.viewmodellist.ui.screens.find.Find
 import com.example.viewmodellist.ui.screens.find.FindviewModel
 import com.example.viewmodellist.ui.screens.mine.Mine
@@ -122,8 +124,14 @@ fun Myapp(modifier: Modifier = Modifier) {
             )
         }
     ) {
-        var extended by remember {
+        var extended by rememberSaveable {
             mutableStateOf(false)
+        }
+        val findviewModel by remember {
+            mutableStateOf(FindviewModel())
+        }
+        val mediaPlayerViewModel by remember {
+            mutableStateOf(MediaPlayerViewModel())
         }
         val pagerState = rememberPagerState(initialPage = selectedTabIndex)
         LaunchedEffect(selectedTabIndex) {
@@ -132,7 +140,7 @@ fun Myapp(modifier: Modifier = Modifier) {
 
         HorizontalPager(state = pagerState, pageCount = 4) { page ->
             when (page) {
-                0 -> Find(FindviewModel())
+                0 -> Find(findviewModel, mediaPlayerViewModel)
                 1 -> SongList()
                 2 -> Top()
                 3 -> Mine()
@@ -141,7 +149,9 @@ fun Myapp(modifier: Modifier = Modifier) {
         PlayButton(
             extended = extended,
             onClick = { extended = !extended },
-            modifier = Modifier.absoluteOffset(x = 15.dp, y = 660.dp)
+            modifier = Modifier.absoluteOffset(x = 5.dp, y = 660.dp),
+            findviewModel = findviewModel,
+            mediaPlayerViewModel = mediaPlayerViewModel
         )
 
     }

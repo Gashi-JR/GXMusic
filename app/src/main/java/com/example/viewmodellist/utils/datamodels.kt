@@ -46,5 +46,12 @@ class Datamodels {
         var artist: String
     )
 
-
+    // TODO: 当前正在播放的音乐模型
+    data class CurrentMusic(
+        var id: Long = 0,
+        var picUrl: String = "",
+        var name: String = "",
+        var artist: String = "",
+        var url: String = ""
+    )
 }

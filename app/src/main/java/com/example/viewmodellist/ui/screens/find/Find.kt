@@ -32,6 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,6 +45,7 @@ import coil.annotation.ExperimentalCoilApi
 import com.example.viewmodellist.R
 import com.example.viewmodellist.ui.components.LoadingAnimation
 import com.example.viewmodellist.ui.components.find.FindCard
+import com.example.viewmodellist.ui.components.find.MediaPlayerViewModel
 import com.example.viewmodellist.ui.components.find.SongCover
 import com.example.viewmodellist.ui.components.find.SonglistCover
 import com.example.viewmodellist.ui.components.find.SonglistPreview
@@ -63,7 +65,11 @@ import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalPagerApi::class, ExperimentalCoilApi::class)
 @Composable
-fun Find(findviewModel: FindviewModel, modifier: Modifier = Modifier) {
+fun Find(
+    findviewModel: FindviewModel,
+    mediaPlayerViewModel: MediaPlayerViewModel,
+    modifier: Modifier = Modifier
+) {
 
 
     val isFixed = rememberSaveable {
@@ -74,7 +80,7 @@ fun Find(findviewModel: FindviewModel, modifier: Modifier = Modifier) {
 //        findviewModel.fetchTopCardData()
 //        findviewModel.fetchBannerData()
 //        findviewModel.fetchRecommendSonglistData()
-//        findviewModel.fetchNewSongData()
+      //  findviewModel.fetchNewSongData()
 
 
         isFixed.value = true
@@ -161,6 +167,7 @@ fun Find(findviewModel: FindviewModel, modifier: Modifier = Modifier) {
             }
         }
         item {
+            val scope = rememberCoroutineScope() // 获取关联的协程作用域
             FindCard(
                 title = R.string.find_newsong,
 
@@ -180,7 +187,22 @@ fun Find(findviewModel: FindviewModel, modifier: Modifier = Modifier) {
                                 id = item.id,
                                 mvid = item.mvid,
                                 artist = item.artist,
-                                modifier = Modifier.clickable(onClick = {}),
+                                modifier = Modifier.clickable {
+
+                                    scope.launch {
+                                        findviewModel.currentMusic.value.id = item.id
+                                        findviewModel.currentMusic.value.name = item.name
+                                        findviewModel.currentMusic.value.picUrl = item.picUrl
+                                        findviewModel.currentMusic.value.artist = item.artist
+                                        findviewModel.fetchCurrentMusicUrl(item.id)
+                                        mediaPlayerViewModel.play(
+                                            Repository().getCurrentMusicUrl(
+                                                item.id
+                                            )
+                                        )
+                                    }
+
+                                },
                             )
                         }
                     else {
@@ -295,7 +317,7 @@ fun Find(findviewModel: FindviewModel, modifier: Modifier = Modifier) {
 fun FindPreview() {
     ViewModelListTheme {
 
-        Find(FindviewModel())
+        Find(FindviewModel(), MediaPlayerViewModel())
 
     }
 }

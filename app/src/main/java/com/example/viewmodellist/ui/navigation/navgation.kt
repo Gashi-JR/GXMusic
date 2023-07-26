@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.viewmodellist.R
+import com.example.viewmodellist.ui.components.find.MediaPlayerViewModel
 import com.example.viewmodellist.ui.screens.find.Find
 import com.example.viewmodellist.ui.screens.find.FindviewModel
 import com.example.viewmodellist.ui.screens.login.Login
@@ -36,7 +37,7 @@ object NavGraph {
 
         NavHost(navController = navHostController, startDestination = "find") {
             composable("login") { Login() }
-            composable("find") { Find(findviewModel = FindviewModel()) }
+            composable("find") { Find(FindviewModel(), MediaPlayerViewModel()) }
             composable("songlist") { SongList() }
             composable("top") { Top() }
             composable("mine") { Mine() }

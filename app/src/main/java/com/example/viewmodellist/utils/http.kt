@@ -30,7 +30,7 @@ interface ApiService {
 
 object NetworkUtils {
     private val retrofit = Retrofit.Builder()
-        .baseUrl("http://duztcy.natappfree.cc") // 设置基本 URL
+        .baseUrl("http://nthww7.natappfree.cc") // 设置基本 URL
         .addConverterFactory(GsonConverterFactory.create()) // 设置 Gson 转换器
         .build()
 
