@@ -21,6 +21,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,7 +35,10 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.example.viewmodellist.R
 import com.example.viewmodellist.ui.components.LoadingAnimation
+import com.example.viewmodellist.ui.screens.find.FindviewModel
+import com.example.viewmodellist.ui.screens.find.Repository
 import com.example.viewmodellist.utils.Datamodels.TopSongItem
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -42,6 +46,8 @@ fun TopCard(
     title: String,
     topid: Long,
     topsong: List<TopSongItem>,
+    findviewModel: FindviewModel,
+    mediaPlayerViewModel: MediaPlayerViewModel,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -90,6 +96,7 @@ fun TopCard(
                 color = Color.Red.copy(alpha = 0.15f),
                 modifier = Modifier.padding(horizontal = 15.dp)
             )
+            val scope = rememberCoroutineScope() // 获取关联的协程作用域
             if (topsong.isNotEmpty())
                 topsong.forEachIndexed { index, item ->
                     Row(
@@ -98,7 +105,21 @@ fun TopCard(
                             .padding(15.dp)
                             .fillMaxWidth()
                             .clip(shape = MaterialTheme.shapes.small)
-                            .clickable { },
+                            .clickable {
+
+                                scope.launch {
+                                    findviewModel.currentMusic.value.id = item.id
+                                    findviewModel.currentMusic.value.name = item.name
+                                    findviewModel.currentMusic.value.picUrl = item.picUrl
+                                    findviewModel.currentMusic.value.artist = item.artist
+                                    findviewModel.fetchCurrentMusicUrl(item.id)
+                                    mediaPlayerViewModel.play(
+                                        Repository().getCurrentMusicUrl(
+                                            item.id
+                                        )
+                                    )
+                                }
+                            },
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
 
@@ -188,7 +209,9 @@ fun TopCardPreview() {
             TopSongItem(15, "adad", "ada", "adad"),
             TopSongItem(15, "adad", "ada", "adad"),
             TopSongItem(15, "adad", "ada", "adad")
-        )
+        ),
+        FindviewModel(),
+        MediaPlayerViewModel(),
     )
 }
 

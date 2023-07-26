@@ -149,7 +149,6 @@ fun Myapp(modifier: Modifier = Modifier) {
         PlayButton(
             extended = extended,
             onClick = { extended = !extended },
-            modifier = Modifier.absoluteOffset(x = 5.dp, y = 660.dp),
             findviewModel = findviewModel,
             mediaPlayerViewModel = mediaPlayerViewModel
         )

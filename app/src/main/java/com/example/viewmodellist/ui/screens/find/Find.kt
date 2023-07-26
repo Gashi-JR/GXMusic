@@ -77,10 +77,10 @@ fun Find(
     }
 
     LaunchedEffect(Unit) {
-//        findviewModel.fetchTopCardData()
+        //findviewModel.fetchTopCardData()
 //        findviewModel.fetchBannerData()
 //        findviewModel.fetchRecommendSonglistData()
-      //  findviewModel.fetchNewSongData()
+        //  findviewModel.fetchNewSongData()
 
 
         isFixed.value = true
@@ -237,6 +237,8 @@ fun Find(
                                     3 * index,
                                     3 * index + 3
                                 ) else listOf(),
+                                findviewModel,
+                                mediaPlayerViewModel,
                             )
 
                         }
