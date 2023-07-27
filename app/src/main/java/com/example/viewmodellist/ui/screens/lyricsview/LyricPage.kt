@@ -1,6 +1,6 @@
-package com.example.viewmodellist.ui.screens.songlist
+package com.example.viewmodellist.ui.screens.lyricsview
 
-import androidx.compose.material3.Text
+
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.viewmodellist.ui.components.LyricsViewPage
@@ -8,15 +8,17 @@ import com.example.viewmodellist.ui.theme.ViewModelListTheme
 
 
 @Composable
-fun SongList() {
-    Text(text = "sdfgs")
+fun LyricPage() {
+
+        LyricsViewPage()
+
 }
 
 
 @Preview
 @Composable
-fun SonglistPreview() {
+fun LyricPagePreview() {
     ViewModelListTheme {
-        SongList()
+        LyricPage()
     }
 }

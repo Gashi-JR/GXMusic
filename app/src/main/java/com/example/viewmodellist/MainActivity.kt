@@ -11,6 +11,8 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
@@ -39,6 +41,7 @@ import com.example.viewmodellist.ui.components.PlayButton
 import com.example.viewmodellist.ui.components.find.MediaPlayerViewModel
 import com.example.viewmodellist.ui.screens.find.Find
 import com.example.viewmodellist.ui.screens.find.FindviewModel
+import com.example.viewmodellist.ui.screens.lyricsview.LyricPage
 import com.example.viewmodellist.ui.screens.mine.Mine
 import com.example.viewmodellist.ui.screens.songlist.SongList
 import com.example.viewmodellist.ui.screens.top.Top
@@ -117,9 +120,10 @@ fun Myapp(modifier: Modifier = Modifier) {
         bottomBar = {
             BottomBar(
                 toFind = { selectedTabIndex = 0 },
-                toSongList = { selectedTabIndex = 1 },
-                toTop = { selectedTabIndex = 2 },
-                toMine = { selectedTabIndex = 3 },
+                toLyc = { selectedTabIndex = 1 },
+                toSongList = { selectedTabIndex = 2 },
+                toTop = { selectedTabIndex = 3 },
+                toMine = { selectedTabIndex = 4 },
                 selectedTabIndex = selectedTabIndex
             )
         }
@@ -138,14 +142,17 @@ fun Myapp(modifier: Modifier = Modifier) {
             pagerState.animateScrollToPage(selectedTabIndex)
         }
 
-        HorizontalPager(state = pagerState, pageCount = 4) { page ->
-            when (page) {
-                0 -> Find(findviewModel, mediaPlayerViewModel)
-                1 -> SongList()
-                2 -> Top()
-                3 -> Mine()
-            }
+        HorizontalPager(state = pagerState, pageCount = 5) { page ->
+
+                when (page) {
+                    0 -> Find(findviewModel, mediaPlayerViewModel)
+                    1 -> LyricPage()
+                    2 -> SongList()
+                    3 -> Top()
+                    4 -> Mine()
+                }
         }
+
         PlayButton(
             extended = extended,
             onClick = { extended = !extended },

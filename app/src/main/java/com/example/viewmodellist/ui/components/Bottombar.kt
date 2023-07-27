@@ -21,6 +21,7 @@ import com.example.viewmodellist.ui.theme.ViewModelListTheme
 fun BottomBar(
     toFind: () -> Unit,
     toMine: () -> Unit,
+    toLyc: () -> Unit,
     toSongList: () -> Unit,
     toTop: () -> Unit,
     selectedTabIndex: Int,
@@ -47,9 +48,26 @@ fun BottomBar(
             selectedContentColor = Color.Red,
 
             )
-
         BottomNavigationItem(
             selected = selectedTabIndex == 1,
+            onClick = toLyc,
+            icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_lyrics_24),
+                    contentDescription = null
+                )
+            },
+            label = {
+                Text(
+                    text = stringResource(id = R.string.app_lyricsview),
+                    fontSize = 10.sp,
+                    color = Color.Gray
+                )
+            },
+            selectedContentColor = Color.Red
+        )
+        BottomNavigationItem(
+            selected = selectedTabIndex == 2,
             onClick = toSongList,
             icon = {
                 Icon(
@@ -66,7 +84,8 @@ fun BottomBar(
             },
             selectedContentColor = Color.Red
         )
-        BottomNavigationItem(selected = selectedTabIndex == 2, onClick = toTop, icon = {
+
+        BottomNavigationItem(selected = selectedTabIndex == 3, onClick = toTop, icon = {
             Icon(
                 painter = painterResource(id = R.drawable.round_queue_music_24),
                 contentDescription = null
@@ -80,7 +99,7 @@ fun BottomBar(
         },
             selectedContentColor = Color.Red
         )
-        BottomNavigationItem(selected = selectedTabIndex == 3, onClick = toMine, icon = {
+        BottomNavigationItem(selected = selectedTabIndex == 4, onClick = toMine, icon = {
             Icon(imageVector = Icons.Default.AccountCircle, contentDescription = null)
         }, label = {
             Text(
@@ -102,6 +121,7 @@ fun BottombarPreview() {
         BottomBar(
             toFind = {},
             toMine = {},
+            toLyc = {},
             toSongList = {},
             toTop = {},
             selectedTabIndex = 0
