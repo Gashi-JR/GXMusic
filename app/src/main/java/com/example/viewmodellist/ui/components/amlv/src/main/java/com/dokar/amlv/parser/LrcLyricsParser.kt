@@ -41,10 +41,13 @@ class LrcLyricsParser : LyricsParser {
             )
         }
         if (length != null) {
-            val last = lines.last()
-            lines[lines.lastIndex] = last.copy(
-                durationMillis = (length - last.startAt).takeIf { it > 0L } ?: Long.MAX_VALUE,
-            )
+            if (lines.isNotEmpty()) {
+                val last = lines.last()
+                lines[lines.lastIndex] = last.copy(
+                    durationMillis = (length - last.startAt).takeIf { it > 0L } ?: Long.MAX_VALUE,
+                )
+            }
+
         } else {
             lines[lines.lastIndex] = lines.last().copy(
                 durationMillis = Long.MAX_VALUE,

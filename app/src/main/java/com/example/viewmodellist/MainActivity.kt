@@ -146,7 +146,7 @@ fun Myapp(modifier: Modifier = Modifier) {
 
                 when (page) {
                     0 -> Find(findviewModel, mediaPlayerViewModel)
-                    1 -> LyricPage()
+                    1 -> LyricPage(findviewModel, mediaPlayerViewModel)
                     2 -> SongList()
                     3 -> Top()
                     4 -> Mine()

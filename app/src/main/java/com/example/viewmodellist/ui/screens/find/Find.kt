@@ -80,7 +80,7 @@ fun Find(
         //findviewModel.fetchTopCardData()
 //        findviewModel.fetchBannerData()
 //        findviewModel.fetchRecommendSonglistData()
-        //  findviewModel.fetchNewSongData()
+          findviewModel.fetchNewSongData()
 
 
         isFixed.value = true
