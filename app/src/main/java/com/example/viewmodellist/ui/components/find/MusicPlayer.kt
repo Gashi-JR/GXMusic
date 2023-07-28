@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -178,7 +179,12 @@ fun MusicPlayer(
                 valueRange = 0f..musicController.duration.toFloat(),
                 modifier = Modifier
                     .width(200.dp)
-                    .height(10.dp)
+                    .height(10.dp),
+                colors = SliderDefaults.colors(
+                    thumbColor = Color.White,
+                    activeTrackColor = Color.Gray.copy(alpha = 0.8f),
+                    inactiveTrackColor = Color.Gray.copy(alpha = 0.5f),
+                ),
             )
 
             Text(
