@@ -1,6 +1,9 @@
 package com.dokar.amlv
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -8,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import com.dokar.amlv.parser.LrcLyricsParser
+import com.example.viewmodellist.ui.components.find.MediaPlayerViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -16,24 +20,31 @@ import kotlinx.coroutines.launch
 import kotlin.system.measureTimeMillis
 
 @Composable
-fun rememberLyricsViewState(lrcContent: String): LyricsViewState {
+fun rememberLyricsViewState(
+    lrcContent: String,
+    mediaPlayerViewModel: MediaPlayerViewModel,
+): LyricsViewState {
     val scope = rememberCoroutineScope()
     val parser = remember { LrcLyricsParser() }
-    return remember(scope, parser, lrcContent) {
+    return remember(scope, parser, lrcContent, mediaPlayerViewModel) {
         val lyrics = parser.parse(lrcContent)
-        LyricsViewState(lyrics, scope)
+        LyricsViewState(lyrics, mediaPlayerViewModel, scope)
     }
 }
 
 @Composable
-fun rememberLyricsViewState(lyrics: Lyrics?): LyricsViewState {
+fun rememberLyricsViewState(
+    lyrics: Lyrics?,
+    mediaPlayerViewModel: MediaPlayerViewModel,
+): LyricsViewState {
     val scope = rememberCoroutineScope()
-    return remember(scope, lyrics) { LyricsViewState(lyrics, scope) }
+    return remember(scope, lyrics) { LyricsViewState(lyrics, mediaPlayerViewModel, scope) }
 }
 
 @Stable
 class LyricsViewState(
     lyrics: Lyrics?,
+    val mediaPlayerViewModel: MediaPlayerViewModel,
     private val scope: CoroutineScope,
     private val tickMillis: Long = 50L,
 ) {
@@ -41,14 +52,10 @@ class LyricsViewState(
 
     private val lineCount = lyrics?.lines?.size ?: 0
 
-    var position by mutableStateOf(0L)
-        private set
 
     internal var currentLineIndex by mutableStateOf(-1)
         private set
 
-    var isPlaying by mutableStateOf(false)
-        private set
 
     private var playbackJob: Job? = null
 
@@ -61,24 +68,25 @@ class LyricsViewState(
     }
 
     fun play() {
+        Log.d(TAG, "play: 第一次播放$lyrics")
         if (lyrics == null) return
 
         val lines = lyrics.lines
         if (lines.isEmpty()) return
 
-        if (position !in 0..lyrics.optimalDurationMillis) {
+        if (mediaPlayerViewModel.currentPosition !in 0..lyrics.optimalDurationMillis) {
             return
         }
 
         playbackJob?.cancel()
         playbackJob = scope.launch {
-            var currLineIdx = findLineIndexAt(position)
+            var currLineIdx = findLineIndexAt(mediaPlayerViewModel.currentPosition.toLong())
             currentLineIndex = currLineIdx
 
-            isPlaying = true
+            mediaPlayerViewModel.isPlaying = true
 
             fun checkFinished(): Boolean {
-                return !isActive || !isPlaying || position >= lyrics.optimalDurationMillis
+                return !isActive || !mediaPlayerViewModel.isPlaying || mediaPlayerViewModel.currentPosition >= lyrics.optimalDurationMillis
             }
 
             /**
@@ -93,7 +101,8 @@ class LyricsViewState(
                 var millis = measureTimeMillis {
                     while (i < loops && !checkFinished()) {
                         delay(tickMillis)
-                        position += tickMillis
+                        mediaPlayerViewModel.currentPosition =
+                            (mediaPlayerViewModel.currentPosition.toLong() + tickMillis).toInt()
                         i++
                     }
                 }
@@ -105,7 +114,8 @@ class LyricsViewState(
 
                 millis = measureTimeMillis {
                     delay(extraDelay)
-                    position += extraDelay
+                    mediaPlayerViewModel.currentPosition =
+                        (mediaPlayerViewModel.currentPosition.toLong() + extraDelay).toInt()
                 }
                 val extraDeviation = extraDelay - millis
 
@@ -118,7 +128,7 @@ class LyricsViewState(
                 currentLineIndex = currLineIdx
 
                 val duration = if (currLineIdx < 0) {
-                    lines.first().startAt - position
+                    lines.first().startAt - mediaPlayerViewModel.currentPosition
                 } else {
                     lines[currLineIdx].durationMillis
                 }
@@ -152,13 +162,17 @@ class LyricsViewState(
         }
         playbackJob!!.invokeOnCompletion { cause ->
             if (cause == null) {
-                isPlaying = false
+                mediaPlayerViewModel.isPlaying = false
             }
         }
     }
 
+
+
+
+
     fun pause() {
-        isPlaying = false
+        mediaPlayerViewModel.isPlaying = false
         playbackJob?.cancel()
     }
 
@@ -167,14 +181,15 @@ class LyricsViewState(
         val idx = index.coerceIn(-1, lineCount - 1)
         val position = if (idx >= 0) lines[idx].startAt else 0L
         seekTo(position)
+        mediaPlayerViewModel.seekTo(position.toInt())
     }
 
     fun seekTo(position: Long) {
-        val playAfterSeeking = isPlaying
-        if (isPlaying) {
+        val playAfterSeeking = mediaPlayerViewModel.isPlaying
+        if (mediaPlayerViewModel.isPlaying) {
             playbackJob?.cancel()
         }
-        this.position = position
+        this.mediaPlayerViewModel.currentPosition = position.toInt()
         if (playAfterSeeking) {
             play()
         } else {

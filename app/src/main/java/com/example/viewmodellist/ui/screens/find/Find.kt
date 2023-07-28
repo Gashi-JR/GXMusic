@@ -42,6 +42,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.annotation.ExperimentalCoilApi
+import com.dokar.amlv.LyricsViewState
+import com.dokar.amlv.rememberLyricsViewState
 import com.example.viewmodellist.R
 import com.example.viewmodellist.ui.components.LoadingAnimation
 import com.example.viewmodellist.ui.components.find.FindCard
@@ -68,6 +70,7 @@ import kotlinx.coroutines.withContext
 fun Find(
     findviewModel: FindviewModel,
     mediaPlayerViewModel: MediaPlayerViewModel,
+    state: LyricsViewState,
     modifier: Modifier = Modifier
 ) {
 
@@ -77,16 +80,16 @@ fun Find(
     }
 
     LaunchedEffect(Unit) {
-        //findviewModel.fetchTopCardData()
+//        findviewModel.fetchTopCardData()
 //        findviewModel.fetchBannerData()
 //        findviewModel.fetchRecommendSonglistData()
-          findviewModel.fetchNewSongData()
+        findviewModel.fetchNewSongData()
 
 
         isFixed.value = true
     }
     LaunchedEffect(findviewModel.topcardData) {
-        //findviewModel.fetchTopSongData(findviewModel.topcardData)
+        // findviewModel.fetchTopSongData(findviewModel.topcardData)
     }
 
 
@@ -200,6 +203,7 @@ fun Find(
                                                 item.id
                                             )
                                         )
+
                                     }
 
                                 },
@@ -319,7 +323,11 @@ fun Find(
 fun FindPreview() {
     ViewModelListTheme {
 
-        Find(FindviewModel(), MediaPlayerViewModel())
+        Find(
+            FindviewModel(),
+            MediaPlayerViewModel(),
+            rememberLyricsViewState(lrcContent = "", mediaPlayerViewModel = MediaPlayerViewModel())
+        )
 
     }
 }

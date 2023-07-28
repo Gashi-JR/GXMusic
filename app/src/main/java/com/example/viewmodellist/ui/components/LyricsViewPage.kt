@@ -70,31 +70,27 @@ import kotlin.math.sqrt
 
 @Composable
 fun LyricsViewPage(
-    lyc: String,
-    name: String,
-    artist: String,
-    duration: String,
     picUrl: String,
     findviewModel: FindviewModel,
     mediaPlayerViewModel: MediaPlayerViewModel,
+    state: LyricsViewState,
     modifier: Modifier = Modifier
 ) {
-    val lycstr = """
-[ar:$artist]
-[ti:$name]
-[al:]
-[length:$duration]
 
+    LaunchedEffect(mediaPlayerViewModel.isPlaying) {
+        if (mediaPlayerViewModel.isPlaying)
+            state.play()
+        else
+            state.pause()
+    }
 
-""" + lyc
-    val state = rememberLyricsViewState(lrcContent = lycstr)
     var showLyc by rememberSaveable {
         mutableStateOf(true)
     }
     Column(
         modifier = modifier
             .height(800.dp)
-            .animatedGradient(animating = state.isPlaying)
+            .animatedGradient(animating = state.mediaPlayerViewModel.isPlaying)
             .windowInsetsPadding(WindowInsets.systemBars),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -143,6 +139,8 @@ fun LyricsViewPage(
             modifier = Modifier,
             contentColor = Color.White,
             showLyc = showLyc,
+            findviewModel,
+            mediaPlayerViewModel,
             onClick = { showLyc = !showLyc }
         )
     }
@@ -185,8 +183,12 @@ fun PlaybackControls(
     modifier: Modifier = Modifier,
     contentColor: Color = MaterialTheme.colorScheme.onBackground,
     showLyc: Boolean,
+    findviewModel: FindviewModel,
+    mediaPlayerViewModel: MediaPlayerViewModel,
     onClick: () -> Unit
 ) {
+
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -206,11 +208,11 @@ fun PlaybackControls(
 
             LaunchedEffect(state, duration) {
                 launch(Dispatchers.Default) {
-                    snapshotFlow { state.position }
+                    snapshotFlow { state.mediaPlayerViewModel.currentPosition + 1000 }
                         .distinctUntilChanged()
                         .collect {
                             progress = ((it.toFloat() / duration) * 100).toInt() / 100f
-                            positionText = millisToText(it)
+                            positionText = millisToText(it.toLong())
                         }
                 }
             }
@@ -221,22 +223,27 @@ fun PlaybackControls(
             ) {
 
                 Text(
-                    text = positionText,
+                    text = mediaPlayerViewModel.currentPositionText,
                     color = contentColor,
                     fontSize = 14.sp,
                 )
 
-                val durationText = remember(duration) { millisToText(duration) }
                 Text(
-                    text = durationText,
+                    text = mediaPlayerViewModel.durationText,
                     color = contentColor,
                     fontSize = 14.sp,
                 )
             }
 
             Slider(
-                value = progress,
-                onValueChange = { state.seekTo((duration * it).toLong()) },
+                value = mediaPlayerViewModel.currentPosition.toFloat(),
+                onValueChange = { newPosition ->
+                    run {
+                        state.seekTo(newPosition.toLong())
+                        mediaPlayerViewModel.seekTo(newPosition.toInt())
+                    }
+                },
+                valueRange = 0f..mediaPlayerViewModel.duration.toFloat(),
                 colors = SliderDefaults.colors(
                     thumbColor = Color.White,
                     activeTrackColor = Color.White.copy(alpha = 0.8f),
@@ -247,9 +254,9 @@ fun PlaybackControls(
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(30.dp),
+            horizontalArrangement = Arrangement.SpaceAround,
         ) {
-            val playIcon = if (state.isPlaying) {
+            val playIcon = if (state.mediaPlayerViewModel.isPlaying) {
                 R.drawable.outline_pause_24
             } else {
                 R.drawable.outline_play_arrow_24
@@ -263,10 +270,12 @@ fun PlaybackControls(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = rememberRipple(bounded = false),
                         onClick = {
-                            if (state.isPlaying) {
-                                state.pause()
+                            if (state.mediaPlayerViewModel.isPlaying) {
+
+                                mediaPlayerViewModel.pause()
                             } else {
-                                state.play()
+
+                                mediaPlayerViewModel.resume()
                             }
                         },
                     ),

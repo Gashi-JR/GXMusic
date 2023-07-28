@@ -4,6 +4,7 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -219,7 +220,9 @@ fun LyricsView(
                     lineHeight = lineHeight,
                     onClick = { state.seekToLine(index) },
                     offsetYProvider = { getItemOffsetY(index) },
-                    modifier = Modifier.onGloballyPositioned { updateItemInfo(index, it) },
+                    modifier = Modifier
+                        .onGloballyPositioned { updateItemInfo(index, it) }
+                        .clickable { },
                 )
             }
         }
@@ -310,11 +313,18 @@ private fun LyricsViewLine(
         Text(
             text = content,
             modifier = Modifier
+                .fillMaxWidth()
                 .graphicsLayer {
                     transformOrigin = TransformOrigin(0f, 1f)
                     scaleX = scale
                     scaleY = scale
                     this.alpha = alpha
+                }
+                .clip(MaterialTheme.shapes.medium)
+                .pointerInput(interactionSource) {
+                    detectTapGestures(
+                        onTap = { onClick() },
+                    )
                 },
             color = contentColor,
             fontSize = fontSize,

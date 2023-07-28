@@ -28,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
+import com.dokar.amlv.LyricsViewState
 import com.example.viewmodellist.R
 import java.util.concurrent.TimeUnit
 
@@ -148,7 +149,13 @@ class MediaPlayerViewModel : ViewModel() {
 
 
 @Composable
-fun MusicPlayer(url: String, name: String, artists: String, musicController: MediaPlayerViewModel) {
+fun MusicPlayer(
+    url: String,
+    name: String,
+    artists: String,
+    musicController: MediaPlayerViewModel,
+    state: LyricsViewState,
+) {
 
 
     Row(
@@ -163,7 +170,10 @@ fun MusicPlayer(url: String, name: String, artists: String, musicController: Med
             Slider(
                 value = musicController.currentPosition.toFloat(),
                 onValueChange = { newPosition ->
-                    musicController.seekTo(newPosition.toInt())
+                    run {
+                        state.seekTo(newPosition.toLong())
+                        musicController.seekTo(newPosition.toInt())
+                    }
                 },
                 valueRange = 0f..musicController.duration.toFloat(),
                 modifier = Modifier
@@ -227,6 +237,6 @@ fun MusicPlayer(url: String, name: String, artists: String, musicController: Med
 @Composable
 fun PreviewApp() {
 
-    MusicPlayer("https://example.com/song.mp3", "sfafaf", "asfasfe", MediaPlayerViewModel())
+    //MusicPlayer("https://example.com/song.mp3", "sfafaf", "asfasfe", MediaPlayerViewModel(),)
 
 }
