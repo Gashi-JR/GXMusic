@@ -9,6 +9,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.dokar.amlv.rememberLyricsViewState
 import com.example.viewmodellist.R
 import com.example.viewmodellist.ui.components.find.MediaPlayerViewModel
 import com.example.viewmodellist.ui.screens.find.Find
@@ -37,7 +38,12 @@ object NavGraph {
 
         NavHost(navController = navHostController, startDestination = "find") {
             composable("login") { Login() }
-            composable("find") { Find(FindviewModel(), MediaPlayerViewModel()) }
+            composable("find") {
+                Find(
+                    FindviewModel(), MediaPlayerViewModel(),
+                    rememberLyricsViewState(lrcContent = "",MediaPlayerViewModel())
+                )
+            }
             composable("songlist") { SongList() }
             composable("top") { Top() }
             composable("mine") { Mine() }

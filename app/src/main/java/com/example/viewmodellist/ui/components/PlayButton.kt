@@ -62,6 +62,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.dokar.amlv.Lyrics
+import com.dokar.amlv.LyricsViewState
+import com.dokar.amlv.rememberLyricsViewState
 import com.example.viewmodellist.R
 import com.example.viewmodellist.ui.components.find.MediaPlayerViewModel
 import com.example.viewmodellist.ui.components.find.MusicPlayer
@@ -74,7 +77,9 @@ fun PlayButton(
     extended: Boolean,
     findviewModel: FindviewModel,
     mediaPlayerViewModel: MediaPlayerViewModel,
+    state: LyricsViewState,
     modifier: Modifier = Modifier
+
 ) {
     val infiniteTransition = rememberInfiniteTransition()
     val rotation by infiniteTransition.animateFloat(
@@ -160,7 +165,8 @@ fun PlayButton(
                     url = findviewModel.currentMusic.value.url,
                     findviewModel.currentMusic.value.name,
                     findviewModel.currentMusic.value.artist,
-                    mediaPlayerViewModel
+                    mediaPlayerViewModel,
+                    state
                 )
             }
         }
@@ -171,6 +177,6 @@ fun PlayButton(
 @Preview
 @Composable
 fun PlayButtonPreview() {
-    PlayButton(onClick = {}, true, FindviewModel(), MediaPlayerViewModel())
+   // PlayButton(onClick = {}, true, FindviewModel(), MediaPlayerViewModel())
 }
 

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
+import com.dokar.amlv.LyricsViewState
 import com.example.viewmodellist.R
 import java.util.concurrent.TimeUnit
 
@@ -148,7 +150,13 @@ class MediaPlayerViewModel : ViewModel() {
 
 
 @Composable
-fun MusicPlayer(url: String, name: String, artists: String, musicController: MediaPlayerViewModel) {
+fun MusicPlayer(
+    url: String,
+    name: String,
+    artists: String,
+    musicController: MediaPlayerViewModel,
+    state: LyricsViewState,
+) {
 
 
     Row(
@@ -163,12 +171,20 @@ fun MusicPlayer(url: String, name: String, artists: String, musicController: Med
             Slider(
                 value = musicController.currentPosition.toFloat(),
                 onValueChange = { newPosition ->
-                    musicController.seekTo(newPosition.toInt())
+                    run {
+                        state.seekTo(newPosition.toLong())
+                        musicController.seekTo(newPosition.toInt())
+                    }
                 },
                 valueRange = 0f..musicController.duration.toFloat(),
                 modifier = Modifier
                     .width(200.dp)
-                    .height(10.dp)
+                    .height(10.dp),
+                colors = SliderDefaults.colors(
+                    thumbColor = Color.White,
+                    activeTrackColor = Color.Gray.copy(alpha = 0.8f),
+                    inactiveTrackColor = Color.Gray.copy(alpha = 0.5f),
+                ),
             )
 
             Text(
@@ -227,6 +243,6 @@ fun MusicPlayer(url: String, name: String, artists: String, musicController: Med
 @Composable
 fun PreviewApp() {
 
-    MusicPlayer("https://example.com/song.mp3", "sfafaf", "asfasfe", MediaPlayerViewModel())
+    //MusicPlayer("https://example.com/song.mp3", "sfafaf", "asfasfe", MediaPlayerViewModel(),)
 
 }

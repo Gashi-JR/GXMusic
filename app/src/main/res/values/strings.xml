@@ -2,6 +2,7 @@
     <string name="app_name">viewModelList</string>
     <string name="app_find">发现</string>
     <string name="app_songlist">歌单</string>
+    <string name="app_lyricsview">歌词</string>
     <string name="app_top">排行榜</string>
     <string name="app_mine">我的</string>
     <string name="app_search">请输入关键字</string>

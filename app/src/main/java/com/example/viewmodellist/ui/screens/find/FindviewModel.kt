@@ -259,4 +259,16 @@ class Repository() {
 
         return songJsonObject.get("url").asString
     }
+
+
+    suspend fun getCurrentMusicLyric(id: Long): String {
+
+        val result = NetworkUtils.https("/lyric?id=$id", "GET")
+        val response = gson.fromJson(result, JsonObject::class.java)
+        val lycobj = response.getAsJsonObject("lrc")
+        val lyc = lycobj.get("lyric").asString
+
+
+        return lyc
+    }
 }
