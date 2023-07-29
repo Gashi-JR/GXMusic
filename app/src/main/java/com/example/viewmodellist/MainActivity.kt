@@ -45,6 +45,8 @@ import com.example.viewmodellist.ui.screens.find.FindviewModel
 import com.example.viewmodellist.ui.screens.find.Repository
 import com.example.viewmodellist.ui.screens.lyricsview.LyricPage
 import com.example.viewmodellist.ui.screens.mine.Mine
+import com.example.viewmodellist.ui.screens.search.Search
+import com.example.viewmodellist.ui.screens.search.SearchviewModel
 import com.example.viewmodellist.ui.screens.songlist.SongList
 import com.example.viewmodellist.ui.screens.top.Top
 import com.example.viewmodellist.ui.theme.ViewModelListTheme
@@ -115,7 +117,7 @@ fun Myapp(modifier: Modifier = Modifier) {
         countDownTimer.start()
     })
 
-    var selectedTabIndex by remember { mutableStateOf(0) }
+    var selectedTabIndex by remember { mutableStateOf(2) }
 
 
     Scaffold(
@@ -138,6 +140,9 @@ fun Myapp(modifier: Modifier = Modifier) {
         }
         val mediaPlayerViewModel by remember {
             mutableStateOf(MediaPlayerViewModel())
+        }
+        val searchViewModel by remember {
+            mutableStateOf(SearchviewModel())
         }
         val pagerState = rememberPagerState(initialPage = selectedTabIndex)
 
@@ -178,7 +183,7 @@ fun Myapp(modifier: Modifier = Modifier) {
             when (page) {
                 0 -> Find(findviewModel, mediaPlayerViewModel, state = state)
                 1 -> LyricPage(findviewModel, mediaPlayerViewModel, state)
-                2 -> SongList()
+                2 -> Search(searchViewModel)
                 3 -> Top()
                 4 -> Mine()
             }

@@ -31,10 +31,12 @@ import com.example.viewmodellist.R
 import com.example.viewmodellist.ui.screens.find.FindviewModel
 
 
-
 @Composable
 fun FindCard(
     @StringRes title: Int,
+    showmore: Boolean,
+    showarrow: Boolean,
+    showline: Boolean,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
@@ -57,29 +59,32 @@ fun FindCard(
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
-                Icon(
-                    painter = painterResource(id = R.drawable.baseline_chevron_right_24),
-                    contentDescription = stringResource(
-                        id = title
-                    ),
-                    tint = Color.Black.copy(alpha = 0.5f)
-                )
+                if (showarrow)
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_chevron_right_24),
+                        contentDescription = stringResource(
+                            id = title
+                        ),
+                        tint = Color.Black.copy(alpha = 0.5f)
+                    )
             }
-            IconButton(onClick = { /*TODO*/ }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.baseline_more_vert_24),
-                    contentDescription = stringResource(
-                        id = title
-                    ),
-                    tint = Color.Black.copy(alpha = 0.5f)
-                )
-            }
+            if (showmore)
+                IconButton(onClick = { /*TODO*/ }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_more_vert_24),
+                        contentDescription = stringResource(
+                            id = title
+                        ),
+                        tint = Color.Black.copy(alpha = 0.5f)
+                    )
+                }
 
         }
         content()
 
         Spacer(modifier = Modifier.height(30.dp))
-        Divider(thickness = 0.2.dp, color = Color.Gray.copy(alpha = 0.3f))
+        if (showline)
+            Divider(thickness = 0.2.dp, color = Color.Gray.copy(alpha = 0.3f))
     }
 }
 
@@ -88,7 +93,7 @@ fun FindCard(
 @Composable
 fun FindCardPreview() {
 
-    FindCard(R.string.find_recommendsonglist) {
+    FindCard(R.string.find_recommendsonglist, true, true, true) {
         LazyRow(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,

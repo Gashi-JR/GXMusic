@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.example.viewmodellist.R
+import com.example.viewmodellist.ui.components.Tag
 import com.example.viewmodellist.utils.formatter
 
 
@@ -60,16 +61,8 @@ fun SonglistCover(
                         contentDescription = null
                     )
                     if (copywriter != "") {
-                        Chip(
+                       Tag(
                             onClick = {},
-                            colors = ChipDefaults.chipColors(
-                                backgroundColor = Color(
-                                    247,
-                                    231,
-                                    232
-                                )
-                            ),
-                            shape = MaterialTheme.shapes.extraSmall,
                             modifier = Modifier
                                 .height(14.dp)
                                 .align(Alignment.BottomStart)

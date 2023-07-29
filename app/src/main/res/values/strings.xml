@@ -10,4 +10,7 @@
     <string name="find_nomore">没有更多了…</string>
     <string name="find_newsong">新歌新碟\\数字专辑</string>
     <string name="find_mysub">我收藏的歌单</string>
+    <string name="search_search">搜索</string>
+    <string name="search_hotkey">热搜关键字</string>
+    <string name="search_hottop">热搜榜</string>
 </resources>

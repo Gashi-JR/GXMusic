@@ -54,4 +54,18 @@ class Datamodels {
         var artist: String = "",
         var url: String = ""
     )
+
+    // TODO: 热搜关键词
+
+    data class SearchHot(
+        var first: String = ""
+    )
+
+    // TODO: 热搜榜歌曲
+    data class SearchHotTop(
+        var searchWord: String,
+        var score: Long,
+        var content: String,
+        var iconUrl: String?,
+    )
 }

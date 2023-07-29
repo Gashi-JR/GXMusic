@@ -131,7 +131,7 @@ fun Find(
 
         item {
             FindCard(
-                R.string.find_recommendsonglist,
+                R.string.find_recommendsonglist, true, true, true,
                 modifier = Modifier.background(findcardGradient)
             ) {
                 LazyRow(
@@ -173,8 +173,8 @@ fun Find(
             val scope = rememberCoroutineScope() // 获取关联的协程作用域
             FindCard(
                 title = R.string.find_newsong,
-
-                ) {
+                true, true, true,
+            ) {
                 LazyHorizontalGrid(
                     rows = GridCells.Fixed(3),
                     modifier = modifier.height(220.dp),
@@ -226,8 +226,8 @@ fun Find(
         item {
             FindCard(
                 title = R.string.app_top,
-
-                ) {
+                true, true, true,
+            ) {
                 LazyRow(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.Top,
@@ -265,7 +265,7 @@ fun Find(
         item {
 
             FindCard(
-                R.string.find_mysub,
+                R.string.find_mysub, true, true, true,
                 //   modifier = Modifier.background(findcardGradient)
             ) {
                 LazyRow(
