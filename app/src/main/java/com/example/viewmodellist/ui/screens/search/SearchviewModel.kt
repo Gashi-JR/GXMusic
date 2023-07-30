@@ -28,6 +28,10 @@ class SearchviewModel(private val repository: Repository = Repository()) : ViewM
         mutableStateOf<MutableList<SearchHotTop>>(mutableStateListOf())
     val searchHotTopData: List<SearchHotTop> get() = _searchHotTopData.value
 
+    private val _searchSuggestData =
+        mutableStateOf<MutableList<SearchSuggest>>(mutableStateListOf())
+    val searchSuggestData: List<SearchSuggest> get() = _searchSuggestData.value
+
 
     fun fetchSearchHotData() {
         viewModelScope.launch {
@@ -69,6 +73,27 @@ class SearchviewModel(private val repository: Repository = Repository()) : ViewM
             }
         }
     }
+
+    fun fetchSearchSuggestData(keyword: String) {
+        viewModelScope.launch {
+            try {
+                val suggests = repository.getSearchSuggestData(keyword)
+                val suggestsList = suggests.map { suggest ->
+                    SearchSuggest(
+                        keyword = suggest.keyword
+                    )
+                }
+
+                _searchSuggestData.value = suggestsList.toMutableList()
+
+                Log.d(TAG, "searchSuggestData: $searchSuggestData")
+            } catch (e: Exception) {
+                // 处理异常情况
+                Log.e(TAG, "fetchSearchSuggestDataError: $e")
+            }
+        }
+    }
+
 }
 
 
@@ -106,4 +131,23 @@ class Repository() {
 
         return hots
     }
+
+
+    suspend fun getSearchSuggestData(keyword: String): List<SearchSuggest> {
+
+        val result = NetworkUtils.https("/search/suggest?keywords=$keyword&type=mobile", "GET")
+        val response = gson.fromJson(result, JsonObject::class.java)
+
+        val obj = response.getAsJsonObject("result")
+        val allMatch = obj.get("allMatch").asJsonArray
+
+
+        val suggests: List<SearchSuggest> =
+            gson.fromJson(allMatch, object : TypeToken<List<SearchSuggest>>() {}.type)
+
+
+        return suggests
+    }
+
+
 }

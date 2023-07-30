@@ -68,4 +68,9 @@ class Datamodels {
         var content: String,
         var iconUrl: String?,
     )
+
+    // TODO:   搜索建议
+    data class SearchSuggest(
+        var keyword: String = ""
+    )
 }
