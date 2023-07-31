@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -152,7 +153,8 @@ fun Myapp(modifier: Modifier = Modifier) {
         val duration = mediaPlayerViewModel.durationText
         val lycState = rememberSaveable { mutableStateOf("") }
         val lyc = lycState.value
-        val lycstr = """
+        val lycstr = """   
+            
 [ar:$artist]
 [ti:$name]
 [al:]
@@ -161,6 +163,10 @@ fun Myapp(modifier: Modifier = Modifier) {
 
 """ + lyc
         val state = rememberLyricsViewState(lrcContent = lycstr, mediaPlayerViewModel)
+        var showSearch = rememberSaveable {
+            mutableStateOf(false)
+        }
+
 
         LaunchedEffect(findviewModel.currentMusic.value.id) {
             var lycs = ""
@@ -180,8 +186,23 @@ fun Myapp(modifier: Modifier = Modifier) {
 
         HorizontalPager(state = pagerState, pageCount = 5) { page ->
 
+            AnimatedVisibility(visible = showSearch.value) {
+                Search(searchViewModel, { showSearch.value = false })
+            }
+
             when (page) {
-                0 -> Find(findviewModel, mediaPlayerViewModel, state = state)
+                0 -> {
+                    AnimatedVisibility(visible = !showSearch.value) {
+                        Find(
+                            findviewModel,
+                            mediaPlayerViewModel,
+                            state = state,
+                            searchviewModel = searchViewModel,
+                            { showSearch.value = true },
+                        )
+                    }
+                }
+
                 1 -> LyricPage(findviewModel, mediaPlayerViewModel, state)
                 2 -> Search(searchViewModel)
                 3 -> Top()

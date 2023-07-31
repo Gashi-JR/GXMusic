@@ -16,6 +16,7 @@ import com.example.viewmodellist.ui.screens.find.Find
 import com.example.viewmodellist.ui.screens.find.FindviewModel
 import com.example.viewmodellist.ui.screens.login.Login
 import com.example.viewmodellist.ui.screens.mine.Mine
+import com.example.viewmodellist.ui.screens.search.SearchviewModel
 import com.example.viewmodellist.ui.screens.songlist.SongList
 import com.example.viewmodellist.ui.screens.top.Top
 
@@ -41,7 +42,8 @@ object NavGraph {
             composable("find") {
                 Find(
                     FindviewModel(), MediaPlayerViewModel(),
-                    rememberLyricsViewState(lrcContent = "",MediaPlayerViewModel())
+                    rememberLyricsViewState(lrcContent = "",MediaPlayerViewModel()),
+                    SearchviewModel()
                 )
             }
             composable("songlist") { SongList() }

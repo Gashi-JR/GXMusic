@@ -83,23 +83,32 @@ import androidx.compose.ui.zIndex
 import com.example.viewmodellist.ui.components.Tag
 import com.example.viewmodellist.ui.components.find.FindCard
 import com.example.viewmodellist.ui.components.search.SearchHotTopItem
+import com.example.viewmodellist.ui.components.search.SearchResult
 
 @OptIn(
     ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class,
     ExperimentalLayoutApi::class, ExperimentalComposeUiApi::class
 )
 @Composable
-fun Search(searchviewModel: SearchviewModel, modifier: Modifier = Modifier) {
+fun Search(
+    searchviewModel: SearchviewModel,
+    onBack: () -> Unit = {},
+    modifier: Modifier = Modifier
+) {
     var searchValue by remember {
         mutableStateOf("")
     }
     var isShow by remember {
         mutableStateOf(false)
     }
+    var isResult by remember {
+        mutableStateOf(true)
+    }
+
     val focusManager = LocalFocusManager.current
     val isFocused = remember { mutableStateOf(true) }
     LaunchedEffect(Unit) {
-        ///  searchviewModel.fetchSearchHotData()
+        //  searchviewModel.fetchSearchHotData()
         //searchviewModel.fetchSearchHotTopData()
     }
 
@@ -109,7 +118,7 @@ fun Search(searchviewModel: SearchviewModel, modifier: Modifier = Modifier) {
             isShow = false
     }
 
-    Box(modifier = modifier) {
+    Box(modifier = modifier.fillMaxHeight()) {
         Column(
             verticalArrangement = Arrangement.spacedBy(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -120,7 +129,11 @@ fun Search(searchviewModel: SearchviewModel, modifier: Modifier = Modifier) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(
+                    onClick = if (isResult) {
+                        { isResult = false }
+                    } else onBack
+                ) {
                     Icon(
                         painter = painterResource(id = R.drawable.baseline_keyboard_backspace_24),
                         contentDescription = "search",
@@ -173,13 +186,6 @@ fun Search(searchviewModel: SearchviewModel, modifier: Modifier = Modifier) {
                             focusedIndicatorColor = Color.Transparent,
                             unfocusedIndicatorColor = Color.Transparent
                         ),
-                        placeholder = {
-                            Text(
-                                text = "大家都在搜 ",
-                                color = Color.Gray,
-                                fontSize = 14.sp
-                            )
-                        },
                         modifier = Modifier
                             .fillMaxHeight()
                             .fillMaxWidth()
@@ -203,7 +209,9 @@ fun Search(searchviewModel: SearchviewModel, modifier: Modifier = Modifier) {
 
 
                 Button(
-                    onClick = { /*TODO*/ }, colors = ButtonDefaults.buttonColors(
+                    onClick = {
+                        isResult = true
+                    }, colors = ButtonDefaults.buttonColors(
                         backgroundColor = Color(0, 0, 0, 0),
                         // contentColor = Color(0, 0, 0, 0)
                     ), modifier = Modifier,
@@ -222,71 +230,77 @@ fun Search(searchviewModel: SearchviewModel, modifier: Modifier = Modifier) {
 
 
 
-
-            LazyColumn(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                item {
-                    FindCard(
-                        title = R.string.search_hotkey,
-                        false,
-                        false,
-                        true,
-                        modifier = Modifier.padding(horizontal = 15.dp)
-                    ) {
-                        Spacer(modifier = Modifier.height(15.dp))
-                        FlowRow(
-                            maxItemsInEachRow = 5,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
+            AnimatedVisibility(visible = !isResult) {
+                LazyColumn(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    item {
+                        FindCard(
+                            title = R.string.search_hotkey,
+                            false,
+                            false,
+                            true,
+                            modifier = Modifier.padding(horizontal = 15.dp)
                         ) {
-                            searchviewModel.searchHotData.forEach { item ->
-                                Tag(
-                                    onClick = {},
-                                    backgroundColor = Color.Gray.copy(0.2f),
-                                    modifier = Modifier
-                                        .height(20.dp)
-                                        .padding(bottom = 5.dp)
-                                ) {
-                                    Text(
-                                        text = item.first,
-                                        color = Color.Black,
-                                        fontSize = 10.sp,
+                            Spacer(modifier = Modifier.height(15.dp))
+                            FlowRow(
+                                maxItemsInEachRow = 5,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                searchviewModel.searchHotData.forEach { item ->
+                                    Tag(
+                                        onClick = {},
+                                        backgroundColor = Color.Gray.copy(0.2f),
+                                        modifier = Modifier
+                                            .height(20.dp)
+                                            .padding(bottom = 5.dp)
+                                    ) {
+                                        Text(
+                                            text = item.first,
+                                            color = Color.Black,
+                                            fontSize = 10.sp,
+                                        )
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                    item {
+                        FindCard(
+                            title = R.string.search_hottop,
+                            false,
+                            false,
+                            true,
+                            modifier = Modifier.padding(horizontal = 15.dp)
+                        ) {
+                            Spacer(modifier = Modifier.height(15.dp))
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
+                                searchviewModel.searchHotTopData.forEach { item ->
+                                    SearchHotTopItem(
+                                        score = item.score,
+                                        searchWord = item.searchWord,
+                                        iconUrl = item.iconUrl,
+                                        content = item.content,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable {}
                                     )
                                 }
                             }
                         }
                     }
-
-                }
-                item {
-                    FindCard(
-                        title = R.string.search_hottop,
-                        false,
-                        false,
-                        true,
-                        modifier = Modifier.padding(horizontal = 15.dp)
-                    ) {
-                        Spacer(modifier = Modifier.height(15.dp))
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
-                            searchviewModel.searchHotTopData.forEach { item ->
-                                SearchHotTopItem(
-                                    score = item.score,
-                                    searchWord = item.searchWord,
-                                    iconUrl = item.iconUrl,
-                                    content = item.content,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clickable {}
-                                )
-                            }
-                        }
-                    }
                 }
             }
+
+            AnimatedVisibility(visible = isResult) {
+                SearchResult()
+            }
+
         }
         Column(
             modifier = Modifier

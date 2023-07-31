@@ -53,6 +53,7 @@ import com.example.viewmodellist.ui.components.find.SonglistCover
 import com.example.viewmodellist.ui.components.find.SonglistPreview
 import com.example.viewmodellist.ui.components.find.TopAppBar
 import com.example.viewmodellist.ui.components.find.TopCard
+import com.example.viewmodellist.ui.screens.search.SearchviewModel
 import com.example.viewmodellist.ui.theme.ViewModelListTheme
 import com.example.viewmodellist.ui.theme.cardGradient
 import com.example.viewmodellist.ui.theme.findcardGradient
@@ -71,6 +72,8 @@ fun Find(
     findviewModel: FindviewModel,
     mediaPlayerViewModel: MediaPlayerViewModel,
     state: LyricsViewState,
+    searchviewModel: SearchviewModel,
+    showSearch:() -> Unit={},
     modifier: Modifier = Modifier
 ) {
 
@@ -84,8 +87,7 @@ fun Find(
 //        findviewModel.fetchBannerData()
 //        findviewModel.fetchRecommendSonglistData()
         //findviewModel.fetchNewSongData()
-
-
+        searchviewModel.fetchSearchHotData()
         isFixed.value = true
     }
     LaunchedEffect(findviewModel.topcardData) {
@@ -115,7 +117,9 @@ fun Find(
                     )
                 ) {
 
-                    TopAppBar()
+                    TopAppBar(
+                        searchviewModel = searchviewModel,
+                        onClick = showSearch)
 
                 }
                 Banner(
@@ -326,7 +330,8 @@ fun FindPreview() {
         Find(
             FindviewModel(),
             MediaPlayerViewModel(),
-            rememberLyricsViewState(lrcContent = "", mediaPlayerViewModel = MediaPlayerViewModel())
+            rememberLyricsViewState(lrcContent = "", mediaPlayerViewModel = MediaPlayerViewModel()),
+            SearchviewModel()
         )
 
     }

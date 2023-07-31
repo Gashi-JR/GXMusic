@@ -33,6 +33,7 @@ class SearchviewModel(private val repository: Repository = Repository()) : ViewM
     val searchSuggestData: List<SearchSuggest> get() = _searchSuggestData.value
 
 
+
     fun fetchSearchHotData() {
         viewModelScope.launch {
             try {
