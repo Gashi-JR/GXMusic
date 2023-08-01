@@ -69,6 +69,7 @@ import com.example.viewmodellist.ui.components.find.TopAppBar
 import com.example.viewmodellist.ui.theme.ViewModelListTheme
 import com.example.viewmodellist.ui.theme.borderGradient
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -98,6 +99,9 @@ fun Search(
     var searchValue by remember {
         mutableStateOf("")
     }
+    var search by remember {
+        mutableStateOf("")
+    }
     var isShow by remember {
         mutableStateOf(false)
     }
@@ -106,7 +110,8 @@ fun Search(
     }
 
     val focusManager = LocalFocusManager.current
-    val isFocused = remember { mutableStateOf(true) }
+
+
     LaunchedEffect(Unit) {
         //  searchviewModel.fetchSearchHotData()
         //searchviewModel.fetchSearchHotTopData()
@@ -210,7 +215,10 @@ fun Search(
 
                 Button(
                     onClick = {
+                        search = searchValue
                         isResult = true
+                        isShow = false
+                        focusManager.clearFocus()
                     }, colors = ButtonDefaults.buttonColors(
                         backgroundColor = Color(0, 0, 0, 0),
                         // contentColor = Color(0, 0, 0, 0)
@@ -298,7 +306,10 @@ fun Search(
             }
 
             AnimatedVisibility(visible = isResult) {
-                SearchResult()
+                SearchResult(
+                    searchviewModel = searchviewModel,
+                    keyword = search
+                )
             }
 
         }

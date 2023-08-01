@@ -33,6 +33,10 @@ class SearchviewModel(private val repository: Repository = Repository()) : ViewM
     val searchSuggestData: List<SearchSuggest> get() = _searchSuggestData.value
 
 
+    private val _resultSongData =
+        mutableStateOf<MutableList<ResultSong>>(mutableStateListOf())
+    var resultSongData: List<ResultSong>  = _resultSongData.value
+
 
     fun fetchSearchHotData() {
         viewModelScope.launch {
@@ -95,6 +99,33 @@ class SearchviewModel(private val repository: Repository = Repository()) : ViewM
         }
     }
 
+
+    fun fetchResultSongData(keyword: String, page: Long) {
+        viewModelScope.launch {
+            try {
+                val songs = repository.getResultSongData(keyword, page)
+                val songsList = songs.map { song ->
+                    ResultSong(
+                        id = song.id,
+                        publishTime = song.publishTime,
+                        mvid = song.mvid,
+                        name = song.name,
+                        artist = song.artist,
+                        al = song.al
+                    )
+                }
+
+                _resultSongData.value=songsList.toMutableList()
+
+                Log.d(TAG, "resultSongData: $resultSongData")
+            } catch (e: Exception) {
+                // 处理异常情况
+                Log.e(TAG, "fetchResultSongDataError: $e")
+            }
+        }
+    }
+
+
 }
 
 
@@ -148,6 +179,37 @@ class Repository() {
 
 
         return suggests
+    }
+
+    suspend fun getResultSongData(keyword: String, page: Long): List<ResultSong> {
+
+
+        val result =
+            NetworkUtils.https("/search?keywords=$keyword&limit=15&offset=${page * 15}", "GET")
+        val response = gson.fromJson(result, JsonObject::class.java)
+
+        val resultobj = response.getAsJsonObject("result")
+        val songs = resultobj.get("songs").asJsonArray
+        val Rsongs: List<ResultSong> =
+            gson.fromJson(songs, object : TypeToken<List<ResultSong>>() {}.type)
+
+        for (i in 0 until songs.size()) {
+            val Songobj = songs[i].asJsonObject
+
+
+            val artistJsonArray = Songobj.getAsJsonArray("artists")
+            val artist = artistJsonArray[0].asJsonObject.get("name").asString
+
+            val albumJsonObject = Songobj.getAsJsonObject("album")
+            val alias = albumJsonObject.get("name").asString
+            val publishTime = albumJsonObject.get("publishTime").asLong
+
+            Rsongs[i].artist = artist
+            Rsongs[i].al = alias
+            Rsongs[i].publishTime = publishTime
+
+        }
+        return Rsongs
     }
 
 

@@ -2,6 +2,11 @@ package com.example.viewmodellist.utils
 
 import java.lang.Float.parseFloat
 import java.lang.Integer.parseInt
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+
 
 object formatter {
     /**
@@ -36,5 +41,15 @@ object formatter {
     }
 
 
+    /**
+     * 毫秒级的时间戳转换为日期
+     * @param {需要转化的数} timestamp
+     */
+    fun convertTimestampToDateString(timestamp: Long): String {
+        val instant = Instant.ofEpochMilli(timestamp)
+        val localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        return localDateTime.format(formatter)
+    }
 }
 

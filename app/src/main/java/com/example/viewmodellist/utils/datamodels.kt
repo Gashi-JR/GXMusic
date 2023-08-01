@@ -73,4 +73,15 @@ class Datamodels {
     data class SearchSuggest(
         var keyword: String = ""
     )
+
+    // TODO: 搜索结果的歌曲
+    data class ResultSong(
+        val id: Long,
+        var publishTime: Long,
+        val mvid: Long,
+        val name: String,
+        var artist: String,
+        var al: String
+    )
+
 }
