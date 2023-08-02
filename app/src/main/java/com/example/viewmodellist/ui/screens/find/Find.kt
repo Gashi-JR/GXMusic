@@ -73,7 +73,7 @@ fun Find(
     mediaPlayerViewModel: MediaPlayerViewModel,
     state: LyricsViewState,
     searchviewModel: SearchviewModel,
-    showSearch:() -> Unit={},
+    showSearch: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
 
@@ -119,7 +119,8 @@ fun Find(
 
                     TopAppBar(
                         searchviewModel = searchviewModel,
-                        onClick = showSearch)
+                        onClick = showSearch
+                    )
 
                 }
                 Banner(

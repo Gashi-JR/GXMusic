@@ -84,4 +84,15 @@ class Datamodels {
         var al: String
     )
 
+    // TODO: 搜索结果的歌单
+    data class ResultSonglist(
+        val id: Long,
+        var trackCount: Long,
+        var playCount: Long,
+        val coverImgUrl: String,
+        val name: String,
+        var creater: String,
+        var officialTags: List<String>?
+    )
+
 }

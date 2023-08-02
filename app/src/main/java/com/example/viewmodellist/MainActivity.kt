@@ -204,7 +204,12 @@ fun Myapp(modifier: Modifier = Modifier) {
                 }
 
                 1 -> LyricPage(findviewModel, mediaPlayerViewModel, state)
-                2 -> Search(searchViewModel)
+                2 -> Search(
+                    searchViewModel,
+                    findviewModel = findviewModel,
+                    mediaPlayerViewModel = mediaPlayerViewModel
+                )
+
                 3 -> Top()
                 4 -> Mine()
             }

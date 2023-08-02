@@ -1,99 +1,79 @@
 package com.example.viewmodellist.ui.screens.search
 
-import android.view.MotionEvent
+
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.FocusInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-
-
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.absoluteOffset
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.ButtonColors
+import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonElevation
-import androidx.compose.material.Chip
-import androidx.compose.material.ChipDefaults
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults.contentColor
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ProvideTextStyle
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.viewmodellist.R
-import com.example.viewmodellist.ui.components.LyricsViewPage
-import com.example.viewmodellist.ui.components.OptionButton
-import com.example.viewmodellist.ui.components.find.TopAppBar
-import com.example.viewmodellist.ui.theme.ViewModelListTheme
-import com.example.viewmodellist.ui.theme.borderGradient
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.focus.FocusManager
-import androidx.compose.ui.input.pointer.pointerInteropFilter
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.stringArrayResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.zIndex
+import com.example.viewmodellist.R
 import com.example.viewmodellist.ui.components.Tag
 import com.example.viewmodellist.ui.components.find.FindCard
+import com.example.viewmodellist.ui.components.find.MediaPlayerViewModel
 import com.example.viewmodellist.ui.components.search.SearchHotTopItem
 import com.example.viewmodellist.ui.components.search.SearchResult
+import com.example.viewmodellist.ui.screens.find.FindviewModel
+import com.example.viewmodellist.ui.theme.ViewModelListTheme
+import com.example.viewmodellist.ui.theme.borderGradient
 
 @OptIn(
-    ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class,
-    ExperimentalLayoutApi::class, ExperimentalComposeUiApi::class
+    ExperimentalMaterial3Api::class,
+    ExperimentalLayoutApi::class
 )
 @Composable
 fun Search(
     searchviewModel: SearchviewModel,
     onBack: () -> Unit = {},
+    findviewModel: FindviewModel = FindviewModel(),
+    mediaPlayerViewModel: MediaPlayerViewModel = MediaPlayerViewModel(),
     modifier: Modifier = Modifier
 ) {
     var searchValue by remember {
@@ -106,7 +86,7 @@ fun Search(
         mutableStateOf(false)
     }
     var isResult by remember {
-        mutableStateOf(true)
+        mutableStateOf(false)
     }
 
     val focusManager = LocalFocusManager.current
@@ -114,7 +94,7 @@ fun Search(
 
     LaunchedEffect(Unit) {
         //  searchviewModel.fetchSearchHotData()
-        //searchviewModel.fetchSearchHotTopData()
+        searchviewModel.fetchSearchHotTopData()
     }
 
 
@@ -136,7 +116,11 @@ fun Search(
             ) {
                 IconButton(
                     onClick = if (isResult) {
-                        { isResult = false }
+                        {
+                            isResult = false
+                            searchValue = ""
+                            focusManager.clearFocus()
+                        }
                     } else onBack
                 ) {
                     Icon(
@@ -199,7 +183,12 @@ fun Search(
                             .clip(MaterialTheme.shapes.medium),
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                         keyboardActions =
-                        KeyboardActions(onSearch = { /* TODO: Handle search action */ }),
+                        KeyboardActions(onSearch = {
+                            search = searchValue
+                            isResult = true
+                            isShow = false
+                            focusManager.clearFocus()
+                        }),
                     )
 
 
@@ -215,10 +204,13 @@ fun Search(
 
                 Button(
                     onClick = {
-                        search = searchValue
-                        isResult = true
-                        isShow = false
-                        focusManager.clearFocus()
+                        if (searchValue != "") {
+                            search = searchValue
+                            isResult = true
+                            isShow = false
+                            focusManager.clearFocus()
+                        }
+
                     }, colors = ButtonDefaults.buttonColors(
                         backgroundColor = Color(0, 0, 0, 0),
                         // contentColor = Color(0, 0, 0, 0)
@@ -238,8 +230,9 @@ fun Search(
 
 
 
-            AnimatedVisibility(visible = !isResult) {
+            if (!isResult) {
                 LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     item {
@@ -258,7 +251,13 @@ fun Search(
                             ) {
                                 searchviewModel.searchHotData.forEach { item ->
                                     Tag(
-                                        onClick = {},
+                                        onClick = {
+                                            searchValue = item.first
+                                            search = item.first
+                                            isShow = false
+                                            isResult = true
+                                            focusManager.clearFocus()
+                                        },
                                         backgroundColor = Color.Gray.copy(0.2f),
                                         modifier = Modifier
                                             .height(20.dp)
@@ -286,7 +285,8 @@ fun Search(
                             Spacer(modifier = Modifier.height(15.dp))
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.spacedBy(10.dp)
+                                verticalArrangement = Arrangement.spacedBy(10.dp),
+                                modifier = Modifier.fillMaxSize()
                             ) {
                                 searchviewModel.searchHotTopData.forEach { item ->
                                     SearchHotTopItem(
@@ -296,19 +296,24 @@ fun Search(
                                         content = item.content,
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .clickable {}
+                                            .clickable {
+                                                searchValue = item.searchWord
+                                                search = item.searchWord
+                                                isShow = false
+                                                isResult = true
+                                                focusManager.clearFocus()
+                                            }
                                     )
                                 }
                             }
                         }
                     }
                 }
-            }
-
-            AnimatedVisibility(visible = isResult) {
+            } else {
                 SearchResult(
                     searchviewModel = searchviewModel,
-                    keyword = search
+                    keyword = search,
+                    findviewModel, mediaPlayerViewModel
                 )
             }
 
@@ -340,7 +345,13 @@ fun Search(
                                         )
                                     }, modifier = Modifier
                                         .width(240.dp)
-                                        .clickable { }
+                                        .clickable {
+                                            searchValue = item.keyword
+                                            search = item.keyword
+                                            isShow = false
+                                            isResult = true
+                                            focusManager.clearFocus()
+                                        }
                                 )
                             }
 

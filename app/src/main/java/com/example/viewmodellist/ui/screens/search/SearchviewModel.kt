@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -33,10 +34,21 @@ class SearchviewModel(private val repository: Repository = Repository()) : ViewM
     val searchSuggestData: List<SearchSuggest> get() = _searchSuggestData.value
 
 
-    private val _resultSongData =
-        mutableStateOf<MutableList<ResultSong>>(mutableStateListOf())
-    var resultSongData: List<ResultSong>  = _resultSongData.value
+    private val _resultSongData by lazy { mutableStateListOf<ResultSong>() }
+    val resultSongData: List<ResultSong> get() = _resultSongData
 
+
+    private val _resultSonglistData by lazy { mutableStateListOf<ResultSonglist>() }
+    val resultSonglistData: List<ResultSonglist> get() = _resultSonglistData
+
+
+    fun clearresultSongData() {
+        _resultSongData.clear()
+    }
+
+    fun clearresultSonglistData() {
+        _resultSonglistData.clear()
+    }
 
     fun fetchSearchHotData() {
         viewModelScope.launch {
@@ -115,7 +127,7 @@ class SearchviewModel(private val repository: Repository = Repository()) : ViewM
                     )
                 }
 
-                _resultSongData.value=songsList.toMutableList()
+                _resultSongData.addAll(songsList)
 
                 Log.d(TAG, "resultSongData: $resultSongData")
             } catch (e: Exception) {
@@ -125,12 +137,35 @@ class SearchviewModel(private val repository: Repository = Repository()) : ViewM
         }
     }
 
+    fun fetchResultSonglistData(keyword: String, page: Long) {
+        viewModelScope.launch {
+            try {
+                val lists = repository.getResultSonglistData(keyword, page)
+                val songsList = lists.map { song ->
+                    ResultSonglist(
+                        id = song.id,
+                        trackCount = song.trackCount,
+                        playCount = song.playCount,
+                        coverImgUrl = song.coverImgUrl,
+                        name = song.name,
+                        creater = song.creater,
+                        officialTags = song.officialTags
+                    )
+                }
 
+                _resultSonglistData.addAll(songsList)
+
+            } catch (e: Exception) {
+                // 处理异常情况
+                Log.e(TAG, "fetchResultSonglistDataError: $e")
+            }
+        }
+    }
 }
 
 
-class Repository() {
-    val gson = Gson()
+class Repository {
+    private val gson = Gson()
 
 
     suspend fun getSearchHotData(): List<SearchHot> {
@@ -212,5 +247,42 @@ class Repository() {
         return Rsongs
     }
 
+    suspend fun getResultSonglistData(keyword: String, page: Long): List<ResultSonglist> {
 
+
+        val result =
+            NetworkUtils.https(
+                "/search?keywords=$keyword&limit=15&offset=${page * 15}&type=1000",
+                "GET"
+            )
+        val response = gson.fromJson(result, JsonObject::class.java)
+
+        val resultobj = response.getAsJsonObject("result")
+        val playlists = resultobj.get("playlists").asJsonArray
+        val Rlists: List<ResultSonglist> =
+            gson.fromJson(playlists, object : TypeToken<List<ResultSonglist>>() {}.type)
+
+        for (i in 0 until playlists.size()) {
+            val Songlistobj = playlists[i].asJsonObject
+
+
+            val creatorobj = Songlistobj.getAsJsonObject("creator")
+            val creator = creatorobj.get("nickname").asString
+            if (Songlistobj.get("officialTags").toString() != "null") {
+                Log.d(TAG, "111111${Songlistobj.get("officialTags")}")
+                val officialTagsarr = Songlistobj.get("officialTags").asJsonArray
+                if (officialTagsarr != null) {
+                    val officialTags = mutableStateListOf<String>()
+                    for (j in officialTagsarr)
+                        officialTags.add(j.asString)
+                    Rlists[i].officialTags = officialTags
+                }
+            }
+
+            Rlists[i].creater = creator
+
+
+        }
+        return Rlists
+    }
 }
