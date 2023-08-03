@@ -130,6 +130,18 @@ class FindviewModel(private val repository: Repository = Repository()) : ViewMod
         }
     }
 
+    fun fetchCurrentMusicPic(id: Long) {
+        viewModelScope.launch {
+            try {
+                currentMusic.value.picUrl = repository.getCurrentMusicPic(id)
+            } catch (e: Exception) {
+                // 处理异常情况
+                Log.e(TAG, "fetchCurrentMusicPicError: $e")
+            }
+        }
+
+    }
+
 }
 
 
@@ -270,5 +282,16 @@ class Repository() {
 
 
         return lyc
+    }
+
+    suspend fun getCurrentMusicPic(id: Long): String {
+        val results =
+            NetworkUtils.https("/song/detail?ids=${id}", "GET")
+        val response = gson.fromJson(results, JsonObject::class.java)
+        val songs = response.getAsJsonArray("songs")
+        val obj = songs[0].asJsonObject
+        val alobj = obj.get("al")
+        val picUrl = alobj.asJsonObject.get("picUrl").asString
+        return picUrl
     }
 }

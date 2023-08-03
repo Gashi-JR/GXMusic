@@ -118,7 +118,7 @@ fun Myapp(modifier: Modifier = Modifier) {
         countDownTimer.start()
     })
 
-    var selectedTabIndex by remember { mutableStateOf(2) }
+    var selectedTabIndex by remember { mutableStateOf(0) }
 
 
     Scaffold(
@@ -187,7 +187,11 @@ fun Myapp(modifier: Modifier = Modifier) {
         HorizontalPager(state = pagerState, pageCount = 5) { page ->
 
             AnimatedVisibility(visible = showSearch.value) {
-                Search(searchViewModel, { showSearch.value = false })
+                Search(
+                    searchViewModel,
+                    findviewModel = findviewModel,
+                    mediaPlayerViewModel = mediaPlayerViewModel,
+                    onBack = { showSearch.value = false })
             }
 
             when (page) {
@@ -204,11 +208,7 @@ fun Myapp(modifier: Modifier = Modifier) {
                 }
 
                 1 -> LyricPage(findviewModel, mediaPlayerViewModel, state)
-                2 -> Search(
-                    searchViewModel,
-                    findviewModel = findviewModel,
-                    mediaPlayerViewModel = mediaPlayerViewModel
-                )
+                2 -> SongList()
 
                 3 -> Top()
                 4 -> Mine()

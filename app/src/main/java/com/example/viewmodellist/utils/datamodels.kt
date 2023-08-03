@@ -81,7 +81,7 @@ class Datamodels {
         val mvid: Long,
         val name: String,
         var artist: String,
-        var al: String
+        var al: String,
     )
 
     // TODO: 搜索结果的歌单

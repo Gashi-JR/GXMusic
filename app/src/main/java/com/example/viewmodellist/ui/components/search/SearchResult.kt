@@ -108,6 +108,8 @@ fun SearchResult(
                             findviewModel.currentMusic.value.name = item.name
                             findviewModel.currentMusic.value.artist = item.artist
                             findviewModel.fetchCurrentMusicUrl(item.id)
+                            findviewModel.fetchCurrentMusicPic(item.id)
+
                             mediaPlayerViewModel.play(
                                 Repository().getCurrentMusicUrl(
                                     item.id
