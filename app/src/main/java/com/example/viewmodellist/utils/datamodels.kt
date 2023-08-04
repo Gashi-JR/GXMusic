@@ -95,4 +95,22 @@ class Datamodels {
         var officialTags: List<String>?
     )
 
+    // TODO: 二维码登录状态检查结果对象
+    data class LoginChechResult(
+        val code: Int,
+        val message: String,
+        val cookie: String,
+    )
+
+    // TODO: 用户信息
+    data class UserInfo(
+        val uid: Long,
+        val nickname: String,
+        val avatarUrl: String,
+        val birthday: Long,
+        val createTime: Long,
+        val province: Long,
+        val signature: String,
+        val gender: Int
+    )
 }

@@ -38,7 +38,7 @@ object NavGraph {
 
 
         NavHost(navController = navHostController, startDestination = "find") {
-            composable("login") { Login() }
+           // composable("login") { Login(loginviewModel = ) }
             composable("find") {
                 Find(
                     FindviewModel(), MediaPlayerViewModel(),

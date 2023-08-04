@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
@@ -44,6 +45,8 @@ import com.example.viewmodellist.ui.components.find.MediaPlayerViewModel
 import com.example.viewmodellist.ui.screens.find.Find
 import com.example.viewmodellist.ui.screens.find.FindviewModel
 import com.example.viewmodellist.ui.screens.find.Repository
+import com.example.viewmodellist.ui.screens.login.Login
+import com.example.viewmodellist.ui.screens.login.LoginviewModel
 import com.example.viewmodellist.ui.screens.lyricsview.LyricPage
 import com.example.viewmodellist.ui.screens.mine.Mine
 import com.example.viewmodellist.ui.screens.search.Search
@@ -118,7 +121,7 @@ fun Myapp(modifier: Modifier = Modifier) {
         countDownTimer.start()
     })
 
-    var selectedTabIndex by remember { mutableStateOf(0) }
+    var selectedTabIndex by remember { mutableStateOf(2) }
 
 
     Scaffold(
@@ -144,6 +147,9 @@ fun Myapp(modifier: Modifier = Modifier) {
         }
         val searchViewModel by remember {
             mutableStateOf(SearchviewModel())
+        }
+        val loginViewModel by remember {
+            mutableStateOf(LoginviewModel())
         }
         val pagerState = rememberPagerState(initialPage = selectedTabIndex)
 
@@ -208,7 +214,7 @@ fun Myapp(modifier: Modifier = Modifier) {
                 }
 
                 1 -> LyricPage(findviewModel, mediaPlayerViewModel, state)
-                2 -> SongList()
+                2 -> Login(loginviewModel = loginViewModel)
 
                 3 -> Top()
                 4 -> Mine()
