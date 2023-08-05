@@ -1,7 +1,5 @@
 package com.example.viewmodellist.utils
 
-import com.google.gson.JsonObject
-
 class Datamodels {
 
     // TODO: 轮播图相关数据类

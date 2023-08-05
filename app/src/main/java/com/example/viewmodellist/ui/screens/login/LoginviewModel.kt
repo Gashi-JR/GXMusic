@@ -25,6 +25,8 @@ class LoginviewModel(private val repository: Repository = Repository()) : ViewMo
     var key: MutableState<String> = mutableStateOf("")
     var result: MutableState<LoginChechResult> = mutableStateOf(LoginChechResult(0, "", ""))
 
+    var User: MutableState<UserInfo> = mutableStateOf(UserInfo(0, "", "", 0, 0, 0, "", 0))
+
 
     fun fetchLoginQRcode() {
         viewModelScope.launch {
@@ -46,6 +48,18 @@ class LoginviewModel(private val repository: Repository = Repository()) : ViewMo
             } catch (e: Exception) {
                 // 处理异常情况
                 Log.e(TAG, "fetchLoginStatusError: $e")
+            }
+        }
+    }
+
+    fun fetchUserUserInfo() {
+        viewModelScope.launch {
+            try {
+                User.value = repository.getLoginUserInfo()
+                Log.d(TAG, "fetchUserUserInfo: ${User.value}")
+            } catch (e: Exception) {
+                // 处理异常情况
+                Log.e(TAG, "fetchUserUserInfoError: $e")
             }
         }
     }
@@ -113,7 +127,7 @@ class Repository {
     }
 
 
-    suspend fun getLoginUserInfo() {
+    suspend fun getLoginUserInfo(): UserInfo {
 
         val results =
             NetworkUtils.https(
@@ -137,7 +151,7 @@ class Repository {
         val signature = profile.get("signature").asString
         val gender = profile.get("gender").asInt  //0未知1男2女
 
-        //   return qrimg
+        return UserInfo(uid, nickname, avatarUrl, birthday, createTime, province, signature, gender)
 
     }
 

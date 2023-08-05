@@ -121,19 +121,24 @@ fun Myapp(modifier: Modifier = Modifier) {
         countDownTimer.start()
     })
 
-    var selectedTabIndex by remember { mutableStateOf(2) }
-
+    var selectedTabIndex by remember { mutableStateOf(4) }
+    var isLogin by rememberSaveable {
+        mutableStateOf(false)
+    }
 
     Scaffold(
         bottomBar = {
-            BottomBar(
-                toFind = { selectedTabIndex = 0 },
-                toLyc = { selectedTabIndex = 1 },
-                toSongList = { selectedTabIndex = 2 },
-                toTop = { selectedTabIndex = 3 },
-                toMine = { selectedTabIndex = 4 },
-                selectedTabIndex = selectedTabIndex
-            )
+            AnimatedVisibility(visible = !isLogin) {
+                BottomBar(
+                    toFind = { selectedTabIndex = 0 },
+                    toLyc = { selectedTabIndex = 1 },
+                    toSongList = { selectedTabIndex = 2 },
+                    toTop = { selectedTabIndex = 3 },
+                    toMine = { selectedTabIndex = 4 },
+                    selectedTabIndex = selectedTabIndex
+                )
+            }
+
         }
     ) {
         var extended by rememberSaveable {
@@ -200,9 +205,18 @@ fun Myapp(modifier: Modifier = Modifier) {
                     onBack = { showSearch.value = false })
             }
 
+            AnimatedVisibility(visible = isLogin) {
+                Login(loginviewModel = loginViewModel, onLogin = {
+                    isLogin = false
+                })
+            }
+
+
+
+
             when (page) {
                 0 -> {
-                    AnimatedVisibility(visible = !showSearch.value) {
+                    AnimatedVisibility(visible = !showSearch.value && !isLogin) {
                         Find(
                             findviewModel,
                             mediaPlayerViewModel,
@@ -214,21 +228,21 @@ fun Myapp(modifier: Modifier = Modifier) {
                 }
 
                 1 -> LyricPage(findviewModel, mediaPlayerViewModel, state)
-                2 -> Login(loginviewModel = loginViewModel)
+                2 -> SongList()
 
                 3 -> Top()
                 4 -> Mine()
             }
         }
-
-        PlayButton(
-            extended = extended,
-            onClick = { extended = !extended },
-            findviewModel = findviewModel,
-            state = state,
-            mediaPlayerViewModel = mediaPlayerViewModel
-        )
-
+        AnimatedVisibility(!isLogin) {
+            PlayButton(
+                extended = extended,
+                onClick = { extended = !extended },
+                findviewModel = findviewModel,
+                state = state,
+                mediaPlayerViewModel = mediaPlayerViewModel
+            )
+        }
     }
 }
 

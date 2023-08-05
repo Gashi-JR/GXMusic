@@ -5,8 +5,16 @@ import android.service.controls.ControlsProviderService.TAG
 import android.util.Base64
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.HoverInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,13 +51,17 @@ import kotlinx.coroutines.delay
 
 
 @Composable
-fun Login(loginviewModel: LoginviewModel, modifier: Modifier = Modifier) {
+fun Login(loginviewModel: LoginviewModel, onLogin: () -> Unit = {}, modifier: Modifier = Modifier) {
     var isRefresh by remember {
         mutableStateOf(true)
     }
     var isOverdue by remember {
         mutableStateOf(false)
     }
+    var isEnter by remember {
+        mutableStateOf(false)
+    }
+
 
     LaunchedEffect(isRefresh) {
         if (!isRefresh) { //轮询扫码登录状态
@@ -67,6 +79,8 @@ fun Login(loginviewModel: LoginviewModel, modifier: Modifier = Modifier) {
                     802 -> {}              //已扫码等待授权
                     803 -> {              //已授权登录
 // TODO:  登录成功后获取cookie解析，跳转主页面然后加载用户信息
+                        onLogin()
+                        loginviewModel.fetchUserUserInfo()
                         isOverdue = true
                         break
                     }
@@ -79,6 +93,10 @@ fun Login(loginviewModel: LoginviewModel, modifier: Modifier = Modifier) {
     LaunchedEffect(loginviewModel.qrimg.value) {
         isOverdue = false
     }
+
+    LaunchedEffect(Unit) {
+        isEnter = true
+    }
     Column(
         modifier = modifier
             .background(Color.White)
@@ -87,11 +105,24 @@ fun Login(loginviewModel: LoginviewModel, modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(modifier = Modifier.height(90.dp))
-        Image(
-            painter = painterResource(id = R.drawable.qq20230804133953),
-            contentDescription = null,
-            modifier = Modifier.size(200.dp)
-        )
+        AnimatedVisibility(
+            visible = isEnter,
+            enter = slideInVertically(
+                initialOffsetY = { it },
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                    stiffness = Spring.StiffnessVeryLow
+                )
+            ),
+            exit = slideOutVertically(targetOffsetY = { -it })
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.qq20230804133953),
+                contentDescription = null,
+                modifier = Modifier.size(200.dp)
+            )
+        }
+
         AnimatedVisibility(visible = loginviewModel.qrimg.value != "") {
 
             Log.d(TAG, "Login: ${loginviewModel.qrimg}")
@@ -129,28 +160,40 @@ fun Login(loginviewModel: LoginviewModel, modifier: Modifier = Modifier) {
 
 
 
-
-        Button(
-            onClick = {
-                loginviewModel.fetchLoginQRcode()
-                isRefresh = false
-            },
-            elevation = ButtonDefaults.elevation(0.dp),
-            enabled = isRefresh,
-            shape = MaterialTheme.shapes.extraLarge,
-            colors = ButtonDefaults.buttonColors(
-                backgroundColor = Color(0, 160, 218)
+        AnimatedVisibility(
+            visible = isEnter,
+            enter = slideInHorizontally(
+                initialOffsetX = { it }, animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                    stiffness = Spring.StiffnessVeryLow
+                )
             ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(45.dp)
+            exit = slideOutHorizontally(targetOffsetX = { -it })
         ) {
-            Text(
-                text = "点击生成二维码",
-                color = Color.White,
-                fontSize = 17.sp
-            )
+            Button(
+                onClick = {
+                    loginviewModel.fetchLoginQRcode()
+                    isRefresh = false
+                },
+                elevation = ButtonDefaults.elevation(0.dp),
+                enabled = isRefresh,
+                shape = MaterialTheme.shapes.extraLarge,
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color(0, 160, 218)
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(45.dp)
+            ) {
+
+                Text(
+                    text = "点击生成二维码",
+                    color = Color.White,
+                    fontSize = 17.sp
+                )
+            }
         }
+
     }
 
 }

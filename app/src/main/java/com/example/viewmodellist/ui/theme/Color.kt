@@ -27,3 +27,19 @@ val findcardGradient = Brush.verticalGradient(
     startY = 0f,
     endY = 700f
 )
+
+val mylikemusicGradient = Brush.verticalGradient(
+    colors = listOf(Color(253, 241, 241), Color.White), // 渐变色列表
+    startY = 0f,
+    endY = 450f
+)
+val recentmusicGradient = Brush.verticalGradient(
+    colors = listOf(Color(254, 246, 233), Color.White), // 渐变色列表
+    startY = 0f,
+    endY = 450f
+)
+val vinylTimeMachineGradient = Brush.verticalGradient(
+    colors = listOf(Color(242, 245, 250), Color.White), // 渐变色列表
+    startY = 0f,
+    endY = 450f
+)

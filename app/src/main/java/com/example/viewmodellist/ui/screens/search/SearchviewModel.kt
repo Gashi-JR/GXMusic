@@ -232,7 +232,6 @@ class Repository {
             val Songobj = songs[i].asJsonObject
 
 
-
             val artistJsonArray = Songobj.getAsJsonArray("artists")
             val artist = artistJsonArray[0].asJsonObject.get("name").asString
 
