@@ -7,16 +7,12 @@ import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.interaction.HoverInteraction
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,10 +22,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -78,9 +72,7 @@ fun Login(loginviewModel: LoginviewModel, onLogin: () -> Unit = {}, modifier: Mo
                     801 -> {}               //等待扫码
                     802 -> {}              //已扫码等待授权
                     803 -> {              //已授权登录
-// TODO:  登录成功后获取cookie解析，跳转主页面然后加载用户信息
                         onLogin()
-                        loginviewModel.fetchUserUserInfo()
                         isOverdue = true
                         break
                     }
@@ -95,7 +87,11 @@ fun Login(loginviewModel: LoginviewModel, onLogin: () -> Unit = {}, modifier: Mo
     }
 
     LaunchedEffect(Unit) {
-        isEnter = true
+        if (Repository().getLoginUserId().toInt() == 0)
+            isEnter = true
+        else {
+            onLogin()
+        }
     }
     Column(
         modifier = modifier

@@ -1,21 +1,16 @@
 package com.example.viewmodellist.ui.screens.login
 
 import NetworkUtils
-import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.viewmodellist.utils.Datamodels.*
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -24,8 +19,8 @@ class LoginviewModel(private val repository: Repository = Repository()) : ViewMo
     var qrimg: MutableState<String> = mutableStateOf("")
     var key: MutableState<String> = mutableStateOf("")
     var result: MutableState<LoginChechResult> = mutableStateOf(LoginChechResult(0, "", ""))
-
-    var User: MutableState<UserInfo> = mutableStateOf(UserInfo(0, "", "", 0, 0, 0, "", 0))
+    var uid: MutableState<Long> = mutableStateOf(0)
+    var User: MutableState<UserInfo> = mutableStateOf(UserInfo(0, "", 0, 0, 0, "", 0, 0, 0, "", 0))
 
 
     fun fetchLoginQRcode() {
@@ -52,11 +47,13 @@ class LoginviewModel(private val repository: Repository = Repository()) : ViewMo
         }
     }
 
-    fun fetchUserUserInfo() {
+    fun fetchUserInfo() {
         viewModelScope.launch {
             try {
-                User.value = repository.getLoginUserInfo()
-                Log.d(TAG, "fetchUserUserInfo: ${User.value}")
+                uid.value = repository.getLoginUserId()
+                Log.d(TAG, "fetchUserId: ${uid.value}")
+                User.value = repository.getLoginUserInfo(uid.value)
+                Log.d(TAG, "fetchUserInfo: ${User.value}")
             } catch (e: Exception) {
                 // 处理异常情况
                 Log.e(TAG, "fetchUserUserInfoError: $e")
@@ -127,11 +124,11 @@ class Repository {
     }
 
 
-    suspend fun getLoginUserInfo(): UserInfo {
+    suspend fun getLoginUserId(): Long {
 
         val results =
             NetworkUtils.https(
-                "/login/status",
+                "/login/status?timestamp=${System.currentTimeMillis()}",
                 "GET"
             )
         val response = gson.fromJson(results, JsonObject::class.java)
@@ -140,9 +137,33 @@ class Repository {
         val data = response.getAsJsonObject("data")
 
         val account = data.get("account").asJsonObject
-        val profile = data.get("profile").asJsonObject
-
         val uid = account.get("id").asLong
+        val profile = data.get("profile").toString()
+        Log.d(TAG, "getLoginUserId:$profile ")
+
+        return if (profile == "null")
+            0
+        else
+            uid
+
+    }
+
+    suspend fun getLoginUserInfo(id: Long): UserInfo {
+
+        val results =
+            NetworkUtils.https(
+                "/user/detail?uid=$id",
+                "GET"
+            )
+        Log.d(TAG, "getLoginUserInfo: $results")
+        val response = gson.fromJson(results, JsonObject::class.java)
+
+
+        val profile = response.get("profile").asJsonObject
+
+
+        val level = response.get("level").asInt
+
         val nickname = profile.get("nickname").asString
         val avatarUrl = profile.get("avatarUrl").asString
         val birthday = profile.get("birthday").asLong
@@ -150,10 +171,23 @@ class Repository {
         val province = profile.get("province").asLong
         val signature = profile.get("signature").asString
         val gender = profile.get("gender").asInt  //0未知1男2女
+        val followeds = profile.get("followeds").asInt
+        val follows = profile.get("follows").asInt
 
-        return UserInfo(uid, nickname, avatarUrl, birthday, createTime, province, signature, gender)
+
+        return UserInfo(
+            id,
+            nickname,
+            level,
+            followeds,
+            follows,
+            avatarUrl,
+            birthday,
+            createTime,
+            province,
+            signature,
+            gender
+        )
 
     }
-
-
 }

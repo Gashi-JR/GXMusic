@@ -1,6 +1,8 @@
 package com.example.viewmodellist.ui.screens.find
 
 import Banner
+import android.service.controls.ControlsProviderService.TAG
+import android.util.Log
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -53,17 +55,20 @@ import com.example.viewmodellist.ui.components.find.SonglistCover
 import com.example.viewmodellist.ui.components.find.SonglistPreview
 import com.example.viewmodellist.ui.components.find.TopAppBar
 import com.example.viewmodellist.ui.components.find.TopCard
+import com.example.viewmodellist.ui.screens.login.LoginviewModel
 import com.example.viewmodellist.ui.screens.search.SearchviewModel
 import com.example.viewmodellist.ui.theme.ViewModelListTheme
 import com.example.viewmodellist.ui.theme.cardGradient
 import com.example.viewmodellist.ui.theme.findcardGradient
 import com.example.viewmodellist.utils.Datamodels
+import com.example.viewmodellist.utils.formatter
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.gson.JsonObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.regex.Pattern
 
 
 @OptIn(ExperimentalPagerApi::class, ExperimentalCoilApi::class)
@@ -73,10 +78,25 @@ fun Find(
     mediaPlayerViewModel: MediaPlayerViewModel,
     state: LyricsViewState,
     searchviewModel: SearchviewModel,
+    loginviewModel: LoginviewModel = LoginviewModel(),
     showSearch: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    LaunchedEffect(loginviewModel.result.value.cookie) {
+        if (loginviewModel.result.value.cookie != "") {
+            val pattern = Pattern.compile("MUSIC_U=([^;]+)")
+            val matcher = pattern.matcher(loginviewModel.result.value.cookie)
 
+            if (matcher.find()) {
+                val keyValue = matcher.group(0).split("=")
+                val key = keyValue[0]
+                val value = keyValue[1]
+                println("Key: $key")
+                println("Value: $value")
+            }
+        }
+
+    }
 
     val isFixed = rememberSaveable {
         mutableStateOf(false)
@@ -87,6 +107,7 @@ fun Find(
 //        findviewModel.fetchBannerData()
 //        findviewModel.fetchRecommendSonglistData()
         //findviewModel.fetchNewSongData()
+        loginviewModel.fetchUserInfo()
         searchviewModel.fetchSearchHotData()
         isFixed.value = true
     }
@@ -119,6 +140,7 @@ fun Find(
 
                     TopAppBar(
                         searchviewModel = searchviewModel,
+                        loginviewModel = loginviewModel,
                         onClick = showSearch
                     )
 

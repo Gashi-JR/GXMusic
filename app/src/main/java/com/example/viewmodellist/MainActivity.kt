@@ -49,6 +49,7 @@ import com.example.viewmodellist.ui.screens.login.Login
 import com.example.viewmodellist.ui.screens.login.LoginviewModel
 import com.example.viewmodellist.ui.screens.lyricsview.LyricPage
 import com.example.viewmodellist.ui.screens.mine.Mine
+import com.example.viewmodellist.ui.screens.mine.MineviewModel
 import com.example.viewmodellist.ui.screens.search.Search
 import com.example.viewmodellist.ui.screens.search.SearchviewModel
 import com.example.viewmodellist.ui.screens.songlist.SongList
@@ -121,14 +122,16 @@ fun Myapp(modifier: Modifier = Modifier) {
         countDownTimer.start()
     })
 
-    var selectedTabIndex by remember { mutableStateOf(4) }
+    var selectedTabIndex by remember { mutableStateOf(0) }
     var isLogin by rememberSaveable {
         mutableStateOf(false)
     }
-
+    var showSearch = rememberSaveable {
+        mutableStateOf(false)
+    }
     Scaffold(
         bottomBar = {
-            AnimatedVisibility(visible = !isLogin) {
+            AnimatedVisibility(visible = !isLogin && !showSearch.value) {
                 BottomBar(
                     toFind = { selectedTabIndex = 0 },
                     toLyc = { selectedTabIndex = 1 },
@@ -156,6 +159,9 @@ fun Myapp(modifier: Modifier = Modifier) {
         val loginViewModel by remember {
             mutableStateOf(LoginviewModel())
         }
+        val mineviewModel by remember {
+            mutableStateOf(MineviewModel())
+        }
         val pagerState = rememberPagerState(initialPage = selectedTabIndex)
 
 
@@ -174,9 +180,7 @@ fun Myapp(modifier: Modifier = Modifier) {
 
 """ + lyc
         val state = rememberLyricsViewState(lrcContent = lycstr, mediaPlayerViewModel)
-        var showSearch = rememberSaveable {
-            mutableStateOf(false)
-        }
+
 
 
         LaunchedEffect(findviewModel.currentMusic.value.id) {
@@ -222,6 +226,7 @@ fun Myapp(modifier: Modifier = Modifier) {
                             mediaPlayerViewModel,
                             state = state,
                             searchviewModel = searchViewModel,
+                            loginviewModel = loginViewModel,
                             { showSearch.value = true },
                         )
                     }
@@ -231,7 +236,7 @@ fun Myapp(modifier: Modifier = Modifier) {
                 2 -> SongList()
 
                 3 -> Top()
-                4 -> Mine()
+                4 -> Mine(loginViewModel, mineviewModel)
             }
         }
         AnimatedVisibility(!isLogin) {

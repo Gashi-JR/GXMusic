@@ -4,6 +4,8 @@ package com.example.viewmodellist.ui.components.find
 import android.app.Activity
 import android.os.CountDownTimer
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,7 +15,9 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -33,8 +37,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 import com.example.viewmodellist.R
 import com.example.viewmodellist.ui.components.OptionButton
+import com.example.viewmodellist.ui.screens.login.LoginviewModel
 import com.example.viewmodellist.ui.screens.search.SearchviewModel
 import com.example.viewmodellist.ui.theme.borderGradient
 import kotlinx.coroutines.Delay
@@ -45,6 +51,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun TopAppBar(
     searchviewModel: SearchviewModel = SearchviewModel(),
+    loginviewModel: LoginviewModel = LoginviewModel(),
     onClick: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
@@ -62,7 +69,10 @@ fun TopAppBar(
         }
     }
 
-    Row() {
+    Row(
+        verticalAlignment = Alignment.Bottom,
+        horizontalArrangement = Arrangement.spacedBy(5.dp)
+    ) {
 
         OptionButton(
             modifier = modifier
@@ -113,7 +123,18 @@ fun TopAppBar(
 
 
         }
-        Spacer(modifier = Modifier.width(30.dp))
+
+        AnimatedVisibility(visible = loginviewModel.User.value.avatarUrl != "") {
+            Image(
+                painter = rememberAsyncImagePainter(loginviewModel.User.value.avatarUrl),
+                contentDescription = null,
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .size(40.dp)
+            )
+        }
+
+        Spacer(modifier = Modifier.width(15.dp))
     }
 }
 

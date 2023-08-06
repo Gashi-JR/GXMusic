@@ -1,17 +1,21 @@
 import android.util.Log
-import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.Cookie
+import okhttp3.CookieJar
+import okhttp3.HttpUrl
+import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
+import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.Call
-import retrofit2.http.GET
-import retrofit2.http.POST
 import retrofit2.http.Body
 import retrofit2.http.DELETE
+import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Url
+
 
 interface ApiService {
     @GET
@@ -27,11 +31,28 @@ interface ApiService {
     fun deleteData(@Url url: String): Call<ResponseBody>
 }
 
+var cookieJar: CookieJar = object : CookieJar {
+    private val cookieStore = HashMap<String, List<Cookie>>()
+    override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
+        cookieStore[url.host] = cookies
+    }
+
+    override fun loadForRequest(url: HttpUrl): List<Cookie> {
+        val cookies = cookieStore[url.host]
+        return cookies ?: ArrayList()
+    }
+}
+
 
 object NetworkUtils {
+    val client = OkHttpClient.Builder()
+        .cookieJar(cookieJar)
+        .build()
+
     private val retrofit = Retrofit.Builder()
-        .baseUrl("http://3y7tj7.natappfree.cc") // 设置基本 URL
+        .baseUrl("http://3snsg6.natappfree.cc") // 设置基本 URL
         .addConverterFactory(GsonConverterFactory.create()) // 设置 Gson 转换器
+        .client(client)
         .build()
 
     suspend fun https(url: String, method: String, requestBody: Any = ""): String? {
@@ -45,7 +66,6 @@ object NetworkUtils {
                 "DELETE" -> apiService.deleteData(url).execute()
                 else -> null
             }
-
             if (response != null && response.isSuccessful) {
                 val responseBody = response.body()
                 val res = responseBody?.string()

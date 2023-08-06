@@ -104,6 +104,9 @@ class Datamodels {
     data class UserInfo(
         val uid: Long,
         val nickname: String,
+        val level: Int,
+        val followeds: Int,
+        val follows: Int,
         val avatarUrl: String,
         val birthday: Long,
         val createTime: Long,
