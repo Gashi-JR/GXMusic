@@ -1,9 +1,8 @@
 package com.example.viewmodellist.ui.screens.mine
 
-import androidx.compose.animation.AnimatedContentScope.SlideDirection.Companion.Start
+
+import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
@@ -13,38 +12,43 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-
-
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
-import androidx.compose.material.Button
 import androidx.compose.material.IconButton
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDefaults
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.BiasAlignment
@@ -52,10 +56,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -64,19 +68,17 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import coil.compose.rememberAsyncImagePainter
 import com.example.viewmodellist.R
-import com.example.viewmodellist.ui.components.Tag
-import com.example.viewmodellist.ui.components.find.FindCard
 import com.example.viewmodellist.ui.components.search.ResultSonglist
 import com.example.viewmodellist.ui.screens.login.LoginviewModel
 import com.example.viewmodellist.ui.theme.ViewModelListTheme
-import com.example.viewmodellist.ui.theme.borderGradient
-import com.example.viewmodellist.ui.theme.findcardGradient
 import com.example.viewmodellist.ui.theme.mylikemusicGradient
 import com.example.viewmodellist.ui.theme.recentmusicGradient
 import com.example.viewmodellist.ui.theme.vinylTimeMachineGradient
 import com.example.viewmodellist.utils.Datamodels
 import com.example.viewmodellist.utils.formatter
 
+@OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("UnrememberedMutableState")
 @Composable
 fun Mine(
     loginviewModel: LoginviewModel = LoginviewModel(),
@@ -85,11 +87,13 @@ fun Mine(
     var isDetail by remember {
         mutableStateOf(false)
     }
+    var isEdit by remember {
+        mutableStateOf(false)
+    }
     AnimatedVisibility(
-        visible = !isDetail, enter = slideInVertically(
-            initialOffsetY = { it },
-        ),
-        exit = slideOutVertically(targetOffsetY = { -it })
+        visible = !isDetail && !isEdit, enter = slideInVertically(
+            initialOffsetY = { -it },
+        ), exit = slideOutVertically(targetOffsetY = { it })
     ) {
         LazyColumn(
             modifier = Modifier
@@ -129,20 +133,18 @@ fun Mine(
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 22.sp
                                 )
-                                if (loginviewModel.User.value.gender == 1)
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.nan),
-                                        contentDescription = "man",
-                                        tint = Color.Unspecified,
-                                        modifier = Modifier.size(20.dp),
-                                    )
-                                if (loginviewModel.User.value.gender == 2)
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.xingbienv),
-                                        contentDescription = "man",
-                                        tint = Color.Unspecified,
-                                        modifier = Modifier.size(20.dp),
-                                    )
+                                if (loginviewModel.User.value.gender == 1) Icon(
+                                    painter = painterResource(id = R.drawable.nan),
+                                    contentDescription = "man",
+                                    tint = Color.Unspecified,
+                                    modifier = Modifier.size(20.dp),
+                                )
+                                if (loginviewModel.User.value.gender == 2) Icon(
+                                    painter = painterResource(id = R.drawable.xingbienv),
+                                    contentDescription = "man",
+                                    tint = Color.Unspecified,
+                                    modifier = Modifier.size(20.dp),
+                                )
                             }
 
                             Text(
@@ -161,8 +163,7 @@ fun Mine(
                                     shape = MaterialTheme.shapes.extraSmall,
                                     modifier = Modifier.width(60.dp),
                                     elevation = 0.dp
-                                )
-                                {
+                                ) {
                                     Text(
                                         text = "IP:未知",
                                         textAlign = TextAlign.Center,
@@ -174,8 +175,7 @@ fun Mine(
                                     shape = MaterialTheme.shapes.extraSmall,
                                     modifier = Modifier.width(65.dp),
                                     elevation = 0.dp
-                                )
-                                {
+                                ) {
                                     Text(
                                         text = formatter.convertTimestampToDateString(loginviewModel.User.value.birthday),
                                         textAlign = TextAlign.Center,
@@ -187,8 +187,7 @@ fun Mine(
                                     shape = MaterialTheme.shapes.extraSmall,
                                     modifier = Modifier.width(55.dp),
                                     elevation = 0.dp
-                                )
-                                {
+                                ) {
                                     Text(
                                         text = formatter.getRegionName(loginviewModel.User.value.province.toString()),
                                         textAlign = TextAlign.Center,
@@ -201,13 +200,11 @@ fun Mine(
                                     shape = MaterialTheme.shapes.extraSmall,
                                     modifier = Modifier.width(65.dp),
                                     elevation = 0.dp
-                                )
-                                {
+                                ) {
                                     Text(
                                         text = "村龄${
                                             ((System.currentTimeMillis() - loginviewModel.User.value.createTime) / 86400000) + 1
-                                        }天", textAlign = TextAlign.Center,
-                                        fontSize = 13.sp
+                                        }天", textAlign = TextAlign.Center, fontSize = 13.sp
                                     )
                                 }
                             }
@@ -217,7 +214,7 @@ fun Mine(
                                 horizontalArrangement = Arrangement.spacedBy(5.dp),
                             ) {
                                 Button(
-                                    onClick = { /*TODO*/ },
+                                    onClick = { isEdit = true },
                                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
                                     shape = MaterialTheme.shapes.large,
                                     elevation = ButtonDefaults.elevation(0.dp),
@@ -251,18 +248,14 @@ fun Mine(
             item {
                 Spacer(modifier = Modifier.height(190.dp))
                 Card(
-                    modifier = Modifier
-                        .width(370.dp),
+                    modifier = Modifier.width(370.dp),
                     shape = MaterialTheme.shapes.medium,
                     elevation = 0.1.dp
                 ) {
                     Column(
                         verticalArrangement = Arrangement.spacedBy(10.dp),
                         modifier = Modifier.padding(
-                            top = 15.dp,
-                            start = 15.dp,
-                            end = 15.dp,
-                            bottom = 8.dp
+                            top = 15.dp, start = 15.dp, end = 15.dp, bottom = 8.dp
                         )
                     ) {
                         Text(
@@ -275,20 +268,16 @@ fun Mine(
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            androidx.compose.material3.Card(
-                                colors = CardDefaults.cardColors(
-                                    containerColor = Color(0, 0, 0, 0),
-                                ),
-                                modifier = Modifier
-                                    .size(109.dp)
+                            androidx.compose.material3.Card(colors = CardDefaults.cardColors(
+                                containerColor = Color(0, 0, 0, 0),
+                            ), modifier = Modifier
+                                .size(109.dp)
 
-                                    .border(
-                                        0.8.dp,
-                                        Color(247, 241, 241),
-                                        MaterialTheme.shapes.medium
-                                    )
-                                    .clip(MaterialTheme.shapes.medium)
-                                    .clickable { }
+                                .border(
+                                    0.8.dp, Color(247, 241, 241), MaterialTheme.shapes.medium
+                                )
+                                .clip(MaterialTheme.shapes.medium)
+                                .clickable { }
 
                             ) {
                                 Column(
@@ -303,9 +292,7 @@ fun Mine(
                                         verticalArrangement = Arrangement.spacedBy(5.dp)
                                     ) {
                                         Text(
-                                            text = "我的喜欢",
-                                            color = Color.Gray,
-                                            fontSize = 12.sp
+                                            text = "我的喜欢", color = Color.Gray, fontSize = 12.sp
                                         )
 
                                         Text(text = "0首", fontSize = 15.sp)
@@ -327,20 +314,16 @@ fun Mine(
 
                                 }
                             }
-                            androidx.compose.material3.Card(
-                                colors = CardDefaults.cardColors(
-                                    containerColor = Color(0, 0, 0, 0),
-                                ),
-                                modifier = Modifier
-                                    .size(109.dp)
+                            androidx.compose.material3.Card(colors = CardDefaults.cardColors(
+                                containerColor = Color(0, 0, 0, 0),
+                            ), modifier = Modifier
+                                .size(109.dp)
 
-                                    .border(
-                                        0.8.dp,
-                                        Color(249, 245, 235),
-                                        MaterialTheme.shapes.medium
-                                    )
-                                    .clip(MaterialTheme.shapes.medium)
-                                    .clickable { }
+                                .border(
+                                    0.8.dp, Color(249, 245, 235), MaterialTheme.shapes.medium
+                                )
+                                .clip(MaterialTheme.shapes.medium)
+                                .clickable { }
 
                             ) {
                                 Column(
@@ -355,9 +338,7 @@ fun Mine(
                                         verticalArrangement = Arrangement.spacedBy(5.dp)
                                     ) {
                                         Text(
-                                            text = "最近播放",
-                                            color = Color.Gray,
-                                            fontSize = 12.sp
+                                            text = "最近播放", color = Color.Gray, fontSize = 12.sp
                                         )
 
                                         Text(text = "0首", fontSize = 15.sp)
@@ -378,20 +359,16 @@ fun Mine(
                                     }
                                 }
                             }
-                            androidx.compose.material3.Card(
-                                colors = CardDefaults.cardColors(
-                                    containerColor = Color(0, 0, 0, 0),
-                                ),
-                                modifier = Modifier
-                                    .size(109.dp)
+                            androidx.compose.material3.Card(colors = CardDefaults.cardColors(
+                                containerColor = Color(0, 0, 0, 0),
+                            ), modifier = Modifier
+                                .size(109.dp)
 
-                                    .border(
-                                        0.8.dp,
-                                        Color(240, 244, 247),
-                                        MaterialTheme.shapes.medium
-                                    )
-                                    .clip(MaterialTheme.shapes.medium)
-                                    .clickable { }
+                                .border(
+                                    0.8.dp, Color(240, 244, 247), MaterialTheme.shapes.medium
+                                )
+                                .clip(MaterialTheme.shapes.medium)
+                                .clickable { }
 
                             ) {
                                 Column(
@@ -437,8 +414,7 @@ fun Mine(
             item {
                 Spacer(modifier = Modifier.height(20.dp))
                 Card(
-                    modifier = Modifier
-                        .width(370.dp),
+                    modifier = Modifier.width(370.dp),
                     shape = MaterialTheme.shapes.medium,
                     elevation = 0.1.dp
                 ) {
@@ -446,10 +422,7 @@ fun Mine(
                         verticalArrangement = Arrangement.spacedBy(10.dp),
                         modifier = Modifier
                             .padding(
-                                top = 15.dp,
-                                start = 15.dp,
-                                end = 15.dp,
-                                bottom = 8.dp
+                                top = 15.dp, start = 15.dp, end = 15.dp, bottom = 8.dp
                             )
                             .height(300.dp)
                     ) {
@@ -458,15 +431,11 @@ fun Mine(
                             horizontalArrangement = Arrangement.spacedBy(3.dp)
                         ) {
                             Text(
-                                text = "收藏的歌单",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 19.sp
+                                text = "收藏的歌单", fontWeight = FontWeight.Bold, fontSize = 19.sp
                             )
 
                             Text(
-                                text = "(2)",
-                                fontSize = 12.sp,
-                                color = Color.Gray
+                                text = "(2)", fontSize = 12.sp, color = Color.Gray
                             )
                         }
                         LazyHorizontalGrid(rows = GridCells.Fixed(3)) {
@@ -498,29 +467,22 @@ fun Mine(
             item {
                 Spacer(modifier = Modifier.height(20.dp))
                 Card(
-                    modifier = Modifier
-                        .width(370.dp),
+                    modifier = Modifier.width(370.dp),
                     shape = MaterialTheme.shapes.medium,
                     elevation = 0.1.dp
                 ) {
                     Column(
 
-                        modifier = Modifier
-                            .height(230.dp)
+                        modifier = Modifier.height(230.dp)
                     ) {
                         Column(
-                            verticalArrangement = Arrangement.spacedBy(15.dp), modifier = Modifier
-                                .padding(
-                                    top = 15.dp,
-                                    start = 15.dp,
-                                    end = 15.dp,
-                                    bottom = 8.dp
-                                )
+                            verticalArrangement = Arrangement.spacedBy(15.dp),
+                            modifier = Modifier.padding(
+                                top = 15.dp, start = 15.dp, end = 15.dp, bottom = 8.dp
+                            )
                         ) {
                             Text(
-                                text = "基本信息",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 19.sp
+                                text = "基本信息", fontWeight = FontWeight.Bold, fontSize = 19.sp
                             )
                             Text(
                                 text = "村龄: ${((System.currentTimeMillis() - loginviewModel.User.value.createTime) / 86400000) + 1}天(${
@@ -530,9 +492,7 @@ fun Mine(
                                 }年${
                                     formatter.convertTimestampToDateString(loginviewModel.User.value.createTime)
                                         .split("-")[1]
-                                }月注册)",
-                                color = Color.Gray,
-                                fontSize = 14.sp
+                                }月注册)", color = Color.Gray, fontSize = 14.sp
                             )
                             Text(
                                 text = "性别: ${if (loginviewModel.User.value.gender == 0) "未知" else if (loginviewModel.User.value.gender == 1) "男" else "女"}",
@@ -544,9 +504,7 @@ fun Mine(
                                     formatter.convertTimestampToDateString(
                                         loginviewModel.User.value.birthday
                                     ).split("-")[0][2]
-                                }0后 ",
-                                color = Color.Gray,
-                                fontSize = 14.sp
+                                }0后 ", color = Color.Gray, fontSize = 14.sp
                             )
                             Text(
                                 text = "个人简介: ${loginviewModel.User.value.signature}",
@@ -566,8 +524,7 @@ fun Mine(
                             horizontalArrangement = Arrangement.Center
                         ) {
                             Text(
-                                text = "查看全部", color = Color.Gray.copy(0.7f),
-                                fontSize = 13.sp
+                                text = "查看全部", color = Color.Gray.copy(0.7f), fontSize = 13.sp
                             )
                             Icon(
                                 painter = painterResource(id = R.drawable.baseline_chevron_right_24),
@@ -590,17 +547,13 @@ fun Mine(
     AnimatedVisibility(
         visible = isDetail, enter = slideInVertically(
             initialOffsetY = { it },
-        ),
-        exit = slideOutVertically(targetOffsetY = { -it })
+        ), exit = slideOutVertically(targetOffsetY = { -it })
     ) {
 
         Column(
             verticalArrangement = Arrangement.spacedBy(15.dp), modifier = Modifier
                 .padding(
-                    top = 15.dp,
-                    start = 15.dp,
-                    end = 15.dp,
-                    bottom = 8.dp
+                    top = 15.dp, start = 15.dp, end = 15.dp, bottom = 8.dp
                 )
                 .fillMaxSize()
         ) {
@@ -612,20 +565,16 @@ fun Mine(
                     Icon(
                         painter = painterResource(id = R.drawable.baseline_keyboard_backspace_24),
                         contentDescription = "search",
-                        modifier = Modifier
-                            .size(30.dp)
+                        modifier = Modifier.size(30.dp)
                     )
                 }
 
                 Text(
-                    text = "基本信息",
-                    fontSize = 19.sp
+                    text = "基本信息", fontSize = 19.sp
                 )
             }
             Text(
-                text = "个人信息",
-                fontWeight = FontWeight.Bold,
-                fontSize = 15.sp
+                text = "个人信息", fontWeight = FontWeight.Bold, fontSize = 15.sp
             )
             Text(
                 text = "村龄: ${((System.currentTimeMillis() - loginviewModel.User.value.createTime) / 86400000) + 1}天(${
@@ -635,18 +584,14 @@ fun Mine(
                 }年${
                     formatter.convertTimestampToDateString(loginviewModel.User.value.createTime)
                         .split("-")[1]
-                }月注册)",
-                color = Color.Gray,
-                fontSize = 14.sp
+                }月注册)", color = Color.Gray, fontSize = 14.sp
             )
             Text(
                 text = "年龄: ${
                     formatter.convertTimestampToDateString(
                         loginviewModel.User.value.birthday
                     ).split("-")[0][2]
-                }0后 ",
-                color = Color.Gray,
-                fontSize = 14.sp
+                }0后 ", color = Color.Gray, fontSize = 14.sp
             )
             Text(
                 text = "性别: ${if (loginviewModel.User.value.gender == 0) "未知" else if (loginviewModel.User.value.gender == 1) "男" else "女"}",
@@ -660,9 +605,7 @@ fun Mine(
             )
             Spacer(modifier = Modifier.height(25.dp))
             Text(
-                text = "个人介绍",
-                fontWeight = FontWeight.Bold,
-                fontSize = 15.sp
+                text = "个人介绍", fontWeight = FontWeight.Bold, fontSize = 15.sp
             )
             Text(
                 text = loginviewModel.User.value.signature,
@@ -673,6 +616,506 @@ fun Mine(
             )
         }
 
+    }
+    var editname by remember {
+        mutableStateOf(false)
+    }
+    var editgender by remember {
+        mutableStateOf(false)
+    }
+    var editarea by remember {
+        mutableStateOf(false)
+    }
+    var editdate by remember {
+        mutableStateOf(false)
+    }
+    var editsignature by remember {
+        mutableStateOf(false)
+    }
+    var nickname by remember {
+        mutableStateOf("")
+    }
+    AnimatedVisibility(
+        visible = isEdit, enter = slideInVertically(
+            initialOffsetY = { it },
+        ), exit = slideOutVertically(targetOffsetY = { -it })
+    ) {
+
+        Column(
+            verticalArrangement = Arrangement.spacedBy(15.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
+                    top = 15.dp, start = 15.dp, end = 15.dp, bottom = 8.dp
+                )
+
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                IconButton(onClick = { isEdit = false }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_keyboard_backspace_24),
+                        contentDescription = null,
+                        modifier = Modifier.size(30.dp)
+                    )
+                }
+
+                Text(
+                    text = "我的资料", fontSize = 19.sp
+                )
+            }
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(170.dp),
+                shape = MaterialTheme.shapes.medium,
+                elevation = 0.1.dp
+            ) {
+                Column(verticalArrangement = Arrangement.SpaceAround) {
+                    Row(modifier = Modifier
+                        .clickable { }
+                        .fillMaxWidth()
+                        .height(40.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween) {
+                        Text(
+                            text = "头像", fontSize = 17.sp
+                        )
+                        Image(
+                            painter = rememberAsyncImagePainter(loginviewModel.User.value.avatarUrl),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .size(33.dp)
+                        )
+                    }
+                    Divider(thickness = 0.5.dp, color = Color.Gray.copy(0.2f))
+                    Row(modifier = Modifier
+                        .clickable { editname = true }
+                        .fillMaxWidth()
+                        .height(40.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween) {
+                        Text(
+                            text = "昵称", fontSize = 17.sp
+                        )
+                        Text(
+                            text = loginviewModel.User.value.nickname,
+                            fontSize = 15.sp,
+                            color = Color.Gray.copy(0.7f)
+                        )
+                    }
+                    Divider(thickness = 0.5.dp, color = Color.Gray.copy(0.2f))
+                    Row(modifier = Modifier
+                        .clickable { editgender = true }
+                        .fillMaxWidth()
+                        .height(40.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween) {
+                        Text(
+                            text = "性别", fontSize = 17.sp
+                        )
+                        Text(
+                            text = " ${if (loginviewModel.User.value.gender == 0) "未知" else if (loginviewModel.User.value.gender == 1) "男" else "女"}",
+                            fontSize = 15.sp,
+                            color = Color.Gray.copy(0.7f)
+                        )
+                    }
+
+                }
+            }
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(170.dp),
+                shape = MaterialTheme.shapes.medium,
+                elevation = 0.1.dp
+            ) {
+                Column(verticalArrangement = Arrangement.SpaceAround) {
+                    Row(modifier = Modifier
+                        .clickable { editdate = true }
+                        .fillMaxWidth()
+                        .height(40.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween) {
+                        Text(
+                            text = "生日", fontSize = 17.sp
+                        )
+                        Text(
+                            text = formatter.convertTimestampToDateString(loginviewModel.User.value.birthday),
+                            textAlign = TextAlign.Center,
+                            fontSize = 15.sp,
+                            color = Color.Gray.copy(0.7f)
+                        )
+                    }
+                    Divider(thickness = 0.5.dp, color = Color.Gray.copy(0.2f))
+                    Row(modifier = Modifier
+                        .clickable { editarea = true }
+                        .fillMaxWidth()
+                        .height(40.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween) {
+                        Text(
+                            text = "地区", fontSize = 17.sp
+                        )
+                        Text(
+                            text = formatter.getRegionName(loginviewModel.User.value.province.toString()),
+                            fontSize = 15.sp,
+                            color = Color.Gray.copy(0.7f)
+                        )
+                    }
+                    Divider(thickness = 0.5.dp, color = Color.Gray.copy(0.2f))
+                    Row(modifier = Modifier
+                        .clickable { editsignature = true }
+                        .fillMaxWidth()
+                        .height(40.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween) {
+                        Text(
+                            text = "简介", fontSize = 17.sp
+                        )
+                        Text(
+                            text = loginviewModel.User.value.signature,
+                            fontSize = 15.sp,
+                            color = Color.Gray.copy(0.7f),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.width(30.dp)
+                        )
+                    }
+
+                }
+            }
+
+        }
+
+    }
+
+
+    AnimatedVisibility(visible = editname) {
+        AlertDialog(onDismissRequest = { /*TODO*/ }, buttons = {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 30.dp)
+            ) {
+                Button(
+                    onClick = { editname = false },
+                    shape = MaterialTheme.shapes.large,
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                    elevation = ButtonDefaults.elevation(0.5.dp)
+                ) {
+                    Text(text = "取消")
+                }
+                Button(
+                    onClick = { editname = false },
+                    shape = MaterialTheme.shapes.large,
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                    elevation = ButtonDefaults.elevation(0.5.dp)
+                ) {
+                    Text(text = "保存")
+                }
+            }
+        }, title = {
+            Text(text = "昵称:")
+        }, text = {
+            val containerColor = Color.Gray.copy(0f)
+            TextField(
+                value = nickname,
+                onValueChange = { nickname = it },
+                maxLines = 1,
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = containerColor,
+                    unfocusedContainerColor = containerColor,
+                    disabledContainerColor = containerColor,
+                    cursorColor = Color.Gray,
+                    focusedIndicatorColor = Color.Gray,
+                    unfocusedIndicatorColor = Color.Gray,
+                )
+
+            )
+        }, modifier = Modifier.padding(15.dp), shape = MaterialTheme.shapes.large
+        )
+    }
+
+
+    var selectIndex by remember {
+        mutableStateOf(loginviewModel.User.value.gender)
+    }
+    AnimatedVisibility(visible = editgender) {
+        AlertDialog(onDismissRequest = { /*TODO*/ }, buttons = {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 30.dp)
+            ) {
+                Button(
+                    onClick = { editgender = false },
+                    shape = MaterialTheme.shapes.large,
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                    elevation = ButtonDefaults.elevation(0.5.dp)
+                ) {
+                    Text(text = "取消")
+                }
+                Button(
+                    onClick = { editgender = false },
+                    shape = MaterialTheme.shapes.large,
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                    elevation = ButtonDefaults.elevation(0.5.dp)
+                ) {
+                    Text(text = "保存")
+                }
+            }
+        }, title = {
+            Text(text = "性别:")
+        }, text = {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { selectIndex = 1 },
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(text = "男")
+                    if (selectIndex == 1) Icon(
+                        painter = painterResource(id = R.drawable.duigou),
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp),
+                        tint = Color.Red.copy(0.4f)
+                    )
+                }
+
+                Divider(thickness = 0.5.dp, color = Color.Gray.copy(0.2f))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { selectIndex = 2 },
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(text = "女")
+                    if (selectIndex == 2) Icon(
+                        painter = painterResource(id = R.drawable.duigou),
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp),
+                        tint = Color.Red.copy(0.4f)
+                    )
+                }
+
+
+            }
+
+        }, modifier = Modifier.padding(15.dp), shape = MaterialTheme.shapes.large
+        )
+    }
+
+
+
+    AnimatedVisibility(visible = editdate) {
+        val datePickerState =
+            rememberDatePickerState(initialSelectedDateMillis = loginviewModel.User.value.birthday)
+        val confirmEnabled = remember {
+            derivedStateOf { datePickerState.selectedDateMillis != null }
+        }
+        DatePickerDialog(onDismissRequest = {
+            editdate = false
+        }, colors = DatePickerDefaults.colors(
+            containerColor = Color.White,
+        ), shape = MaterialTheme.shapes.medium, confirmButton = {
+            TextButton(
+                onClick = {
+                    editdate = false
+                    println("选中时间戳为： ${datePickerState.selectedDateMillis}")
+                }, enabled = confirmEnabled.value
+            ) {
+                Text("确定")
+            }
+        }, dismissButton = {
+            TextButton(onClick = {
+                editdate = false
+            }) {
+                Text("取消")
+            }
+        }) {
+            DatePicker(state = datePickerState)
+
+        }
+    }
+
+
+    var areaIndex by remember {
+        mutableStateOf(loginviewModel.User.value.province.toInt())
+    }
+
+    AnimatedVisibility(visible = editarea) {
+        AlertDialog(onDismissRequest = { /*TODO*/ }, buttons = {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 30.dp)
+            ) {
+                Button(
+                    onClick = { editarea = false },
+                    shape = MaterialTheme.shapes.large,
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                    elevation = ButtonDefaults.elevation(0.5.dp)
+                ) {
+                    Text(text = "取消")
+                }
+                Button(
+                    onClick = { editarea = false },
+                    shape = MaterialTheme.shapes.large,
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                    elevation = ButtonDefaults.elevation(0.5.dp)
+                ) {
+                    Text(text = "保存")
+                }
+            }
+        }, text = {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(250.dp)
+            ) {
+                items(
+                    listOf(
+                        "北京市",
+                        "天津市",
+                        "河北省",
+                        "山西省",
+                        "内蒙古自治区",
+                        "辽宁省",
+                        "吉林省",
+                        "黑龙江省",
+                        "上海市",
+                        "江苏省",
+                        "浙江省",
+                        "安徽省",
+                        "福建省",
+                        "江西省",
+                        "山东省",
+                        "河南省",
+                        "湖北省",
+                        "湖南省",
+                        "广东省",
+                        "广西壮族自治区",
+                        "海南省",
+                        "重庆市",
+                        "四川省",
+                        "贵州省",
+                        "云南省",
+                        "西藏自治区",
+                        "陕西省",
+                        "甘肃省",
+                        "青海省",
+                        "宁夏回族自治区",
+                        "新疆维吾尔自治区",
+                        "台湾省",
+                        "香港特别行政区",
+                        "澳门特别行政区"
+                    )
+                ) {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    areaIndex = formatter
+                                        .getCodeByRegionName(it)
+                                        ?.toInt()!!
+                                }, horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(text = it)
+                            if (areaIndex == formatter.getCodeByRegionName(it)?.toInt()!!) Icon(
+                                painter = painterResource(id = R.drawable.duigou),
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp),
+                                tint = Color.Red.copy(0.4f)
+                            )
+                        }
+
+                        Divider(thickness = 0.5.dp, color = Color.Gray.copy(0.2f))
+                    }
+
+                }
+
+
+            }
+
+        }, modifier = Modifier.padding(15.dp), shape = MaterialTheme.shapes.large
+        )
+    }
+
+
+    var signature = remember {
+        mutableStateOf(TextFieldValue())
+    }
+    val maxlen = remember {
+        mutableStateOf(100)
+    }
+    AnimatedVisibility(visible = editsignature) {
+        AlertDialog(onDismissRequest = { /*TODO*/ }, buttons = {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 30.dp)
+            ) {
+                Button(
+                    onClick = { editsignature = false },
+                    shape = MaterialTheme.shapes.large,
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                    elevation = ButtonDefaults.elevation(0.5.dp)
+                ) {
+                    Text(text = "取消")
+                }
+                Button(
+                    onClick = { editsignature = false },
+                    shape = MaterialTheme.shapes.large,
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                    elevation = ButtonDefaults.elevation(0.5.dp)
+                ) {
+                    Text(text = "保存")
+                }
+            }
+        }, title = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(text = "简介: ")
+                Text(
+                    text = "还剩${maxlen.value - signature.value.text.length}字",
+                    color = Color.Gray.copy(0.5f),
+                    fontSize = 14.sp
+                )
+            }
+
+        }, text = {
+            val containerColor = Color.Gray.copy(0.05f)
+            TextField(value = signature.value, onValueChange = {
+                if (it.text.length <= maxlen.value) {
+                    signature.value = it
+                }
+            }, placeholder = {
+                Text(text = loginviewModel.User.value.signature)
+            }, colors = TextFieldDefaults.colors(
+                focusedContainerColor = containerColor,
+                unfocusedContainerColor = Color.White,
+                disabledContainerColor = containerColor,
+                cursorColor = Color.Gray,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+            ), minLines = 9
+
+            )
+        }, modifier = Modifier.padding(15.dp), shape = MaterialTheme.shapes.large
+        )
     }
 
 

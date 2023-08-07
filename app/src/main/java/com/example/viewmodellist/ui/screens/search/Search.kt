@@ -337,7 +337,7 @@ fun Search(
                         searchviewModel.searchSuggestData.forEach { item ->
                             run {
                                 ListItem(
-                                    headlineText = {
+                                    headlineContent = {
                                         Text(
                                             item.keyword,
                                             maxLines = 1,
