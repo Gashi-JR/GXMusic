@@ -114,4 +114,16 @@ class Datamodels {
         val signature: String,
         val gender: Int
     )
+
+
+    // TODO: 我收藏的歌单
+    data class MySonglist(
+        val id: Long,
+        var trackCount: Long,
+        var playCount: Long,
+        val coverImgUrl: String,
+        val name: String,
+        var creater: String,
+        var tags: List<String>?
+    )
 }

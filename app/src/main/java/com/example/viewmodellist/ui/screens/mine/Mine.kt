@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.AlertDialog
@@ -45,6 +46,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -68,6 +70,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import coil.compose.rememberAsyncImagePainter
 import com.example.viewmodellist.R
+import com.example.viewmodellist.ui.components.mine.MySonglists
 import com.example.viewmodellist.ui.components.search.ResultSonglist
 import com.example.viewmodellist.ui.screens.login.LoginviewModel
 import com.example.viewmodellist.ui.theme.ViewModelListTheme
@@ -90,6 +93,15 @@ fun Mine(
     var isEdit by remember {
         mutableStateOf(false)
     }
+
+
+    LaunchedEffect(Unit) {
+        mineviewModel.fetchResultSonglistData(8504687668)
+    }
+
+
+
+
     AnimatedVisibility(
         visible = !isDetail && !isEdit, enter = slideInVertically(
             initialOffsetY = { -it },
@@ -435,24 +447,27 @@ fun Mine(
                             )
 
                             Text(
-                                text = "(2)", fontSize = 12.sp, color = Color.Gray
+                                text = "(${mineviewModel.mySonglistData.size})",
+                                fontSize = 12.sp,
+                                color = Color.Gray
                             )
                         }
-                        LazyHorizontalGrid(rows = GridCells.Fixed(3)) {
-                            listOf(1, 1, 1, 1, 1, 1, 1, 1, 1, 1).forEach {
-                                item {
-                                    ResultSonglist(
-                                        songlist = Datamodels.ResultSonglist(
-                                            1,
-                                            1,
-                                            1,
-                                            "http://p1.music.126.net/2zSNIqTcpHL2jIvU6hG0EA==/109951162868128395.jpg",
-                                            "asfafaf",
-                                            "afafafa",
-                                            null
-                                        )
-                                    )
-                                }
+                        LazyHorizontalGrid(rows = GridCells.Fixed(4)) {
+                            items(mineviewModel.mySonglistData) { item ->
+                                MySonglists(
+                                    songlist = Datamodels.MySonglist(
+                                        item.id,
+                                        item.trackCount,
+                                        item.playCount,
+                                        item.coverImgUrl,
+                                        item.name,
+                                        item.creater,
+                                        item.tags
+                                    ),
+                                    modifier = Modifier.clickable { }
+                                )
+
+
                             }
 
 
@@ -617,6 +632,7 @@ fun Mine(
         }
 
     }
+
     var editname by remember {
         mutableStateOf(false)
     }
@@ -633,7 +649,7 @@ fun Mine(
         mutableStateOf(false)
     }
     var nickname by remember {
-        mutableStateOf("")
+        mutableStateOf(loginviewModel.User.value.nickname)
     }
     AnimatedVisibility(
         visible = isEdit, enter = slideInVertically(
@@ -782,7 +798,7 @@ fun Mine(
                             color = Color.Gray.copy(0.7f),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.width(30.dp)
+                            modifier = Modifier.width(150.dp)
                         )
                     }
 
@@ -823,6 +839,7 @@ fun Mine(
             Text(text = "昵称:")
         }, text = {
             val containerColor = Color.Gray.copy(0f)
+            // nickname = loginviewModel.User.value.nickname
             TextField(
                 value = nickname,
                 onValueChange = { nickname = it },

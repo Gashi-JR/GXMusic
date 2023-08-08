@@ -152,7 +152,7 @@ class Repository {
 
         val results =
             NetworkUtils.https(
-                "/user/detail?uid=$id",
+                "/user/detail?uid=8504687668",
                 "GET"
             )
         Log.d(TAG, "getLoginUserInfo: $results")
