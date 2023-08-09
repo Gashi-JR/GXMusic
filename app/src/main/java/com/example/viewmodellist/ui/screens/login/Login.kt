@@ -87,11 +87,7 @@ fun Login(loginviewModel: LoginviewModel, onLogin: () -> Unit = {}, modifier: Mo
     }
 
     LaunchedEffect(Unit) {
-        if (Repository().getLoginUserId().toInt() == 0)
             isEnter = true
-        else {
-            onLogin()
-        }
     }
     Column(
         modifier = modifier

@@ -124,7 +124,7 @@ fun Myapp(modifier: Modifier = Modifier) {
 
     var selectedTabIndex by remember { mutableStateOf(0) }
     var isLogin by rememberSaveable {
-        mutableStateOf(false)
+        mutableStateOf(true)
     }
     var showSearch = rememberSaveable {
         mutableStateOf(false)
@@ -236,7 +236,15 @@ fun Myapp(modifier: Modifier = Modifier) {
                 2 -> SongList()
 
                 3 -> Top()
-                4 -> Mine(loginViewModel, mineviewModel)
+                4 -> AnimatedVisibility(visible = !showSearch.value && !isLogin) {
+                    Mine(
+                        loginViewModel,
+                        mineviewModel,
+                        onLogin = {
+                            isLogin = true
+                            loginViewModel.qrimg.value = ""
+                        })
+                }
             }
         }
         AnimatedVisibility(!isLogin) {

@@ -10,6 +10,8 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.viewmodellist.utils.Datamodels.*
@@ -24,8 +26,10 @@ import java.net.InetAddress
 
 
 class MineviewModel(private val repository: Repository = Repository()) : ViewModel() {
-    private val _mySonglistData by lazy { mutableStateListOf<MySonglist>() }
+    private var _mySonglistData by mutableStateOf<MutableList<MySonglist>>(mutableStateListOf())
     val mySonglistData: List<MySonglist> get() = _mySonglistData
+
+    var duplicated by mutableStateOf(false)
 
 
     fun fetchResultSonglistData(id: Long) {
@@ -44,7 +48,7 @@ class MineviewModel(private val repository: Repository = Repository()) : ViewMod
                     )
                 }
 
-                _mySonglistData.addAll(songsList)
+                _mySonglistData = songsList.toMutableList()
 
             } catch (e: Exception) {
                 // 处理异常情况
@@ -53,7 +57,60 @@ class MineviewModel(private val repository: Repository = Repository()) : ViewMod
         }
     }
 
+    fun checkNickname(name: String) {
+        viewModelScope.launch {
+            try {
+                duplicated = repository.getcheckNicknameData(name)
+            } catch (e: Exception) {
+                // 处理异常情况
+                Log.e(TAG, "checkNicknameDataError: $e")
+            }
+        }
 
+    }
+
+    fun modifyUserInfo(
+        birthday: Long,
+        province: Long,
+        signature: String,
+        gender: Int
+    ) {
+        viewModelScope.launch {
+            try {
+                repository.modifyUserInfoData(birthday, province, signature, gender)
+            } catch (e: Exception) {
+                // 处理异常情况
+                Log.e(TAG, "modifyUserInfoDataError: $e")
+            }
+        }
+
+    }
+
+    fun modifyUsername(
+        name: String,
+    ) {
+        viewModelScope.launch {
+            try {
+                repository.modifyUsernameData(name)
+            } catch (e: Exception) {
+                // 处理异常情况
+                Log.e(TAG, "modifyUsernameDataError: $e")
+            }
+        }
+
+    }
+
+    fun logout() {
+        viewModelScope.launch {
+            try {
+                repository.logout()
+            } catch (e: Exception) {
+                // 处理异常情况
+                Log.e(TAG, "logoutError: $e")
+            }
+        }
+
+    }
 }
 
 
@@ -93,4 +150,66 @@ class Repository {
         return Mylists
     }
 
+    suspend fun getcheckNicknameData(name: String): Boolean {
+        val result =
+            NetworkUtils.https(
+                "/nickname/check?nickname=$name",
+                "GET"
+            )
+        val response = gson.fromJson(result, JsonObject::class.java)
+
+
+        return response.get("duplicated").asBoolean
+    }
+
+    suspend fun modifyUserInfoData(
+        birthday: Long,
+        province: Long,
+        signature: String,
+        gender: Int
+    ): String {
+        val result =
+            NetworkUtils.https(
+                "/user/update?gender=$gender&signature=$signature&city=${
+                    if (province.toInt() == 110000 || province.toInt() == 120000 || province.toInt() == 310000 || province.toInt() == 500000)
+                        province + 101
+                    else
+                        province + 100
+                }&birthday=$birthday&province=$province",
+                "GET"
+            )
+
+        val response = gson.fromJson(result, JsonObject::class.java)
+
+
+        return response.get("code").asString
+    }
+
+    suspend fun modifyUsernameData(
+        name: String,
+    ): String {
+        val result =
+            NetworkUtils.https(
+                "/user/update?nickname=$name",
+                "GET"
+            )
+
+        val response = gson.fromJson(result, JsonObject::class.java)
+
+
+        return response.get("code").asString
+    }
+
+    suspend fun logout(): String {
+        val result =
+            NetworkUtils.https(
+                "/logout",
+                "GET"
+            )
+
+        val response = gson.fromJson(result, JsonObject::class.java)
+
+
+        return response.get("code").asString
+    }
 }
