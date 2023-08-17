@@ -103,16 +103,16 @@ fun Find(
     }
 
     LaunchedEffect(Unit) {
-//        findviewModel.fetchTopCardData()
-//        findviewModel.fetchBannerData()
-//        findviewModel.fetchRecommendSonglistData()
-        //findviewModel.fetchNewSongData()
+        findviewModel.fetchTopCardData()
+        findviewModel.fetchBannerData()
+        findviewModel.fetchRecommendSonglistData()
+        findviewModel.fetchNewSongData()
         loginviewModel.fetchUserInfo()
         searchviewModel.fetchSearchHotData()
         isFixed.value = true
     }
     LaunchedEffect(findviewModel.topcardData) {
-        // findviewModel.fetchTopSongData(findviewModel.topcardData)
+        findviewModel.fetchTopSongData(findviewModel.topcardData)
     }
 
 
@@ -293,7 +293,7 @@ fun Find(
 
             FindCard(
                 R.string.find_mysub, true, true, true,
-                //   modifier = Modifier.background(findcardGradient)
+                   modifier = Modifier.background(findcardGradient)
             ) {
                 LazyRow(
                     horizontalArrangement = Arrangement.spacedBy(10.dp),

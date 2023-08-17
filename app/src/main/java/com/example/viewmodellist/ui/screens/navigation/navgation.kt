@@ -1,4 +1,4 @@
-package com.example.viewmodellist.ui.navigation
+package com.example.viewmodellist.ui.screens.navigation
 
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable

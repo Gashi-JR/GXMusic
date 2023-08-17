@@ -18,7 +18,7 @@ class LoginviewModel(private val repository: Repository = Repository()) : ViewMo
 
     var qrimg: MutableState<String> = mutableStateOf("")
     var key: MutableState<String> = mutableStateOf("")
-    var result: MutableState<LoginChechResult> = mutableStateOf(LoginChechResult(0, "", ""))
+    var result: MutableState<LoginCheckResult> = mutableStateOf(LoginCheckResult(0, "", ""))
     var uid: MutableState<Long> = mutableStateOf(0)
     var User: MutableState<UserInfo> = mutableStateOf(UserInfo(0, "", 0, 0, 0, "", 0, 0, 0, "", 0))
 
@@ -99,7 +99,7 @@ class Repository {
 
     }
 
-    suspend fun getLoginQRStatus(key: String): LoginChechResult {
+    suspend fun getLoginQRStatus(key: String): LoginCheckResult {
 
         val results =
             NetworkUtils.https(
@@ -119,7 +119,7 @@ class Repository {
         val cookie = response.get("cookie").asString
 
 
-        return LoginChechResult(code, message, cookie)
+        return LoginCheckResult(code, message, cookie)
 
     }
 

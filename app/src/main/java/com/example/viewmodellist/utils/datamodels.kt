@@ -94,7 +94,7 @@ class Datamodels {
     )
 
     // TODO: 二维码登录状态检查结果对象
-    data class LoginChechResult(
+    data class LoginCheckResult(
         val code: Int,
         val message: String,
         val cookie: String,
