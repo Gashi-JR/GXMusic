@@ -22,6 +22,32 @@ class Datamodels {
         val picUrl: String,
     )
 
+    //TODO njl 的类
+
+    //TODO 用户歌单列表  传入用户id获取的歌单列表
+    data class Playlist(
+        val listID : Long  //歌单id
+    )
+    //TODO 歌单详情     传入歌单id获取的歌单详情，返回：歌单中音乐的id
+    data class Tracks(
+        val name : String,
+        val id : Long
+    )
+
+    //TODO 音乐详情     传入音乐id获取音乐URL
+    data class SongList(
+        val url : String,  // 歌曲URL
+    )
+
+    data class MySongList(
+        var url : String,
+        var name : String,
+        val Author : String
+    )
+
+    //TODO njl 的类
+
+
     // TODO: 新歌数据类
     data class NewSongItem(
         val id: Long,

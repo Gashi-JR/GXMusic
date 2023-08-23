@@ -233,7 +233,7 @@ fun Myapp(modifier: Modifier = Modifier) {
                 }
 
                 1 -> LyricPage(findviewModel, mediaPlayerViewModel, state)
-                2 -> SongList()
+                2 -> SongList(imageUrl = "http://p2.music.126.net/a9oLdcFPhqQyuouJzG2mAQ==/3273246124149810.jpg")
 
                 3 -> Top()
                 4 -> Mine(loginViewModel, mineviewModel)
