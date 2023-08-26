@@ -22,6 +22,10 @@ class Datamodels {
         val picUrl: String,
     )
 
+
+
+
+
     //TODO njl 的类
 
     //TODO 用户歌单列表  传入用户id获取的歌单列表
@@ -42,10 +46,13 @@ class Datamodels {
     data class MySongList(
         var url : String,
         var name : String,
-        val Author : String
+        var author : String
     )
 
     //TODO njl 的类
+
+
+
 
 
     // TODO: 新歌数据类

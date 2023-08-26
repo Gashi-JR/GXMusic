@@ -16,9 +16,13 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,14 +35,23 @@ import com.example.viewmodellist.ui.theme.ViewModelListTheme
 import com.example.viewmodellist.ui.theme.songListGradient
 import com.example.viewmodellist.utils.Datamodels
 import com.google.accompanist.pager.ExperimentalPagerApi
+import com.example.viewmodellist.ui.screens.login.LoginviewModel
 
 @OptIn(ExperimentalPagerApi::class, ExperimentalCoilApi::class)
 @Composable
 fun SongList(
     modifier : Modifier = Modifier,
     imageUrl : String,
-
+    loginviewModel : LoginviewModel = LoginviewModel(),
+    songListViewModel : SongListViewModel = SongListViewModel()
 ) {
+
+
+    LaunchedEffect(loginviewModel.result.value.cookie){
+        songListViewModel.fetchSongLists()
+    }
+
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -107,13 +120,54 @@ fun SongList(
             Text(text = "分享")
             Text(text = "评论")
             Text(text = "分享")
+
         }
 
+        //TODO : 歌单部分
+
+        val state = rememberLazyListState()
+
+        LazyColumn{
+            itemsIndexed(songListViewModel.songList){
+                index,songlist->
+                SongItem(index + 1,songlist.url,songlist.name,songlist.author)
+            }
+        }
     }
 
 }
 
+@Composable
+fun SongItem(
+    no : Int,
+    url:String,
+    name : String,
+    author : String,
+    Unit : () -> Unit = {}
+){
+    Row(modifier = Modifier
+        .fillMaxWidth()
+        .background(Color.White) ,
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Text(no.toString())
 
+        Column{
+            Text(text = name)
+            Text(text = author)
+        }
+
+        IconButton(onClick = { /*TODO*/ }) {
+            Icon(
+                painter = painterResource(id = R.drawable.baseline_more_vert_24),
+                contentDescription = "",
+                tint = Color.Black.copy(alpha = 0.5f)
+            )
+        }
+    }
+    
+    
+}
 
 @Preview
 @Composable
