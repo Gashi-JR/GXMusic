@@ -2,6 +2,7 @@ package com.example.viewmodellist.ui.screens.songlist
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,8 +24,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ElevatedButton
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.annotation.ExperimentalCoilApi
@@ -56,7 +62,8 @@ fun SongList(
         modifier = modifier
             .fillMaxWidth()
             .background(songListGradient)
-    ) {
+        ) {
+
         Row(
             modifier = modifier
                 .fillMaxWidth(),
@@ -64,27 +71,33 @@ fun SongList(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = modifier.padding(start = 15.dp)) {
-                Text("歌单")
+                verticalAlignment = Alignment.CenterVertically,) {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_keyboard_backspace_24),
+                    contentDescription = null)
+                Text(text = "歌单",
+                    color = Color.White,
+                    modifier = modifier.padding(start = 10.dp),
+                    fontWeight = FontWeight.Bold)
+
             }
             Row (verticalAlignment = Alignment.CenterVertically,){
-                androidx.compose.material.Icon(
+                Icon(
                     painter = painterResource(id = R.drawable.baseline_search_24),
                     contentDescription = "search",
-                    tint = Color.Black.copy(alpha = 0.5f)
+                    tint = Color.White
                 )
                 IconButton(onClick = { /*TODO*/ }) {
                     Icon(
                         painter = painterResource(id = R.drawable.baseline_more_vert_24),
                         contentDescription = "",
-                        tint = Color.Black.copy(alpha = 0.5f)
+                        tint = Color.White
                     )
                 }
             }
         }
 
-        Spacer(modifier = modifier.height(30.dp))
+        Spacer(modifier = modifier.height(25.dp))
 
         Row() {
             Image(
@@ -93,22 +106,30 @@ fun SongList(
                 modifier = modifier
                     .height(100.dp)
                     .width(100.dp)
-            )
-            Column() {
-                Text(text = "我喜欢的音乐")
-                Row {
+                    .padding(start = 8.dp),
 
-                    Text("gnon2002")
+            )
+            Column(modifier = Modifier.padding(start = 8.dp)) {
+                Text(text = "我喜欢的音乐",
+                    modifier = Modifier.padding(start = 8.dp),
+                    color = Color.White)
+                Row(modifier = Modifier.padding(start = 8.dp)) {
+
+                    Text("gnon2002",
+                        modifier = modifier.padding(top = 5.dp),
+                    color = Color.Gray,
+                    fontWeight = FontWeight.Light
+                    )
                     Icon(
                         painter = painterResource(id = R.drawable.baseline_chevron_right_24),
                         contentDescription = null,
-                        tint = Color.Black.copy(alpha = 0.5f)
+                        tint = Color.Gray.copy(alpha = 0.5f)
                     )
                 }
             }
         }
 
-        Spacer(modifier = modifier.height(30.dp))
+        Spacer(modifier = modifier.height(10.dp))
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -117,22 +138,45 @@ fun SongList(
                 .fillMaxWidth()
                 .padding(start = 20.dp, end = 20.dp)
         ){
-            Text(text = "分享")
-            Text(text = "评论")
-            Text(text = "分享")
+            ElevatedButton(onClick = { /*TODO*/ }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_screen_share_24),
+                    contentDescription = null)
+                Text(text = "分享")
+            }
+            ElevatedButton(onClick = { /*TODO*/ }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_comment_24),
+                    contentDescription = null)
+                Text(text = "评论")
+            }
+            ElevatedButton(onClick = { /*TODO*/ }) {
+                Icon(painter = painterResource(id = R.drawable.baseline_create_new_folder_24), contentDescription = null)
+                Text(text = "收藏")
+            }
 
         }
+
+
+        //.border(20.dp,Color.Black, RoundedCornerShape(20.dp,20.dp,0.dp,0.dp)
+        Spacer(modifier = Modifier.height(50.dp))
+
+        Text(text = "  含126首VIP专享歌曲",
+            modifier.fillMaxWidth()
+            .clip(RoundedCornerShape(20.dp,20.dp))
+            .background(Color.White))
 
         //TODO : 歌单部分
 
-        val state = rememberLazyListState()
-
-        LazyColumn{
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.background(Color.White)){
             itemsIndexed(songListViewModel.songList){
-                index,songlist->
+                    index,songlist->
                 SongItem(index + 1,songlist.url,songlist.name,songlist.author)
             }
         }
+
     }
 
 }
@@ -147,15 +191,25 @@ fun SongItem(
 ){
     Row(modifier = Modifier
         .fillMaxWidth()
-        .background(Color.White) ,
-        horizontalArrangement = Arrangement.SpaceBetween,
-    ) {
-        Text(no.toString())
+        .background(Color.White),
 
-        Column{
-            Text(text = name)
-            Text(text = author)
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        Row {
+            Text(
+                no.toString(),
+                modifier = Modifier.padding(start = 12.dp)
+                    .align(Alignment.CenterVertically),
+            )
+
+            Column(modifier = Modifier.padding(start = 12.dp)) {
+                Text(text = name)
+                Text(text = author,fontWeight = FontWeight.Light)
+            }
         }
+
 
         IconButton(onClick = { /*TODO*/ }) {
             Icon(
@@ -173,6 +227,7 @@ fun SongItem(
 @Composable
 fun SonglistPreview() {
     ViewModelListTheme {
-        SongList(imageUrl = "http://p2.music.126.net/a9oLdcFPhqQyuouJzG2mAQ==/3273246124149810.jpg")
+        SongList(
+            imageUrl = "http://p2.music.126.net/a9oLdcFPhqQyuouJzG2mAQ==/3273246124149810.jpg")
     }
 }
