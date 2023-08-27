@@ -53,6 +53,7 @@ import com.example.viewmodellist.ui.screens.mine.MineviewModel
 import com.example.viewmodellist.ui.screens.search.Search
 import com.example.viewmodellist.ui.screens.search.SearchviewModel
 import com.example.viewmodellist.ui.screens.songlist.SongList
+import com.example.viewmodellist.ui.screens.songlist.SongListViewModel
 import com.example.viewmodellist.ui.screens.top.Top
 import com.example.viewmodellist.ui.theme.ViewModelListTheme
 
@@ -147,6 +148,8 @@ fun Myapp(modifier: Modifier = Modifier) {
         var extended by rememberSaveable {
             mutableStateOf(false)
         }
+
+
         val findviewModel by remember {
             mutableStateOf(FindviewModel())
         }
@@ -164,6 +167,9 @@ fun Myapp(modifier: Modifier = Modifier) {
         }
         val pagerState = rememberPagerState(initialPage = selectedTabIndex)
 
+
+        //TODO njl
+        val songListViewModel by remember{ mutableStateOf(SongListViewModel()) }
 
         val name = findviewModel.currentMusic.value.name
         val artist = findviewModel.currentMusic.value.artist
@@ -233,7 +239,9 @@ fun Myapp(modifier: Modifier = Modifier) {
                 }
 
                 1 -> LyricPage(findviewModel, mediaPlayerViewModel, state)
-                2 -> SongList(imageUrl = "http://p2.music.126.net/a9oLdcFPhqQyuouJzG2mAQ==/3273246124149810.jpg")
+                2 -> SongList(findviewModel = findviewModel,
+                    mediaPlayerViewModel = mediaPlayerViewModel,
+                songListViewModel = songListViewModel)
 
                 3 -> Top()
                 4 -> Mine(loginViewModel, mineviewModel)

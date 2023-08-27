@@ -5,8 +5,10 @@ import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -23,21 +25,25 @@ class SongListViewModel(private val repository: Repository = Repository()) : Vie
     private val _songList =
         mutableStateOf<MutableList<MySongList>>(mutableStateListOf())
     val songList: List<MySongList> get() = _songList.value //歌单对外的接口
-    var index = 1;
+    var coverImgUrl = mutableStateOf("")
     fun fetchSongLists() {
         viewModelScope.launch {
             try {
                 val list = repository.getSongList()
                 val Mylist = list.map { item ->
                     MySongList(
+                        id = item.id,
                         url = item.url,
                         name = item.name,
-                        author = item.author
+                        artist = item.artist
                     )
                 }
 
                 _songList.value = Mylist.toMutableList()
+                coverImgUrl.value = repository.coverImgUrl
+
                 Log.d(TAG, "SongList: $songList")
+                Log.d(TAG, "coverImgUrl.value:"+ coverImgUrl.value)
             } catch (e: Exception) {
                 // 处理异常情况
                 Log.e(TAG, "fetchSongListsError: $e")
@@ -50,17 +56,25 @@ class SongListViewModel(private val repository: Repository = Repository()) : Vie
 
 class Repository() {
     val gson = Gson()
-
+    var coverImgUrl : String = ""
     suspend fun getSongList(): List<MySongList> {
-
-
+        // TODO 传入歌单ID获取歌单详情
         var result = NetworkUtils.https(url = "/playlist/detail?id=2195384925", method = "GET")
-        var response = gson.fromJson(result, JsonObject::class.java)
-        val playlistJsonObject = response.getAsJsonObject("playlist")
-        val tracksJsonArray = playlistJsonObject.getAsJsonArray("tracks")
-        val tracks : List<Tracks> =
-            gson.fromJson(tracksJsonArray, object : TypeToken<List<Tracks>>() {}.type)
 
+        var response = gson.fromJson(result, JsonObject::class.java)  // 转为Json对象
+        val playlistJsonObject = response.getAsJsonObject("playlist")  // 将playList转化为Json对象
+        coverImgUrl = playlistJsonObject.get("coverImgUrl").asString
+
+/*        try {
+            Log.d(TAG, "coverImageURL:$coverImgUrl" )
+        }catch (e : Exception){
+            Log.e(TAG, "专辑封面获取失败:$e")
+        }*/
+
+        val tracksJsonArray = playlistJsonObject.getAsJsonArray("tracks") // playList中的tracks转为Json数组
+
+        val tracks : List<Tracks> =
+            gson.fromJson(tracksJsonArray, object : TypeToken<List<Tracks>>() {}.type)  // Json数组转为自定义列表
         println("tracks:$tracks")
         var songIdList : String = ""
         for(i in 0 until tracksJsonArray.size()){
@@ -78,17 +92,32 @@ class Repository() {
 
         for(i in 0 until songListJsonArray.size()){
 
+            var _author : String = "";
+
+            val artistsJsonArray =  tracksJsonArray[i].asJsonObject.getAsJsonArray("ar")
+            val artists : List<Artists> = gson.fromJson(artistsJsonArray, object : TypeToken<List<Artists>>() {}.type)
+            for(j in 0 until artistsJsonArray.size()){
+                if(j != artistsJsonArray.size() -1){
+                    _author += artists[j].name
+                    _author += " / "
+                }
+                else{
+                    _author += artists[j].name
+                }
+            }
+
             res.add(element = MySongList(
+                id = tracks[i].id,
                 url=data[i].url,
                 name=tracks[i].name,
-                author="123"), index = i)
+                artist=_author), index = i)
 
         }
-        try {
+/*        try {
             Log.d(TAG, "res:$res")
         }catch (e : Exception){
             Log.e(TAG, "getSongList() error: $e")
-        }
+        }*/
         return res
     }
 }

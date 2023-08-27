@@ -28,7 +28,7 @@ class Datamodels {
 
     //TODO njl 的类
 
-    //TODO 用户歌单列表  传入用户id获取的歌单列表
+    //TODO 用户歌单列表  传入用户id获取的歌单列表  user/playlist?uid
     data class Playlist(
         val listID : Long  //歌单id
     )
@@ -43,10 +43,15 @@ class Datamodels {
         val url : String,  // 歌曲URL
     )
 
+    data class Artists(
+        val name : String
+    )
+
     data class MySongList(
+        var id : Long,
         var url : String,
         var name : String,
-        var author : String
+        var artist : String,
     )
 
     //TODO njl 的类

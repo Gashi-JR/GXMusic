@@ -46,7 +46,7 @@ object NavGraph {
                     SearchviewModel()
                 )
             }
-            composable("songlist") { SongList(imageUrl = "http://p2.music.126.net/a9oLdcFPhqQyuouJzG2mAQ==/3273246124149810.jpg") }
+            composable("songlist") { SongList() }
             composable("top") { Top() }
             composable("mine") { Mine() }
 

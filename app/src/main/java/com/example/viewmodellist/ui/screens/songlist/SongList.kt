@@ -3,6 +3,7 @@ package com.example.viewmodellist.ui.screens.songlist
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,6 +27,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -34,22 +36,32 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.annotation.ExperimentalCoilApi
+import coil.compose.AsyncImage
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import coil.compose.rememberAsyncImagePainter
 import com.example.viewmodellist.R
 import com.example.viewmodellist.ui.components.LyricsViewPage
+import com.example.viewmodellist.ui.components.find.MediaPlayerViewModel
+import com.example.viewmodellist.ui.screens.find.FindviewModel
+import com.example.viewmodellist.ui.screens.find.Repository
 import com.example.viewmodellist.ui.theme.ViewModelListTheme
 import com.example.viewmodellist.ui.theme.songListGradient
 import com.example.viewmodellist.utils.Datamodels
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.example.viewmodellist.ui.screens.login.LoginviewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class, ExperimentalCoilApi::class)
 @Composable
 fun SongList(
     modifier : Modifier = Modifier,
-    imageUrl : String,
     loginviewModel : LoginviewModel = LoginviewModel(),
-    songListViewModel : SongListViewModel = SongListViewModel()
+    songListViewModel : SongListViewModel = SongListViewModel(),
+    mediaPlayerViewModel : MediaPlayerViewModel = MediaPlayerViewModel(),
+    findviewModel: FindviewModel = FindviewModel()
 ) {
 
 
@@ -100,20 +112,28 @@ fun SongList(
         Spacer(modifier = modifier.height(25.dp))
 
         Row() {
-            Image(
-                painter = rememberAsyncImagePainter(imageUrl),
-                contentDescription = null,
+            var coverImgUrl by remember { mutableStateOf(songListViewModel.coverImgUrl) }
+/*            try{
+                println("songlist中的专辑封面URL:" + coverImgUrl.value)
+            }catch (e : Exception){
+                println("song-list封面加载失败$e")
+            }*/
+            AsyncImage(
+                model = coverImgUrl.value,
+                contentDescription = "专辑封面",
                 modifier = modifier
                     .height(100.dp)
                     .width(100.dp)
-                    .padding(start = 8.dp),
-
+                    .padding(start = 8.dp)
             )
+
             Column(modifier = Modifier.padding(start = 8.dp)) {
                 Text(text = "我喜欢的音乐",
                     modifier = Modifier.padding(start = 8.dp),
                     color = Color.White)
                 Row(modifier = Modifier.padding(start = 8.dp)) {
+
+
 
                     Text("gnon2002",
                         modifier = modifier.padding(top = 5.dp),
@@ -141,17 +161,19 @@ fun SongList(
             ElevatedButton(onClick = { /*TODO*/ }) {
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_screen_share_24),
-                    contentDescription = null)
+                    contentDescription = "分享")
                 Text(text = "分享")
             }
             ElevatedButton(onClick = { /*TODO*/ }) {
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_comment_24),
-                    contentDescription = null)
+                    contentDescription = "评论")
                 Text(text = "评论")
             }
             ElevatedButton(onClick = { /*TODO*/ }) {
-                Icon(painter = painterResource(id = R.drawable.baseline_create_new_folder_24), contentDescription = null)
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_create_new_folder_24),
+                    contentDescription = "收藏")
                 Text(text = "收藏")
             }
 
@@ -173,7 +195,19 @@ fun SongList(
             modifier = Modifier.background(Color.White)){
             itemsIndexed(songListViewModel.songList){
                     index,songlist->
-                SongItem(index + 1,songlist.url,songlist.name,songlist.author)
+                SongItem(
+                    index,
+                    songlist.url,
+                    songlist.name,
+                    songlist.artist,
+                modifier = Modifier.clickable{
+                        findviewModel.currentMusic.value.id = songlist.id
+                        findviewModel.currentMusic.value.name = songlist.name
+                        findviewModel.currentMusic.value.picUrl = songListViewModel.coverImgUrl.value
+                        findviewModel.currentMusic.value.artist = songlist.artist
+                    mediaPlayerViewModel.play(songlist.url)
+
+                })
             }
         }
 
@@ -187,9 +221,10 @@ fun SongItem(
     url:String,
     name : String,
     author : String,
-    Unit : () -> Unit = {}
+    Unit : () -> Unit = {},
+    modifier: Modifier = Modifier
 ){
-    Row(modifier = Modifier
+    Row(modifier = modifier
         .fillMaxWidth()
         .background(Color.White),
 
@@ -199,7 +234,7 @@ fun SongItem(
 
         Row {
             Text(
-                no.toString(),
+                (no+1).toString(),
                 modifier = Modifier.padding(start = 12.dp)
                     .align(Alignment.CenterVertically),
             )
@@ -227,7 +262,6 @@ fun SongItem(
 @Composable
 fun SonglistPreview() {
     ViewModelListTheme {
-        SongList(
-            imageUrl = "http://p2.music.126.net/a9oLdcFPhqQyuouJzG2mAQ==/3273246124149810.jpg")
+        SongList()
     }
 }
