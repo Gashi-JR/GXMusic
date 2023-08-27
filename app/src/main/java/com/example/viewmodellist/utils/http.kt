@@ -50,7 +50,7 @@ object NetworkUtils {
         .build()
 
     private val retrofit = Retrofit.Builder()
-        .baseUrl("http://w3zj7y.natappfree.cc") // 设置基本 URL
+        .baseUrl(" http://eer84y.natappfree.cc") // 设置基本 URL
         .addConverterFactory(GsonConverterFactory.create()) // 设置 Gson 转换器
         .client(client)
         .build()

@@ -40,9 +40,12 @@ class Datamodels {
 
     //TODO 音乐详情     传入音乐id获取音乐URL
     data class SongList(
-        val url : String,  // 歌曲URL
+        val id : Long,
+        val url : String  // 歌曲URL
     )
-
+    data class Names(
+        val name: String  // 歌曲URL
+    )
     data class Artists(
         val name : String
     )

@@ -17,7 +17,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.launch
-
+// "/login/cellphone?phone=18178364626&password=shunjianbaozha1,"
 
 class SongListViewModel(private val repository: Repository = Repository()) : ViewModel() {
     //创建 MutableList 对象来存储列表数据。
@@ -65,11 +65,6 @@ class Repository() {
         val playlistJsonObject = response.getAsJsonObject("playlist")  // 将playList转化为Json对象
         coverImgUrl = playlistJsonObject.get("coverImgUrl").asString
 
-/*        try {
-            Log.d(TAG, "coverImageURL:$coverImgUrl" )
-        }catch (e : Exception){
-            Log.e(TAG, "专辑封面获取失败:$e")
-        }*/
 
         val tracksJsonArray = playlistJsonObject.getAsJsonArray("tracks") // playList中的tracks转为Json数组
 
@@ -89,6 +84,18 @@ class Repository() {
         val data : List<SongList> = gson.fromJson(songListJsonArray, object : TypeToken<List<SongList>>() {}.type)
 
         val res : MutableList<MySongList> = mutableListOf()
+        songIdList = ""
+        for(i in 0 until songListJsonArray.size()){
+            songIdList += data[i].id
+            if(i != tracksJsonArray.size() -1){
+                songIdList += ","
+            }
+        }
+        result = NetworkUtils.https("/song/detail?ids=$songIdList", "GET")
+        response = gson.fromJson(result, JsonObject::class.java)
+        //val songsJsonArray = response.getAsJsonArray("songs")
+        val nameJsonArray = response.getAsJsonArray("songs")
+        val name : List<Names> = gson.fromJson(nameJsonArray, object : TypeToken<List<Names>>() {}.type)
 
         for(i in 0 until songListJsonArray.size()){
 
@@ -107,9 +114,9 @@ class Repository() {
             }
 
             res.add(element = MySongList(
-                id = tracks[i].id,
+                id = data[i].id,
                 url=data[i].url,
-                name=tracks[i].name,
+                name=name[i].name,
                 artist=_author), index = i)
 
         }
@@ -119,5 +126,17 @@ class Repository() {
             Log.e(TAG, "getSongList() error: $e")
         }*/
         return res
+    }
+    suspend fun getRecommendSonglistData(): List<SongListItem> {
+
+        val result = NetworkUtils.https("/personalized?limit=6", "GET")
+        Log.d(TAG, "getRecommendSonglistData: $result")
+        val response = gson.fromJson(result, JsonObject::class.java)
+        val songlistJsonArray = response.getAsJsonArray("result")
+        val songlist: List<SongListItem> =
+            gson.fromJson(songlistJsonArray, object : TypeToken<List<SongListItem>>() {}.type)
+
+
+        return songlist
     }
 }

@@ -53,6 +53,7 @@ import com.example.viewmodellist.ui.screens.mine.MineviewModel
 import com.example.viewmodellist.ui.screens.search.Search
 import com.example.viewmodellist.ui.screens.search.SearchviewModel
 import com.example.viewmodellist.ui.screens.songlist.SongList
+import com.example.viewmodellist.ui.screens.songlist.SongListDetail
 import com.example.viewmodellist.ui.screens.songlist.SongListViewModel
 import com.example.viewmodellist.ui.screens.top.Top
 import com.example.viewmodellist.ui.theme.ViewModelListTheme
@@ -239,7 +240,7 @@ fun Myapp(modifier: Modifier = Modifier) {
                 }
 
                 1 -> LyricPage(findviewModel, mediaPlayerViewModel, state)
-                2 -> SongList(findviewModel = findviewModel,
+                2 -> SongListDetail(findviewModel = findviewModel,
                     mediaPlayerViewModel = mediaPlayerViewModel,
                 songListViewModel = songListViewModel)
 
