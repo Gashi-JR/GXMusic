@@ -39,7 +39,6 @@ fun AlbumArt(
     imageUrl: String,
     title: String,
     playCounts: Long,
-    copywriter: String,
     modifier: Modifier = Modifier,
 ) {
     Column(//Column用于专辑封面和Title的上下布局
@@ -53,21 +52,7 @@ fun AlbumArt(
                     contentScale = ContentScale.Crop,
                     contentDescription = null
                 )
-                if (copywriter != "") {
-                    Tag(
-                        onClick = {},
-                        modifier = Modifier
-                            .height(14.dp)
-                            .align(Alignment.BottomStart)
-                    ) {
-                        Text(
-                            text = copywriter,
-                            color = Color(250, 65, 64),
-                            fontSize = 8.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
+
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_play_arrow_40),
                     contentDescription = null,
@@ -115,6 +100,5 @@ fun AlbumArtPreview() {
         imageUrl = "https://p2.music.126.net/R2zySKjiX_hG8uFn1aCRcw==/109951165187830237.jpg",
         title = "This is a title",
         playCounts = 6346363636,
-        copywriter = "播放过万"
     )
 }

@@ -31,6 +31,10 @@ class SongListViewModel(private val repository: Repository = Repository()) : Vie
         mutableStateOf<MutableList<SongListItem>>(mutableStateListOf())
     val songlistData: List<SongListItem> get() = _songlistData.value
 
+    private val _hotPlayList =
+        mutableStateOf<MutableList<HotPlayListItem>>(mutableStateListOf())
+    val hotPlayList: List<HotPlayListItem> get() = _hotPlayList.value //歌单对外的接口
+    val tagList : List<String> = listOf("推荐","官方","精品","欧美","轻音乐","摇滚","电子","民谣")
     fun fetchSongLists() {
         viewModelScope.launch {
             try {
@@ -64,6 +68,18 @@ class SongListViewModel(private val repository: Repository = Repository()) : Vie
             } catch (e: Exception) {
                 // 处理异常情况
                 Log.e(TAG, "songListfetchRecommendSonglistDataError: $e")
+            }
+        }
+    }
+    fun fetchHotPlaylist() {
+        viewModelScope.launch {
+            try {
+                val songlist = repository.getHotPlaylist()
+                _hotPlayList.value = songlist.toMutableList()
+                Log.d(TAG, "fetchHotPlaylist: $songlist")
+            } catch (e: Exception) {
+                // 处理异常情况
+                Log.e(TAG, "fetchHotPlaylistError: $e")
             }
         }
     }
@@ -151,7 +167,14 @@ class Repository() {
         val songlistJsonArray = response.getAsJsonArray("result")
         val songlist: List<SongListItem> =
             gson.fromJson(songlistJsonArray, object : TypeToken<List<SongListItem>>() {}.type)
-
+        return songlist
+    }
+    suspend fun getHotPlaylist() :  List<HotPlayListItem>{
+        val result = NetworkUtils.https("/top/playlist", "GET")
+        val response = gson.fromJson(result, JsonObject::class.java)
+        val songlistJsonArray = response.getAsJsonArray("playlists")
+        val songlist: List<HotPlayListItem> =
+            gson.fromJson(songlistJsonArray, object : TypeToken<List<HotPlayListItem>>() {}.type)
         return songlist
     }
 }

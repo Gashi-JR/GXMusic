@@ -4,20 +4,27 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,98 +47,77 @@ fun RecSongList(
     mediaPlayerViewModel : MediaPlayerViewModel = MediaPlayerViewModel(),
     songListViewModel: SongListViewModel = SongListViewModel(),
     modifier: Modifier = Modifier
-){
+) {
+
 
     //需要滚动
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(14.dp)
-    ){
+    ) {
+
         //专属的推荐歌单 一共六个推荐（3*2）
         item {
-            if (songListViewModel.songlistData.isNotEmpty()) {
-                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            Row {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_refresh_24),
+                    contentDescription = "刷新",
+                    modifier = modifier.padding(end = 2.dp)
+                )
+                if (songListViewModel.songlistData.isNotEmpty()) {
+                    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                        Text(
+                            text = "Hi gnon2002，快来听听",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = modifier.padding(bottom = 5.dp)
+                        )
 
-                    Text(
-                        text = "Hi gnon2002，快来听听",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-                        AlbumArt(
-                            imageUrl = songListViewModel.songlistData[0].picUrl,
-                            title = "This is a title",
-                            playCounts = 6346363636,
-                            copywriter = "播放过万"
-                        )
-                        AlbumArt(
-                            imageUrl = songListViewModel.songlistData[1].picUrl,
-                            title = "This is a title",
-                            playCounts = 6346363636,
-                            copywriter = "播放过万"
-                        )
-                        AlbumArt(
-                            imageUrl = songListViewModel.songlistData[2].picUrl,
-                            title = "This is a title",
-                            playCounts = 6346363636,
-                            copywriter = "播放过万"
-                        )
+                        Spacer(modifier = modifier.height(5.dp))
+                        
+                        RowThree1(albumArts = songListViewModel.songlistData.subList(0, 3))
+                        RowThree1(albumArts = songListViewModel.songlistData.subList(3, 6))
                     }
-                    Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-                        AlbumArt(
-                            imageUrl = songListViewModel.songlistData[3].picUrl,
-                            title = "This is a title",
-                            playCounts = 6346363636,
-                            copywriter = "播放过万"
-                        )
-                        AlbumArt(
-                            imageUrl = songListViewModel.songlistData[4].picUrl,
-                            title = "This is a title",
-                            playCounts = 6346363636,
-                            copywriter = "播放过万"
-                        )
-                        AlbumArt(
-                            imageUrl = songListViewModel.songlistData[5].picUrl,
-                            title = "This is a title",
-                            playCounts = 6346363636,
-                            copywriter = "播放过万"
-                        )
-
-                    }
-                }
+                } else
+                    println("失败捏")
             }
-            else
-                println("失败捏")
         }
         item {
 
-            Text(text = "今日达人推荐",
+            Text(
+                text = "今日达人推荐",
                 fontSize = 18.sp,
-                fontWeight = FontWeight.Bold)
-
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)){
-                items(6){
-                    item->
-                        AlbumArt("https://p2.music.126.net/R2zySKjiX_hG8uFn1aCRcw==/109951165187830237.jpg",
-                            title = "This is a title",
-                            playCounts = 6346363636,
-                            copywriter = "播放过万")
+                fontWeight = FontWeight.Bold,
+                modifier = modifier.padding(bottom = 5.dp)
+            )
+            if (songListViewModel.hotPlayList.isNotEmpty()) {
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    items(songListViewModel.hotPlayList.take(6)) { item ->
+                        AlbumArt(
+                            imageUrl = item.coverImgUrl,
+                            title = item.name,
+                            playCounts = item.playCount
+                        )
+                    }
                 }
-            }
+            } else
+                println("等待")
         }
-        
-        
-        item { 
-            Text(text = "日落与音乐相伴 睡个好觉 清晨和旋律相遇 午间律动",
+        item {
+            Text(
+                text = "日落与音乐相伴 睡个好觉 清晨和旋律相遇 午间律动",
                 fontSize = 18.sp,
-                fontWeight = FontWeight.Bold)
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)){
-                items(6){
-                        item->
-                    AlbumArt("https://p2.music.126.net/R2zySKjiX_hG8uFn1aCRcw==/109951165187830237.jpg",
-                        title = "This is a title",
-                        playCounts = 6346363636,
-                        copywriter = "播放过万")
+                fontWeight = FontWeight.Bold,
+                modifier = modifier.padding(bottom = 5.dp)
+            )
+            if (songListViewModel.hotPlayList.isNotEmpty()) {
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    items(songListViewModel.hotPlayList.subList(6, 12)) { item ->
+                        AlbumArt(
+                            imageUrl = item.coverImgUrl,
+                            title = item.name,
+                            playCounts = item.playCount
+                        )
+                    }
                 }
             }
         }
@@ -174,12 +160,25 @@ fun RecSongList(
 
             }
         }
-
-/*        item{
-            Text(text = "这些歌单，你一定在找",
+        item{
+            Text(
+                text = "这些歌单，你一定在找",
                 fontSize = 18.sp,
-                fontWeight = FontWeight.Bold)
-            LazyVerticalGrid(columns = , content = )
-        }*/
+                fontWeight = FontWeight.Bold,
+                modifier = modifier.padding(bottom = 5.dp)
+            )
+            if (songListViewModel.hotPlayList.isNotEmpty()) {
+                Column{
+                    RowThree2(albumArts = songListViewModel.hotPlayList.subList(13, 16))
+                    RowThree2(albumArts = songListViewModel.hotPlayList.subList(16, 19))
+                    RowThree2(albumArts = songListViewModel.hotPlayList.subList(7, 10))
+                    RowThree2(albumArts = songListViewModel.hotPlayList.subList(10, 13))
+                }
+            }
+        }
+        item{
+            Text(text = "暂无更多歌单")
+        }
     }
+
 }

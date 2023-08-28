@@ -17,7 +17,6 @@ class Datamodels {
         val id: Long,
         val name: String,
         val copywriter: String,
-        val playcount: Long,
         val playCount: Long,
         val picUrl: String,
     )
@@ -55,6 +54,17 @@ class Datamodels {
         var url : String,
         var name : String,
         var artist : String,
+    )
+
+    data class HotPlayListItem(
+        val id: Long,
+        val name: String,
+        val playCount: Long,
+        val coverImgUrl: String,
+    )
+
+    data class Tag(
+        val tag : String
     )
 
     //TODO njl 的类

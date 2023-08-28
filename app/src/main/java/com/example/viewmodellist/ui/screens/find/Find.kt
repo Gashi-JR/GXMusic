@@ -174,7 +174,7 @@ fun Find(
                             SonglistCover(
                                 imageUrl = item.picUrl,
                                 title = item.name,
-                                playCount = if (item.playcount > 0) item.playcount else item.playCount,
+                                playCount = if (item.playCount > 0) item.playCount else item.playCount,
                                 id = item.id,
                                 copywriter = item.copywriter,
                                 modifier = Modifier

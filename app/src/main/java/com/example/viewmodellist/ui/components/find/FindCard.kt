@@ -103,7 +103,7 @@ fun FindCardPreview() {
                 SonglistCover(
                     imageUrl = item.picUrl,
                     title = item.name,
-                    playCount = item.playcount,
+                    playCount = item.playCount,
                     id = item.id,
                     copywriter = item.copywriter,
                     modifier = Modifier

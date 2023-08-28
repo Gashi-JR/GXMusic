@@ -32,11 +32,12 @@ fun SongList(
     ) {
     LaunchedEffect(Unit) {
         songListViewModel.fetchRecommendSonglistData()
+        songListViewModel.fetchHotPlaylist()
     }
     Column(
         verticalArrangement = Arrangement.spacedBy(10.dp),
         modifier = modifier.background(Color.White)
-            .padding(start = 6.dp)
+            .padding(start = 7.dp,end = 7.dp)
     ) {
         TopBar()
         RecSongList(findviewModel,mediaPlayerViewModel,songListViewModel)
