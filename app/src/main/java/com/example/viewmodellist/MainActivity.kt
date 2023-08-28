@@ -198,7 +198,11 @@ fun Myapp(modifier: Modifier = Modifier) {
         LaunchedEffect(selectedTabIndex) {
             pagerState.animateScrollToPage(selectedTabIndex)
         }
-
+        AnimatedVisibility(visible = isLogin) {
+            Login(loginviewModel = loginViewModel, onLogin = {
+                isLogin = false
+            })
+        }
         HorizontalPager(state = pagerState, pageCount = 5) { page ->
 
             AnimatedVisibility(visible = showSearch.value) {
@@ -209,43 +213,36 @@ fun Myapp(modifier: Modifier = Modifier) {
                     onBack = { showSearch.value = false })
             }
 
-            AnimatedVisibility(visible = isLogin) {
-                Login(loginviewModel = loginViewModel, onLogin = {
-                    isLogin = false
-                })
-            }
 
 
+                when (page) {
+                    0 -> {
+                        AnimatedVisibility(visible = !showSearch.value && !isLogin) {
+                            Find(
+                                findviewModel,
+                                mediaPlayerViewModel,
+                                state = state,
+                                searchviewModel = searchViewModel,
+                                loginviewModel = loginViewModel,
+                                { showSearch.value = true },
+                            )
+                        }
+                    }
 
+                    1 -> LyricPage(findviewModel, mediaPlayerViewModel, state)
+                    2 -> SongList()
 
-            when (page) {
-                0 -> {
-                    AnimatedVisibility(visible = !showSearch.value && !isLogin) {
-                        Find(
-                            findviewModel,
-                            mediaPlayerViewModel,
-                            state = state,
-                            searchviewModel = searchViewModel,
-                            loginviewModel = loginViewModel,
-                            { showSearch.value = true },
-                        )
+                    3 -> Top()
+                    4 -> AnimatedVisibility(visible = !showSearch.value && !isLogin) {
+                        Mine(
+                            loginViewModel,
+                            mineviewModel,
+                            onLogin = {
+                                isLogin = true
+                                loginViewModel.qrimg.value = ""
+                            })
                     }
                 }
-
-                1 -> LyricPage(findviewModel, mediaPlayerViewModel, state)
-                2 -> SongList()
-
-                3 -> Top()
-                4 -> AnimatedVisibility(visible = !showSearch.value && !isLogin) {
-                    Mine(
-                        loginViewModel,
-                        mineviewModel,
-                        onLogin = {
-                            isLogin = true
-                            loginViewModel.qrimg.value = ""
-                        })
-                }
-            }
         }
         AnimatedVisibility(!isLogin) {
             PlayButton(

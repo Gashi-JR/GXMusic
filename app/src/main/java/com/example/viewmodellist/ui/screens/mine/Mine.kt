@@ -216,7 +216,7 @@ fun Mine(
                                     Text(
                                         text = "IP:未知",
                                         textAlign = TextAlign.Center,
-                                        fontSize = 13.sp
+                                        fontSize = 11.sp
                                     )
                                 }
                                 Card(
@@ -226,11 +226,12 @@ fun Mine(
                                     elevation = 0.dp
                                 ) {
                                     Text(
-                                        text = formatter.convertTimestampToDateString(
+                                        text =
+                                        formatter.convertTimestampToDateString(
                                             datePickerState.selectedDateMillis!!
                                         ),
                                         textAlign = TextAlign.Center,
-                                        fontSize = 13.sp
+                                        fontSize = 11.sp
                                     )
                                 }
                                 Card(
@@ -242,7 +243,7 @@ fun Mine(
                                     Text(
                                         text = formatter.getRegionName(areaIndex.toString()),
                                         textAlign = TextAlign.Center,
-                                        fontSize = 13.sp,
+                                        fontSize = 11.sp,
                                         overflow = TextOverflow.Ellipsis,
                                         maxLines = 1
                                     )
@@ -257,7 +258,7 @@ fun Mine(
                                     Text(
                                         text = "村龄${
                                             ((System.currentTimeMillis() - loginviewModel.User.value.createTime) / 86400000) + 1
-                                        }天", textAlign = TextAlign.Center, fontSize = 13.sp
+                                        }天", textAlign = TextAlign.Center, fontSize = 11.sp
                                     )
                                 }
                             }

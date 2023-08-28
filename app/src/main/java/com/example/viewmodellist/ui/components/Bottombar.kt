@@ -27,8 +27,6 @@ fun BottomBar(
     selectedTabIndex: Int,
     modifier: Modifier = Modifier
 ) {
-
-
     BottomNavigation(
         modifier = modifier,
         backgroundColor = Color.White

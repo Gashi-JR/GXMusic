@@ -55,10 +55,6 @@ fun Banner(
     @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
 ) {
 
-
-    if (list != null) {
-        Log.d(TAG, "list:${list.size} ")
-    }
     Box(
         modifier = modifier
             .background(MaterialTheme.colors.background)
@@ -73,7 +69,8 @@ fun Banner(
                     .fillMaxHeight()
                     .fillMaxWidth()
             )
-        } else {
+        } else
+        {
             val pagerState = rememberPagerState(
                 //总页数
                 pageCount = list.size,

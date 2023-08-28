@@ -117,7 +117,6 @@ fun Login(loginviewModel: LoginviewModel, onLogin: () -> Unit = {}, modifier: Mo
 
         AnimatedVisibility(visible = loginviewModel.qrimg.value != "") {
 
-            Log.d(TAG, "Login: ${loginviewModel.qrimg}")
             val decodedBytes = Base64.decode(
                 loginviewModel.qrimg.value.split(",")[1], Base64.DEFAULT
             )

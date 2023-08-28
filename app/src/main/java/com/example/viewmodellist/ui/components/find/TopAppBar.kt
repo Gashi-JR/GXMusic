@@ -1,9 +1,6 @@
 package com.example.viewmodellist.ui.components.find
 
 
-import android.app.Activity
-import android.os.CountDownTimer
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -22,7 +19,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -43,8 +39,6 @@ import com.example.viewmodellist.ui.components.OptionButton
 import com.example.viewmodellist.ui.screens.login.LoginviewModel
 import com.example.viewmodellist.ui.screens.search.SearchviewModel
 import com.example.viewmodellist.ui.theme.borderGradient
-import kotlinx.coroutines.Delay
-import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.delay
 
 
