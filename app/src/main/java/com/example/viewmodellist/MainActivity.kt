@@ -240,10 +240,7 @@ fun Myapp(modifier: Modifier = Modifier) {
                 }
 
                 1 -> LyricPage(findviewModel, mediaPlayerViewModel, state)
-                2 -> SongListDetail(findviewModel = findviewModel,
-                    mediaPlayerViewModel = mediaPlayerViewModel,
-                songListViewModel = songListViewModel)
-
+                2 -> SongList(findviewModel, mediaPlayerViewModel)
                 3 -> Top()
                 4 -> Mine(loginViewModel, mineviewModel)
             }

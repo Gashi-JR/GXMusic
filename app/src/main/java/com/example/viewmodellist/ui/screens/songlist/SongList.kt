@@ -10,6 +10,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,34 +18,27 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.viewmodellist.R
+import com.example.viewmodellist.ui.components.find.MediaPlayerViewModel
+import com.example.viewmodellist.ui.components.songlist.RecSongList
+import com.example.viewmodellist.ui.components.songlist.TopBar
+import com.example.viewmodellist.ui.screens.find.FindviewModel
 
 @Composable
 fun SongList(
-    modifier: Modifier = Modifier,
-    songListViewModel: SongListViewModel = SongListViewModel()
-) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(6.dp),
-        modifier = modifier.background(Color.White)
+    findviewModel : FindviewModel = FindviewModel(),
+    mediaPlayerViewModel : MediaPlayerViewModel = MediaPlayerViewModel(),
+    songListViewModel: SongListViewModel = SongListViewModel(),
+    modifier: Modifier = Modifier
     ) {
-        Row(
-            modifier = modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.baseline_keyboard_backspace_24),
-                contentDescription = null
-            )
-            Text(
-                text = "歌单广场",
-                modifier = modifier.padding(start = 10.dp),
-                fontWeight = FontWeight.Bold
-            )
-
-        }
-
-
+    LaunchedEffect(Unit) {
+        songListViewModel.fetchRecommendSonglistData()
+    }
+    Column(
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+        modifier = modifier.background(Color.White)
+            .padding(start = 6.dp)
+    ) {
+        TopBar()
+        RecSongList(findviewModel,mediaPlayerViewModel,songListViewModel)
     }
 }

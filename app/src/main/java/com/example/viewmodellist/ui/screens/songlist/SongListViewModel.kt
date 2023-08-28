@@ -26,6 +26,11 @@ class SongListViewModel(private val repository: Repository = Repository()) : Vie
         mutableStateOf<MutableList<MySongList>>(mutableStateListOf())
     val songList: List<MySongList> get() = _songList.value //歌单对外的接口
     var coverImgUrl = mutableStateOf("")
+
+    private val _songlistData =
+        mutableStateOf<MutableList<SongListItem>>(mutableStateListOf())
+    val songlistData: List<SongListItem> get() = _songlistData.value
+
     fun fetchSongLists() {
         viewModelScope.launch {
             try {
@@ -50,7 +55,18 @@ class SongListViewModel(private val repository: Repository = Repository()) : Vie
             }
         }
     }
-
+    fun fetchRecommendSonglistData() {
+        viewModelScope.launch {
+            try {
+                val songlist = repository.getRecommendSonglistData()
+                _songlistData.value = songlist.toMutableList()
+                Log.d(TAG, "songListRecommendSonglistData: $songlist")
+            } catch (e: Exception) {
+                // 处理异常情况
+                Log.e(TAG, "songListfetchRecommendSonglistDataError: $e")
+            }
+        }
+    }
 }
 
 
@@ -135,7 +151,6 @@ class Repository() {
         val songlistJsonArray = response.getAsJsonArray("result")
         val songlist: List<SongListItem> =
             gson.fromJson(songlistJsonArray, object : TypeToken<List<SongListItem>>() {}.type)
-
 
         return songlist
     }
