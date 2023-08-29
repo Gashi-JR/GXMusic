@@ -49,7 +49,7 @@ class Datamodels {
         val name : String
     )
 
-    data class MySongList(
+    data class gnonSongList(
         var id : Long,
         var url : String,
         var name : String,

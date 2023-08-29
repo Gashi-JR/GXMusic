@@ -24,8 +24,8 @@ class SongListViewModel(private val repository: Repository = Repository()) : Vie
     //创建 MutableList 对象来存储列表数据。
     @SuppressLint("MutableCollectionMutableState")
     private val _songList =
-        mutableStateOf<MutableList<MySongList>>(mutableStateListOf())
-    val songList: List<MySongList> get() = _songList.value //歌单对外的接口
+        mutableStateOf<MutableList<gnonSongList>>(mutableStateListOf())
+    val songList: List<gnonSongList> get() = _songList.value //歌单对外的接口
     var coverImgUrl = mutableStateOf("")
     var name = mutableStateOf("")
     private val _songlistData =
@@ -52,7 +52,7 @@ class SongListViewModel(private val repository: Repository = Repository()) : Vie
             try {
                 val list = repository.getSongList(detailId.value)
                 val Mylist = list.map { item ->
-                    MySongList(
+                    gnonSongList(
                         id = item.id,
                         url = item.url,
                         name = item.name,
@@ -119,7 +119,7 @@ class Repository() {
     val gson = Gson()
     var coverImgUrl : String = ""
     var name : String = ""
-    suspend fun getSongList(detailId:Long): List<MySongList> {
+    suspend fun getSongList(detailId:Long): List<gnonSongList> {
         // TODO 传入歌单ID获取歌单详情
         var result = NetworkUtils.https(url = "/playlist/detail?id=$detailId", method = "GET")
 
@@ -145,7 +145,7 @@ class Repository() {
         val songListJsonArray = response.getAsJsonArray("data")
         val data : List<SongList> = gson.fromJson(songListJsonArray, object : TypeToken<List<SongList>>() {}.type)
 
-        val res : MutableList<MySongList> = mutableListOf()
+        val res : MutableList<gnonSongList> = mutableListOf()
         songIdList = ""
         for(i in 0 until songListJsonArray.size()){
             songIdList += data[i].id
@@ -175,7 +175,7 @@ class Repository() {
                 }
             }
 
-            res.add(element = MySongList(
+            res.add(element = gnonSongList(
                 id = data[i].id,
                 url=data[i].url,
                 name=name[i].name,

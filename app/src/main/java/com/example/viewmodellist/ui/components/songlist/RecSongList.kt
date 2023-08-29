@@ -33,7 +33,6 @@ import com.example.viewmodellist.ui.components.LoadingAnimation
 import com.example.viewmodellist.ui.components.find.AlbumArt
 import com.example.viewmodellist.ui.components.find.FindCard
 import com.example.viewmodellist.ui.components.find.MediaPlayerViewModel
-import com.example.viewmodellist.ui.components.find.SonglistCover
 import com.example.viewmodellist.ui.components.find.TopCard
 import com.example.viewmodellist.ui.screens.find.FindviewModel
 import com.example.viewmodellist.ui.screens.songlist.SongListViewModel

@@ -125,7 +125,7 @@ fun SongListDetail(
                                 .height(100.dp)
                                 .width(100.dp)
                                 .padding(start = 8.dp)
-                                .clip(MaterialTheme.shapes.small)
+                                .clip(MaterialTheme.shapes.medium)
                         )
 
                         Column(modifier = Modifier.padding(start = 8.dp)) {
@@ -152,8 +152,8 @@ fun SongListDetail(
                         }
                     }
 
-                    Spacer(modifier = modifier.height(10.dp))
-
+                    //.border(20.dp,Color.Black, RoundedCornerShape(20.dp,20.dp,0.dp,0.dp)
+                    Spacer(modifier = Modifier.height(50.dp))
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -184,11 +184,6 @@ fun SongListDetail(
                         }
 
                     }
-
-
-                    //.border(20.dp,Color.Black, RoundedCornerShape(20.dp,20.dp,0.dp,0.dp)
-                    Spacer(modifier = Modifier.height(50.dp))
-
                     Text(
                         text = "  \n",
                         modifier
