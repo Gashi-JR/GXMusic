@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
@@ -44,25 +45,20 @@ import com.example.viewmodellist.ui.screens.login.LoginviewModel
 @OptIn(ExperimentalPagerApi::class, ExperimentalCoilApi::class)
 @Composable
 fun SongListDetail(
-    modifier : Modifier = Modifier,
     loginviewModel : LoginviewModel = LoginviewModel(),
     songListViewModel : SongListViewModel = SongListViewModel(),
     mediaPlayerViewModel : MediaPlayerViewModel = MediaPlayerViewModel(),
-    findviewModel: FindviewModel = FindviewModel()
-) {
+    findviewModel: FindviewModel = FindviewModel(),
+    modifier : Modifier = Modifier
+    ) {
 
     var coverImgUrl by remember { mutableStateOf(songListViewModel.coverImgUrl) }
-    LaunchedEffect(loginviewModel.result.value.cookie){
+    LaunchedEffect(loginviewModel.result.value.cookie) {
         songListViewModel.fetchSongLists()
     }
 
-
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(songListGradient)
-        ) {
-
+    //TODO : 歌单部分
+    Column() {
         Row(
             modifier = modifier
                 .fillMaxWidth(),
@@ -70,17 +66,25 @@ fun SongListDetail(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(
-                verticalAlignment = Alignment.CenterVertically,) {
-                Icon(
-                    painter = painterResource(id = R.drawable.baseline_keyboard_backspace_24),
-                    contentDescription = null)
-                Text(text = "歌单",
-                    color = Color.White,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                IconButton(onClick = {
+                    songListViewModel.isShowDetail.value =
+                        !songListViewModel.isShowDetail.value
+                }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_keyboard_backspace_24),
+                        contentDescription = null
+                    )
+                }
+                Text(
+                    text = "歌单",
                     modifier = modifier.padding(start = 10.dp),
-                    fontWeight = FontWeight.Bold)
+                    fontWeight = FontWeight.Bold
+                )
 
             }
-            Row (verticalAlignment = Alignment.CenterVertically,){
+            Row(verticalAlignment = Alignment.CenterVertically,) {
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_search_24),
                     contentDescription = "search",
@@ -95,111 +99,126 @@ fun SongListDetail(
                 }
             }
         }
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.background(Color.White)
+        ) {
+            item {
+                Column(
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .background(songListGradient)
+                ) {
 
-        Spacer(modifier = modifier.height(25.dp))
+                    Spacer(modifier = modifier.height(25.dp))
 
-        Row() {
+                    Row() {
 /*            try{
                 println("songlist中的专辑封面URL:" + coverImgUrl.value)
             }catch (e : Exception){
                 println("song-list封面加载失败$e")
             }*/
-            AsyncImage(
-                model = coverImgUrl.value,
-                contentDescription = "专辑封面",
-                modifier = modifier
-                    .height(100.dp)
-                    .width(100.dp)
-                    .padding(start = 8.dp)
-            )
+                        AsyncImage(
+                            model = coverImgUrl.value,
+                            contentDescription = "专辑封面",
+                            modifier = modifier
+                                .height(100.dp)
+                                .width(100.dp)
+                                .padding(start = 8.dp)
+                                .clip(MaterialTheme.shapes.small)
+                        )
 
-            Column(modifier = Modifier.padding(start = 8.dp)) {
-                Text(text = "我喜欢的音乐",
-                    modifier = Modifier.padding(start = 8.dp),
-                    color = Color.White)
-                Row(modifier = Modifier.padding(start = 8.dp)) {
+                        Column(modifier = Modifier.padding(start = 8.dp)) {
+                            Text(
+                                text = songListViewModel.name.value,
+                                modifier = Modifier.padding(start = 8.dp),
+                                color = Color.Black
+                            )
+                            Row(modifier = Modifier.padding(start = 8.dp)) {
 
 
+                                Text(
+                                    text = "gnon2002",
+                                    modifier = modifier.padding(top = 5.dp),
+                                    color = Color.Gray,
+                                    fontWeight = FontWeight.Light
+                                )
+                                Icon(
+                                    painter = painterResource(id = R.drawable.baseline_chevron_right_24),
+                                    contentDescription = null,
+                                    tint = Color.Gray.copy(alpha = 0.5f)
+                                )
+                            }
+                        }
+                    }
 
-                    Text("gnon2002",
-                        modifier = modifier.padding(top = 5.dp),
-                    color = Color.Gray,
-                    fontWeight = FontWeight.Light
+                    Spacer(modifier = modifier.height(10.dp))
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 20.dp, end = 20.dp)
+                    ) {
+                        ElevatedButton(onClick = { /*TODO*/ }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.baseline_screen_share_24),
+                                contentDescription = "分享"
+                            )
+                            Text(text = "分享")
+                        }
+                        ElevatedButton(onClick = { /*TODO*/ }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.baseline_comment_24),
+                                contentDescription = "评论"
+                            )
+                            Text(text = "评论")
+                        }
+                        ElevatedButton(onClick = { /*TODO*/ }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.baseline_create_new_folder_24),
+                                contentDescription = "收藏"
+                            )
+                            Text(text = "收藏")
+                        }
+
+                    }
+
+
+                    //.border(20.dp,Color.Black, RoundedCornerShape(20.dp,20.dp,0.dp,0.dp)
+                    Spacer(modifier = Modifier.height(50.dp))
+
+                    Text(
+                        text = "  \n",
+                        modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(20.dp, 20.dp))
+                            .background(Color.LightGray)
                     )
-                    Icon(
-                        painter = painterResource(id = R.drawable.baseline_chevron_right_24),
-                        contentDescription = null,
-                        tint = Color.Gray.copy(alpha = 0.5f)
-                    )
+
                 }
             }
-        }
-
-        Spacer(modifier = modifier.height(10.dp))
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 20.dp, end = 20.dp)
-        ){
-            ElevatedButton(onClick = { /*TODO*/ }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.baseline_screen_share_24),
-                    contentDescription = "分享")
-                Text(text = "分享")
-            }
-            ElevatedButton(onClick = { /*TODO*/ }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.baseline_comment_24),
-                    contentDescription = "评论")
-                Text(text = "评论")
-            }
-            ElevatedButton(onClick = { /*TODO*/ }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.baseline_create_new_folder_24),
-                    contentDescription = "收藏")
-                Text(text = "收藏")
-            }
-
-        }
-
-
-        //.border(20.dp,Color.Black, RoundedCornerShape(20.dp,20.dp,0.dp,0.dp)
-        Spacer(modifier = Modifier.height(50.dp))
-
-        Text(text = "  含126首VIP专享歌曲",
-            modifier.fillMaxWidth()
-            .clip(RoundedCornerShape(20.dp,20.dp))
-            .background(Color.White))
-
-        //TODO : 歌单部分
-
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.background(Color.White)){
-            itemsIndexed(songListViewModel.songList){
-                    index,songlist->
+            itemsIndexed(songListViewModel.songList) { index, songlist ->
                 SongItem(
                     index,
                     songlist.url,
                     songlist.name,
                     songlist.artist,
-                modifier = Modifier.clickable{
+                    modifier = Modifier.clickable {
                         findviewModel.currentMusic.value.id = songlist.id
                         findviewModel.currentMusic.value.name = songlist.name
-                        findviewModel.currentMusic.value.picUrl = songListViewModel.coverImgUrl.value
+                        findviewModel.currentMusic.value.picUrl =
+                            songListViewModel.coverImgUrl.value
                         findviewModel.currentMusic.value.artist = songlist.artist
-                    mediaPlayerViewModel.play(songlist.url)
+                        mediaPlayerViewModel.play(songlist.url)
                         println("当前选中音乐的URL:" + songlist.url)
-                })
+                    })
             }
         }
-
     }
-
 }
+
 
 @Composable
 fun SongItem(
@@ -221,7 +240,8 @@ fun SongItem(
         Row {
             Text(
                 (no+1).toString(),
-                modifier = Modifier.padding(start = 12.dp)
+                modifier = Modifier
+                    .padding(start = 12.dp)
                     .align(Alignment.CenterVertically),
             )
 

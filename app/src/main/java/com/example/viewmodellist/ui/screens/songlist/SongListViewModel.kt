@@ -4,6 +4,7 @@ import NetworkUtils
 import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
 import android.util.Log
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateListOf
@@ -26,7 +27,7 @@ class SongListViewModel(private val repository: Repository = Repository()) : Vie
         mutableStateOf<MutableList<MySongList>>(mutableStateListOf())
     val songList: List<MySongList> get() = _songList.value //歌单对外的接口
     var coverImgUrl = mutableStateOf("")
-
+    var name = mutableStateOf("")
     private val _songlistData =
         mutableStateOf<MutableList<SongListItem>>(mutableStateListOf())
     val songlistData: List<SongListItem> get() = _songlistData.value
@@ -34,11 +35,22 @@ class SongListViewModel(private val repository: Repository = Repository()) : Vie
     private val _hotPlayList =
         mutableStateOf<MutableList<HotPlayListItem>>(mutableStateListOf())
     val hotPlayList: List<HotPlayListItem> get() = _hotPlayList.value //歌单对外的接口
-    val tagList : List<String> = listOf("推荐","官方","精品","欧美","轻音乐","摇滚","电子","民谣")
+
+    private val _tagsPlayList = mutableStateOf<MutableList<HotPlayListItem>>(mutableListOf())
+    val tagPlayList get() = _tagsPlayList.value
+    val selectedTagIndex = mutableStateOf<Int>(0)
+
+    val tagList : List<String> = listOf("推荐","古风","蓝调","欧美","轻音乐","摇滚","民谣","电子")
+    val isRec = mutableStateOf(true)
+    //TODO 歌单广场和歌单详情之间的切换状态
+    var isShowDetail = mutableStateOf(false)
+    var nowTag : MutableState<String> = mutableStateOf("推荐")
+    var detailId : MutableState<Long> = mutableStateOf(0)
+
     fun fetchSongLists() {
         viewModelScope.launch {
             try {
-                val list = repository.getSongList()
+                val list = repository.getSongList(detailId.value)
                 val Mylist = list.map { item ->
                     MySongList(
                         id = item.id,
@@ -50,7 +62,7 @@ class SongListViewModel(private val repository: Repository = Repository()) : Vie
 
                 _songList.value = Mylist.toMutableList()
                 coverImgUrl.value = repository.coverImgUrl
-
+                name.value = repository.name
                 Log.d(TAG, "SongList: $songList")
                 Log.d(TAG, "coverImgUrl.value:"+ coverImgUrl.value)
             } catch (e: Exception) {
@@ -83,20 +95,38 @@ class SongListViewModel(private val repository: Repository = Repository()) : Vie
             }
         }
     }
+
+    fun fetchTagPlayList(){
+        viewModelScope.launch {
+            if(nowTag.value != "推荐") {
+                try {
+                    val tagList = repository.getTagsPlayList(nowTag.value)
+                    _tagsPlayList.value = tagList.toMutableList()
+                    Log.d(TAG, "tagList:$tagList")
+                } catch (e: Exception) {
+                    Log.e(TAG, "fetchTagError:$e")
+                }
+            }
+            else
+                println("推荐内容")
+        }
+    }
+
 }
 
 
 class Repository() {
     val gson = Gson()
     var coverImgUrl : String = ""
-    suspend fun getSongList(): List<MySongList> {
+    var name : String = ""
+    suspend fun getSongList(detailId:Long): List<MySongList> {
         // TODO 传入歌单ID获取歌单详情
-        var result = NetworkUtils.https(url = "/playlist/detail?id=2195384925", method = "GET")
+        var result = NetworkUtils.https(url = "/playlist/detail?id=$detailId", method = "GET")
 
         var response = gson.fromJson(result, JsonObject::class.java)  // 转为Json对象
         val playlistJsonObject = response.getAsJsonObject("playlist")  // 将playList转化为Json对象
         coverImgUrl = playlistJsonObject.get("coverImgUrl").asString
-
+        name = playlistJsonObject.get("name").asString
 
         val tracksJsonArray = playlistJsonObject.getAsJsonArray("tracks") // playList中的tracks转为Json数组
 
@@ -176,5 +206,14 @@ class Repository() {
         val songlist: List<HotPlayListItem> =
             gson.fromJson(songlistJsonArray, object : TypeToken<List<HotPlayListItem>>() {}.type)
         return songlist
+    }
+
+    suspend fun getTagsPlayList(tag : String) : List<HotPlayListItem>{
+        val result = NetworkUtils.https("/top/playlist/highquality?cat=$tag","GET")
+        val response = gson.fromJson(result, JsonObject::class.java)
+        val tagListJsonArray = response.getAsJsonArray("playlists")
+        val tagList : List<HotPlayListItem> =
+            gson.fromJson(tagListJsonArray, object : TypeToken<List<HotPlayListItem>>() {}.type)
+        return tagList
     }
 }

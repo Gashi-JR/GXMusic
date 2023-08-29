@@ -58,11 +58,6 @@ fun RecSongList(
         //专属的推荐歌单 一共六个推荐（3*2）
         item {
             Row {
-                Icon(
-                    painter = painterResource(id = R.drawable.baseline_refresh_24),
-                    contentDescription = "刷新",
-                    modifier = modifier.padding(end = 2.dp)
-                )
                 if (songListViewModel.songlistData.isNotEmpty()) {
                     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                         Text(
@@ -74,8 +69,8 @@ fun RecSongList(
 
                         Spacer(modifier = modifier.height(5.dp))
                         
-                        RowThree1(albumArts = songListViewModel.songlistData.subList(0, 3))
-                        RowThree1(albumArts = songListViewModel.songlistData.subList(3, 6))
+                        RowThree1(albumArts = songListViewModel.songlistData.subList(0, 3), songListViewModel = songListViewModel)
+                        RowThree1(albumArts = songListViewModel.songlistData.subList(3, 6), songListViewModel = songListViewModel)
                     }
                 } else
                     println("失败捏")
@@ -93,9 +88,11 @@ fun RecSongList(
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     items(songListViewModel.hotPlayList.take(6)) { item ->
                         AlbumArt(
+                            id = item.id,
                             imageUrl = item.coverImgUrl,
                             title = item.name,
-                            playCounts = item.playCount
+                            playCounts = item.playCount,
+                            songListViewModel = songListViewModel
                         )
                     }
                 }
@@ -113,9 +110,11 @@ fun RecSongList(
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     items(songListViewModel.hotPlayList.subList(6, 12)) { item ->
                         AlbumArt(
+                            id = item.id,
                             imageUrl = item.coverImgUrl,
                             title = item.name,
-                            playCounts = item.playCount
+                            playCounts = item.playCount,
+                            songListViewModel = songListViewModel
                         )
                     }
                 }
@@ -169,10 +168,10 @@ fun RecSongList(
             )
             if (songListViewModel.hotPlayList.isNotEmpty()) {
                 Column{
-                    RowThree2(albumArts = songListViewModel.hotPlayList.subList(13, 16))
-                    RowThree2(albumArts = songListViewModel.hotPlayList.subList(16, 19))
-                    RowThree2(albumArts = songListViewModel.hotPlayList.subList(7, 10))
-                    RowThree2(albumArts = songListViewModel.hotPlayList.subList(10, 13))
+                    RowThree2(albumArts = songListViewModel.hotPlayList.subList(13, 16),songListViewModel)
+                    RowThree2(albumArts = songListViewModel.hotPlayList.subList(16, 19),songListViewModel)
+                    RowThree2(albumArts = songListViewModel.hotPlayList.subList(7, 10),songListViewModel)
+                    RowThree2(albumArts = songListViewModel.hotPlayList.subList(10, 13),songListViewModel)
                 }
             }
         }

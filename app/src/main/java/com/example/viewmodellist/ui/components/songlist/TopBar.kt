@@ -7,9 +7,11 @@ import android.os.CountDownTimer
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,6 +23,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material3.Card
@@ -39,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -60,7 +64,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun TopBar(
-    songListViewModel: SongListViewModel = SongListViewModel(),
+    songListViewModel: SongListViewModel,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.padding(top = 8.dp)) {
@@ -85,10 +89,16 @@ fun TopBar(
 
         // TODO 歌单标签选择
         LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(24.dp)
+            horizontalArrangement = Arrangement.spacedBy(24.dp),
         ) {
-            items(songListViewModel.tagList) { item ->
-                TagItem(txt = item)
+            itemsIndexed(songListViewModel.tagList) { index,item ->
+                TagItem(txt = item,isSelected = index == songListViewModel.selectedTagIndex.value){
+                    songListViewModel.nowTag.value = item
+                    songListViewModel.selectedTagIndex.value = index
+                    songListViewModel.fetchTagPlayList()
+                    songListViewModel.isRec.value = !songListViewModel.isRec.value
+                    println("Click on $item\n"+songListViewModel.isRec.value)
+                }
             }
         }
     }
@@ -96,29 +106,42 @@ fun TopBar(
 
 @Composable
 fun TagItem(
-    txt : String
+    txt : String,
+    isSelected : Boolean,
+    onItemClick: () -> Unit
 ){
-    if(txt.equals("推荐")){
-        Column {
-            Text(text = txt,
+
+    Column(modifier = Modifier.clickable{
+        onItemClick()
+    }) {
+        val tagTextStyle = if (isSelected) {
+            TextStyle(
                 fontWeight = FontWeight.Bold,
-                fontSize = 18.sp)
-            Text(text = " —",
-            fontSize = 25.sp,
-            color = Color.Red
+                fontSize = 18.sp,
+                color = Color.Black
+            )
+        } else {
+            TextStyle(
+                fontWeight = FontWeight.Light,
+                fontSize = 18.sp,
+                color = Color.Gray
             )
         }
-    }
-    else {
-        Text(
-            text = txt,
-            fontWeight = FontWeight.Light,
-            fontSize = 18.sp
-        )
+        Text(text = txt,
+        style = tagTextStyle)
+        if (isSelected) {
+            Spacer(modifier = Modifier.height(4.dp))
+            Box(
+                modifier = Modifier
+                    .height(2.dp)
+                    .fillMaxWidth()
+                    .background(Color.Red)
+            )
+        }
     }
 }
 @Preview
 @Composable
 fun TopBarPreview() {
-    TopBar()
+    TopBar(SongListViewModel())
 }

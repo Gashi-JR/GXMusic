@@ -12,6 +12,8 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 
+val LightGray = Color(0xFFD2D1D5)
+
 val cardGradient = Brush.horizontalGradient(
     colors = listOf(Color(217, 220, 253), Color(244, 216, 239)), // 渐变色列表
     startX = 0f,
@@ -45,7 +47,7 @@ val vinylTimeMachineGradient = Brush.verticalGradient(
 )
 
 val songListGradient = Brush.verticalGradient(
-    colors = listOf(Color(105, 105, 97), Color(129,129,121)),
+    colors = listOf(Color(198, 15, 230, 255), Color(199, 127, 211, 255)),
     startY = 0f,
     endY = 450f
 )

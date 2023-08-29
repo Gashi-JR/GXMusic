@@ -1,11 +1,11 @@
 package com.example.viewmodellist.ui.components.find
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.example.viewmodellist.R
-import com.example.viewmodellist.ui.components.Tag
+import com.example.viewmodellist.ui.screens.songlist.SongListViewModel
 import com.example.viewmodellist.utils.formatter
 
 
@@ -36,13 +36,21 @@ import com.example.viewmodellist.utils.formatter
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun AlbumArt(
+    id : Long,
     imageUrl: String,
     title: String,
     playCounts: Long,
     modifier: Modifier = Modifier,
+    songListViewModel: SongListViewModel
 ) {
     Column(//Column用于专辑封面和Title的上下布局
-        modifier = Modifier.width(120.dp)
+        modifier = Modifier
+            .width(120.dp)
+            .clickable {
+                songListViewModel.detailId.value = id
+                songListViewModel.fetchSongLists()
+                songListViewModel.isShowDetail.value = !songListViewModel.isShowDetail.value
+            }
     ) {
         Card(shape = MaterialTheme.shapes.small) {
             Box {
@@ -97,8 +105,10 @@ fun AlbumArt(
 @Composable
 fun AlbumArtPreview() {
     AlbumArt(
+        id = 6727421797,
         imageUrl = "https://p2.music.126.net/R2zySKjiX_hG8uFn1aCRcw==/109951165187830237.jpg",
         title = "This is a title",
         playCounts = 6346363636,
+        songListViewModel = SongListViewModel()
     )
 }

@@ -5,19 +5,12 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.absoluteOffset
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,12 +24,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.dokar.amlv.rememberLyricsViewState
 import com.example.viewmodellist.ui.components.BottomBar
@@ -53,7 +44,6 @@ import com.example.viewmodellist.ui.screens.mine.MineviewModel
 import com.example.viewmodellist.ui.screens.search.Search
 import com.example.viewmodellist.ui.screens.search.SearchviewModel
 import com.example.viewmodellist.ui.screens.songlist.SongList
-import com.example.viewmodellist.ui.screens.songlist.SongListDetail
 import com.example.viewmodellist.ui.screens.songlist.SongListViewModel
 import com.example.viewmodellist.ui.screens.top.Top
 import com.example.viewmodellist.ui.theme.ViewModelListTheme
@@ -221,10 +211,6 @@ fun Myapp(modifier: Modifier = Modifier) {
                     isLogin = false
                 })
             }
-
-
-
-
             when (page) {
                 0 -> {
                     AnimatedVisibility(visible = !showSearch.value && !isLogin) {
@@ -240,7 +226,7 @@ fun Myapp(modifier: Modifier = Modifier) {
                 }
 
                 1 -> LyricPage(findviewModel, mediaPlayerViewModel, state)
-                2 -> SongList(findviewModel, mediaPlayerViewModel)
+                2 -> SongList(songListViewModel,mediaPlayerViewModel,findviewModel)
                 3 -> Top()
                 4 -> Mine(loginViewModel, mineviewModel)
             }
