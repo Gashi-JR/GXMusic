@@ -126,7 +126,16 @@ fun Mine(
         mutableStateOf(100)
     }
     val datePickerState =
-        rememberDatePickerState(initialSelectedDateMillis = loginviewModel.User.value.birthday)
+        rememberDatePickerState(
+            initialSelectedDateMillis =
+            if (formatter.convertTimestampToDateString(loginviewModel.User.value.birthday)
+                    .split("-")[0].toInt() >= 1900
+            )
+                loginviewModel.User.value.birthday
+            else
+            0
+        )
+
     val confirmEnabled = remember {
         derivedStateOf { datePickerState.selectedDateMillis != null }
     }
