@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.AlertDialog
@@ -45,6 +46,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -68,6 +70,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import coil.compose.rememberAsyncImagePainter
 import com.example.viewmodellist.R
+import com.example.viewmodellist.ui.components.mine.MySonglists
 import com.example.viewmodellist.ui.components.search.ResultSonglist
 import com.example.viewmodellist.ui.screens.login.LoginviewModel
 import com.example.viewmodellist.ui.theme.ViewModelListTheme
@@ -82,7 +85,8 @@ import com.example.viewmodellist.utils.formatter
 @Composable
 fun Mine(
     loginviewModel: LoginviewModel = LoginviewModel(),
-    mineviewModel: MineviewModel = MineviewModel()
+    mineviewModel: MineviewModel = MineviewModel(),
+    onLogin: () -> Unit = {},
 ) {
     var isDetail by remember {
         mutableStateOf(false)
@@ -90,6 +94,60 @@ fun Mine(
     var isEdit by remember {
         mutableStateOf(false)
     }
+
+    var editname by remember {
+        mutableStateOf(false)
+    }
+    var editgender by remember {
+        mutableStateOf(false)
+    }
+    var editarea by remember {
+        mutableStateOf(false)
+    }
+    var editdate by remember {
+        mutableStateOf(false)
+    }
+    var editsignature by remember {
+        mutableStateOf(false)
+    }
+    var nickname by remember {
+        mutableStateOf(loginviewModel.User.value.nickname)
+    }
+    var selectIndex by remember {
+        mutableStateOf(loginviewModel.User.value.gender)
+    }
+    var areaIndex by remember {
+        mutableStateOf(loginviewModel.User.value.province.toInt())
+    }
+    val signature = remember {
+        mutableStateOf(TextFieldValue(loginviewModel.User.value.signature))
+    }
+    val maxlen = remember {
+        mutableStateOf(100)
+    }
+    val datePickerState =
+        rememberDatePickerState(
+            initialSelectedDateMillis =
+            if (formatter.convertTimestampToDateString(loginviewModel.User.value.birthday)
+                    .split("-")[0].toInt() >= 1900
+            )
+                loginviewModel.User.value.birthday
+            else
+            0
+        )
+
+    val confirmEnabled = remember {
+        derivedStateOf { datePickerState.selectedDateMillis != null }
+    }
+    LaunchedEffect(Unit) {
+        mineviewModel.fetchResultSonglistData(loginviewModel.uid.value)
+    }
+
+
+
+
+
+
     AnimatedVisibility(
         visible = !isDetail && !isEdit, enter = slideInVertically(
             initialOffsetY = { -it },
@@ -133,13 +191,13 @@ fun Mine(
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 22.sp
                                 )
-                                if (loginviewModel.User.value.gender == 1) Icon(
+                                if (selectIndex == 1) Icon(
                                     painter = painterResource(id = R.drawable.nan),
                                     contentDescription = "man",
                                     tint = Color.Unspecified,
                                     modifier = Modifier.size(20.dp),
                                 )
-                                if (loginviewModel.User.value.gender == 2) Icon(
+                                if (selectIndex == 2) Icon(
                                     painter = painterResource(id = R.drawable.xingbienv),
                                     contentDescription = "man",
                                     tint = Color.Unspecified,
@@ -167,7 +225,7 @@ fun Mine(
                                     Text(
                                         text = "IP:未知",
                                         textAlign = TextAlign.Center,
-                                        fontSize = 13.sp
+                                        fontSize = 11.sp
                                     )
                                 }
                                 Card(
@@ -177,9 +235,12 @@ fun Mine(
                                     elevation = 0.dp
                                 ) {
                                     Text(
-                                        text = formatter.convertTimestampToDateString(loginviewModel.User.value.birthday),
+                                        text =
+                                        formatter.convertTimestampToDateString(
+                                            datePickerState.selectedDateMillis!!
+                                        ),
                                         textAlign = TextAlign.Center,
-                                        fontSize = 13.sp
+                                        fontSize = 11.sp
                                     )
                                 }
                                 Card(
@@ -189,9 +250,11 @@ fun Mine(
                                     elevation = 0.dp
                                 ) {
                                     Text(
-                                        text = formatter.getRegionName(loginviewModel.User.value.province.toString()),
+                                        text = formatter.getRegionName(areaIndex.toString()),
                                         textAlign = TextAlign.Center,
-                                        fontSize = 13.sp
+                                        fontSize = 11.sp,
+                                        overflow = TextOverflow.Ellipsis,
+                                        maxLines = 1
                                     )
 
                                 }
@@ -204,7 +267,7 @@ fun Mine(
                                     Text(
                                         text = "村龄${
                                             ((System.currentTimeMillis() - loginviewModel.User.value.createTime) / 86400000) + 1
-                                        }天", textAlign = TextAlign.Center, fontSize = 13.sp
+                                        }天", textAlign = TextAlign.Center, fontSize = 11.sp
                                     )
                                 }
                             }
@@ -222,6 +285,22 @@ fun Mine(
                                 ) {
                                     Text(
                                         text = "编辑资料",
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 13.sp
+                                    )
+                                }
+                                Button(
+                                    onClick = {
+                                        mineviewModel.logout()
+                                        onLogin()
+                                    },
+                                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                                    shape = MaterialTheme.shapes.large,
+                                    elevation = ButtonDefaults.elevation(0.dp),
+                                    border = BorderStroke(0.1.dp, Color.Gray.copy(0.4f))
+                                ) {
+                                    Text(
+                                        text = "退出登录",
                                         fontWeight = FontWeight.Bold,
                                         fontSize = 13.sp
                                     )
@@ -435,24 +514,27 @@ fun Mine(
                             )
 
                             Text(
-                                text = "(2)", fontSize = 12.sp, color = Color.Gray
+                                text = "(${mineviewModel.mySonglistData.size})",
+                                fontSize = 12.sp,
+                                color = Color.Gray
                             )
                         }
-                        LazyHorizontalGrid(rows = GridCells.Fixed(3)) {
-                            listOf(1, 1, 1, 1, 1, 1, 1, 1, 1, 1).forEach {
-                                item {
-                                    ResultSonglist(
-                                        songlist = Datamodels.ResultSonglist(
-                                            1,
-                                            1,
-                                            1,
-                                            "http://p1.music.126.net/2zSNIqTcpHL2jIvU6hG0EA==/109951162868128395.jpg",
-                                            "asfafaf",
-                                            "afafafa",
-                                            null
-                                        )
-                                    )
-                                }
+                        LazyHorizontalGrid(rows = GridCells.Fixed(4)) {
+                            items(mineviewModel.mySonglistData) { item ->
+                                MySonglists(
+                                    songlist = Datamodels.MySonglist(
+                                        item.id,
+                                        item.trackCount,
+                                        item.playCount,
+                                        item.coverImgUrl,
+                                        item.name,
+                                        item.creater,
+                                        item.tags
+                                    ),
+                                    modifier = Modifier.clickable { }
+                                )
+
+
                             }
 
 
@@ -495,19 +577,19 @@ fun Mine(
                                 }月注册)", color = Color.Gray, fontSize = 14.sp
                             )
                             Text(
-                                text = "性别: ${if (loginviewModel.User.value.gender == 0) "未知" else if (loginviewModel.User.value.gender == 1) "男" else "女"}",
+                                text = "性别: ${if (selectIndex == 0) "未知" else if (selectIndex == 1) "男" else "女"}",
                                 color = Color.Gray,
                                 fontSize = 14.sp
                             )
                             Text(
                                 text = "年龄: ${
                                     formatter.convertTimestampToDateString(
-                                        loginviewModel.User.value.birthday
+                                        datePickerState.selectedDateMillis!!
                                     ).split("-")[0][2]
                                 }0后 ", color = Color.Gray, fontSize = 14.sp
                             )
                             Text(
-                                text = "个人简介: ${loginviewModel.User.value.signature}",
+                                text = "个人简介: ${signature.value.text}",
                                 color = Color.Gray,
                                 fontSize = 14.sp,
                                 maxLines = 1,
@@ -589,17 +671,17 @@ fun Mine(
             Text(
                 text = "年龄: ${
                     formatter.convertTimestampToDateString(
-                        loginviewModel.User.value.birthday
+                        datePickerState.selectedDateMillis!!
                     ).split("-")[0][2]
                 }0后 ", color = Color.Gray, fontSize = 14.sp
             )
             Text(
-                text = "性别: ${if (loginviewModel.User.value.gender == 0) "未知" else if (loginviewModel.User.value.gender == 1) "男" else "女"}",
+                text = "性别: ${if (selectIndex == 0) "未知" else if (selectIndex == 1) "男" else "女"}",
                 color = Color.Gray,
                 fontSize = 14.sp
             )
             Text(
-                text = "地区: ${formatter.getRegionName(loginviewModel.User.value.province.toString())}",
+                text = "地区: ${formatter.getRegionName(areaIndex.toString())}",
                 color = Color.Gray,
                 fontSize = 14.sp
             )
@@ -608,7 +690,7 @@ fun Mine(
                 text = "个人介绍", fontWeight = FontWeight.Bold, fontSize = 15.sp
             )
             Text(
-                text = loginviewModel.User.value.signature,
+                text = signature.value.text,
                 color = Color.Gray,
                 fontSize = 14.sp,
                 maxLines = 99,
@@ -617,24 +699,8 @@ fun Mine(
         }
 
     }
-    var editname by remember {
-        mutableStateOf(false)
-    }
-    var editgender by remember {
-        mutableStateOf(false)
-    }
-    var editarea by remember {
-        mutableStateOf(false)
-    }
-    var editdate by remember {
-        mutableStateOf(false)
-    }
-    var editsignature by remember {
-        mutableStateOf(false)
-    }
-    var nickname by remember {
-        mutableStateOf("")
-    }
+
+
     AnimatedVisibility(
         visible = isEdit, enter = slideInVertically(
             initialOffsetY = { it },
@@ -654,7 +720,17 @@ fun Mine(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                IconButton(onClick = { isEdit = false }) {
+                IconButton(onClick = {
+                    isEdit = false
+                    mineviewModel.modifyUserInfo(
+                        datePickerState.selectedDateMillis!!,
+                        areaIndex.toLong(),
+                        signature.value.text,
+                        selectIndex
+                    )
+                    mineviewModel.modifyUsername(nickname)
+                    loginviewModel.fetchUserInfo()
+                }) {
                     Icon(
                         painter = painterResource(id = R.drawable.baseline_keyboard_backspace_24),
                         contentDescription = null,
@@ -702,7 +778,7 @@ fun Mine(
                             text = "昵称", fontSize = 17.sp
                         )
                         Text(
-                            text = loginviewModel.User.value.nickname,
+                            text = nickname,
                             fontSize = 15.sp,
                             color = Color.Gray.copy(0.7f)
                         )
@@ -718,7 +794,7 @@ fun Mine(
                             text = "性别", fontSize = 17.sp
                         )
                         Text(
-                            text = " ${if (loginviewModel.User.value.gender == 0) "未知" else if (loginviewModel.User.value.gender == 1) "男" else "女"}",
+                            text = " ${if (selectIndex == 0) "未知" else if (selectIndex == 1) "男" else "女"}",
                             fontSize = 15.sp,
                             color = Color.Gray.copy(0.7f)
                         )
@@ -744,7 +820,7 @@ fun Mine(
                             text = "生日", fontSize = 17.sp
                         )
                         Text(
-                            text = formatter.convertTimestampToDateString(loginviewModel.User.value.birthday),
+                            text = formatter.convertTimestampToDateString(datePickerState.selectedDateMillis!!),
                             textAlign = TextAlign.Center,
                             fontSize = 15.sp,
                             color = Color.Gray.copy(0.7f)
@@ -761,7 +837,7 @@ fun Mine(
                             text = "地区", fontSize = 17.sp
                         )
                         Text(
-                            text = formatter.getRegionName(loginviewModel.User.value.province.toString()),
+                            text = formatter.getRegionName(areaIndex.toString()),
                             fontSize = 15.sp,
                             color = Color.Gray.copy(0.7f)
                         )
@@ -777,12 +853,12 @@ fun Mine(
                             text = "简介", fontSize = 17.sp
                         )
                         Text(
-                            text = loginviewModel.User.value.signature,
+                            text = signature.value.text,
                             fontSize = 15.sp,
                             color = Color.Gray.copy(0.7f),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.width(30.dp)
+                            modifier = Modifier.width(150.dp)
                         )
                     }
 
@@ -803,7 +879,10 @@ fun Mine(
                     .padding(horizontal = 30.dp)
             ) {
                 Button(
-                    onClick = { editname = false },
+                    onClick = {
+                        nickname = loginviewModel.User.value.nickname
+                        editname = false
+                    },
                     shape = MaterialTheme.shapes.large,
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
                     elevation = ButtonDefaults.elevation(0.5.dp)
@@ -811,21 +890,44 @@ fun Mine(
                     Text(text = "取消")
                 }
                 Button(
-                    onClick = { editname = false },
+                    onClick = {
+                        editname = false
+                    },
                     shape = MaterialTheme.shapes.large,
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
-                    elevation = ButtonDefaults.elevation(0.5.dp)
+                    elevation = ButtonDefaults.elevation(0.5.dp),
+                    enabled = !(mineviewModel.duplicated && nickname != loginviewModel.User.value.nickname)
                 ) {
                     Text(text = "保存")
                 }
             }
         }, title = {
-            Text(text = "昵称:")
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = "昵称:")
+                Text(
+                    text = "每天仅可修改两次",
+                    fontSize = 13.sp,
+                    color = Color.Gray.copy(0.7f)
+                )
+                AnimatedVisibility(
+                    visible = mineviewModel.duplicated && nickname != loginviewModel.User.value.nickname
+                ) {
+                    Text(text = "昵称已存在", color = Color.Red.copy(0.7f))
+                }
+            }
+
         }, text = {
             val containerColor = Color.Gray.copy(0f)
+
             TextField(
                 value = nickname,
-                onValueChange = { nickname = it },
+                onValueChange = {
+                    nickname = it
+                    mineviewModel.checkNickname(it)
+                },
                 maxLines = 1,
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = containerColor,
@@ -842,9 +944,7 @@ fun Mine(
     }
 
 
-    var selectIndex by remember {
-        mutableStateOf(loginviewModel.User.value.gender)
-    }
+
     AnimatedVisibility(visible = editgender) {
         AlertDialog(onDismissRequest = { /*TODO*/ }, buttons = {
             Row(
@@ -854,7 +954,10 @@ fun Mine(
                     .padding(horizontal = 30.dp)
             ) {
                 Button(
-                    onClick = { editgender = false },
+                    onClick = {
+                        selectIndex = loginviewModel.User.value.gender
+                        editgender = false
+                    },
                     shape = MaterialTheme.shapes.large,
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
                     elevation = ButtonDefaults.elevation(0.5.dp)
@@ -918,11 +1021,7 @@ fun Mine(
 
 
     AnimatedVisibility(visible = editdate) {
-        val datePickerState =
-            rememberDatePickerState(initialSelectedDateMillis = loginviewModel.User.value.birthday)
-        val confirmEnabled = remember {
-            derivedStateOf { datePickerState.selectedDateMillis != null }
-        }
+
         DatePickerDialog(onDismissRequest = {
             editdate = false
         }, colors = DatePickerDefaults.colors(
@@ -938,6 +1037,7 @@ fun Mine(
             }
         }, dismissButton = {
             TextButton(onClick = {
+                datePickerState.setSelection(loginviewModel.User.value.birthday)
                 editdate = false
             }) {
                 Text("取消")
@@ -949,9 +1049,6 @@ fun Mine(
     }
 
 
-    var areaIndex by remember {
-        mutableStateOf(loginviewModel.User.value.province.toInt())
-    }
 
     AnimatedVisibility(visible = editarea) {
         AlertDialog(onDismissRequest = { /*TODO*/ }, buttons = {
@@ -962,7 +1059,10 @@ fun Mine(
                     .padding(horizontal = 30.dp)
             ) {
                 Button(
-                    onClick = { editarea = false },
+                    onClick = {
+                        areaIndex = loginviewModel.User.value.province.toInt()
+                        editarea = false
+                    },
                     shape = MaterialTheme.shapes.large,
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
                     elevation = ButtonDefaults.elevation(0.5.dp)
@@ -970,7 +1070,10 @@ fun Mine(
                     Text(text = "取消")
                 }
                 Button(
-                    onClick = { editarea = false },
+                    onClick = {
+
+                        editarea = false
+                    },
                     shape = MaterialTheme.shapes.large,
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
                     elevation = ButtonDefaults.elevation(0.5.dp)
@@ -1055,12 +1158,7 @@ fun Mine(
     }
 
 
-    var signature = remember {
-        mutableStateOf(TextFieldValue())
-    }
-    val maxlen = remember {
-        mutableStateOf(100)
-    }
+
     AnimatedVisibility(visible = editsignature) {
         AlertDialog(onDismissRequest = { /*TODO*/ }, buttons = {
             Row(
@@ -1070,7 +1168,10 @@ fun Mine(
                     .padding(horizontal = 30.dp)
             ) {
                 Button(
-                    onClick = { editsignature = false },
+                    onClick = {
+                        signature.value = TextFieldValue(loginviewModel.User.value.signature)
+                        editsignature = false
+                    },
                     shape = MaterialTheme.shapes.large,
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
                     elevation = ButtonDefaults.elevation(0.5.dp)
@@ -1078,7 +1179,11 @@ fun Mine(
                     Text(text = "取消")
                 }
                 Button(
-                    onClick = { editsignature = false },
+                    onClick = {
+
+
+                        editsignature = false
+                    },
                     shape = MaterialTheme.shapes.large,
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
                     elevation = ButtonDefaults.elevation(0.5.dp)
@@ -1103,7 +1208,7 @@ fun Mine(
                     signature.value = it
                 }
             }, placeholder = {
-                Text(text = loginviewModel.User.value.signature)
+                Text(text = signature.value.text)
             }, colors = TextFieldDefaults.colors(
                 focusedContainerColor = containerColor,
                 unfocusedContainerColor = Color.White,

@@ -34,7 +34,6 @@ import com.example.viewmodellist.ui.components.Tag
 import com.example.viewmodellist.utils.formatter
 
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SonglistCover(
     imageUrl: String,
