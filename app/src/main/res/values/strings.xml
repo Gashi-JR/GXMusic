@@ -14,4 +14,8 @@
     <string name="search_hotkey">热搜关键字</string>
     <string name="search_hottop">热搜榜</string>
     <string name="mine_musicstyle">"音乐品味"</string>
+    <string name="greet_morning">"清晨和旋律相遇"</string>
+    <string name="greet_noon">"午间律动"</string>
+    <string name="greet_afternoon">"日落与音乐相伴"</string>
+    <string name="greet_night">"睡个好觉"</string>
 </resources>

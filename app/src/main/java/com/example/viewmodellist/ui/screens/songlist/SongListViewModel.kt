@@ -19,6 +19,8 @@ import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.launch
 import org.w3c.dom.Comment
+import java.text.SimpleDateFormat
+import java.util.Date
 
 // "/login/cellphone?phone=18178364626&password=shunjianbaozha1,"
 
@@ -30,12 +32,16 @@ class SongListViewModel(private val repository: Repository = Repository()) : Vie
         mutableStateOf<MutableList<gnonSongList>>(mutableStateListOf())
     val songList: List<gnonSongList> get() = _songList.value //歌单对外的接口
 
+    //TODO 获取系统时间
+    val currentTime = mutableStateOf( SimpleDateFormat("HH").format(Date()).toInt())
 
     //TODO 当前歌单相关的信息
     var id : MutableState<Long> = mutableStateOf(705123491)
     var coverImgUrl = mutableStateOf("")
     var name = mutableStateOf("")
     val userAvatar = mutableStateOf("http://p1.music.126.net/SUeqMM8HOIpHv9Nhl9qt9w==/109951165647004069.jpg")
+    val selectedSongIndex = mutableStateOf<Int>(-1)
+
     //var author = mutableStateOf("")
 
     //TODO 专辑列表
@@ -54,7 +60,7 @@ class SongListViewModel(private val repository: Repository = Repository()) : Vie
 
     //TODO 歌单广场顶部导航栏相关
     val selectedTagIndex = mutableStateOf<Int>(0)
-    val tagList : List<String> = listOf("推荐","古风","蓝调","欧美","轻音乐","摇滚","民谣","电子")
+    val tagList : List<String> = listOf("推荐","古风","蓝调","欧美","轻音乐","摇滚","民谣","电子","爵士","乡村","说唱","民族","金属")
     val isRec = mutableStateOf(true)
     var nowTag : MutableState<String> = mutableStateOf("推荐")
 
@@ -141,6 +147,7 @@ class SongListViewModel(private val repository: Repository = Repository()) : Vie
                 val commentsList = repository.getComments(detailId.value)
                 _commentsData.value = commentsList.toMutableList()
                 Log.d(TAG, "fetchHotPlaylist: $commentsList")
+                Log.d(TAG,"大小${commentsList.size}")
             } catch (e: Exception) {
                 // 处理异常情况
                 Log.e(TAG, "fetchHotPlaylistError: $e")
@@ -260,7 +267,7 @@ class Repository() {
     suspend fun getComments(id : Long) : List<Comments>{
 
 
-        val result = NetworkUtils.https("/comment/playlist?id=$id", "GET")
+        val result = NetworkUtils.https("/comment/playlist?id=$id&limit=100", "GET")
         val response = gson.fromJson(result, JsonObject::class.java)
         val commentsJsonArray = response.getAsJsonArray("comments")
         val comments : List<Comments> = gson.fromJson(commentsJsonArray,object : TypeToken<List<Comments>>() {}.type)

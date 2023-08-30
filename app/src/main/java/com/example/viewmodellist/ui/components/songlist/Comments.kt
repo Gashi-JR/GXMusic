@@ -81,7 +81,7 @@ fun Comments(
                             modifier = modifier
                                 .height(100.dp)
                                 .width(100.dp)
-                                .clip(RoundedCornerShape(55.dp))
+                                .clip(MaterialTheme.shapes.extraLarge)
                                 .padding(start = 4.dp, end = 4.dp, top = 10.dp, bottom = 4.dp))
                         Text(text = songListViewModel.name.value,
                             modifier = modifier.padding(top = 4.dp))
@@ -128,7 +128,7 @@ fun CommentItem(
             Text(text = nickname,
                 fontWeight = FontWeight.Bold,
                 fontSize = 10.sp)
-            Text(text = "$timeStr  $ipLocation", fontSize = 12.sp)
+            Text(text = "$timeStr   ip:$ipLocation", fontSize = 12.sp)
 
             Spacer(modifier = Modifier.height(3.dp))
             Text(text = content)

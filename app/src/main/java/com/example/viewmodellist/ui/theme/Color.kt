@@ -46,8 +46,14 @@ val vinylTimeMachineGradient = Brush.verticalGradient(
     endY = 450f
 )
 
+val topColor = Color(84, 4, 99, 255)
+val bottomColor = Color(115, 7, 133, 255)
+val lightBottom = Color(124, 62, 134, 255)
 val songListGradient = Brush.verticalGradient(
-    colors = listOf(Color(84, 4, 99, 255), Color(115, 7, 133, 255)),
-    startY = 0f,
-    endY = 450f
+    colors = listOf(topColor, bottomColor),
+    //startY = 0f,
+    //endY = 250f
+)
+val GrayGradient = Brush.verticalGradient(
+    colors = listOf(Color.LightGray, Color.White),
 )

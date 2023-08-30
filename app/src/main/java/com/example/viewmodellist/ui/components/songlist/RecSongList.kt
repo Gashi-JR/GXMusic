@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -99,8 +100,12 @@ fun RecSongList(
                 println("等待")
         }
         item {
+
             Text(
-                text = "日落与音乐相伴 睡个好觉 清晨和旋律相遇 午间律动",
+                text =  if (songListViewModel.currentTime.value<8){stringResource(id = R.string.greet_morning)}
+                else if (songListViewModel.currentTime.value<14){stringResource(id = R.string.greet_noon)}
+                else if (songListViewModel.currentTime.value<19){stringResource(id = R.string.greet_afternoon)}
+                else{stringResource(id = R.string.greet_night)},
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = modifier.padding(bottom = 5.dp)

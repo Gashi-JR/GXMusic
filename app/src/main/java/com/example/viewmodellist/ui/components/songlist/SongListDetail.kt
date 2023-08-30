@@ -1,4 +1,4 @@
-package com.example.viewmodellist.ui.screens.songlist
+package com.example.viewmodellist.ui.components.songlist
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -24,8 +24,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Divider
-import androidx.compose.material3.ElevatedButton
+import androidx.compose.material.OutlinedButton
+import androidx.compose.material.TextButton
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.draw.clip
@@ -40,17 +44,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.tooling.preview.Device
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
 import com.example.viewmodellist.R
 import com.example.viewmodellist.ui.components.find.MediaPlayerViewModel
-import com.example.viewmodellist.ui.components.songlist.Comments
 import com.example.viewmodellist.ui.screens.find.FindviewModel
 import com.example.viewmodellist.ui.theme.ViewModelListTheme
 import com.example.viewmodellist.ui.theme.songListGradient
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.example.viewmodellist.ui.screens.login.LoginviewModel
+import com.example.viewmodellist.ui.screens.songlist.SongListViewModel
+import com.example.viewmodellist.ui.theme.GrayGradient
 import com.example.viewmodellist.ui.theme.GrayLight
+import com.example.viewmodellist.ui.theme.bottomColor
+import com.example.viewmodellist.ui.theme.lightBottom
+import com.example.viewmodellist.ui.theme.topColor
 
 @OptIn(ExperimentalPagerApi::class, ExperimentalCoilApi::class)
 @Composable
@@ -72,7 +80,8 @@ fun SongListDetail(
         Column() {
             Row(
                 modifier = modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .background(topColor),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -85,11 +94,13 @@ fun SongListDetail(
                     }) {
                         Icon(
                             painter = painterResource(id = R.drawable.baseline_keyboard_backspace_24),
-                            contentDescription = null
+                            contentDescription = null,
+                            tint = Color.White
                         )
                     }
                     Text(
                         text = "歌单",
+                        color = Color.White,
                         modifier = modifier.padding(start = 10.dp),
                         fontWeight = FontWeight.Bold
                     )
@@ -139,8 +150,9 @@ fun SongListDetail(
                                     text = songListViewModel.name.value,
                                     modifier = Modifier.padding(start = 8.dp),
                                     color = Color.White,
+                                    fontWeight = FontWeight.Bold
                                 )
-                                Row(modifier = Modifier.padding(start = 8.dp)) {
+                                Row(modifier = Modifier.padding(start = 8.dp,top = 4.dp)) {
 
                                     AsyncImage(model = songListViewModel.userAvatar.value,
                                         contentDescription = "用户头像",
@@ -151,14 +163,15 @@ fun SongListDetail(
 
                                     Text(
                                         text = "gnon2002",
-                                        modifier = modifier.padding(top = 5.dp),
+                                        modifier = modifier.padding(top = 5.dp, start = 6.dp),
                                         color = GrayLight,
                                         fontWeight = FontWeight.Light
                                     )
                                     Icon(
                                         painter = painterResource(id = R.drawable.baseline_chevron_right_24),
                                         contentDescription = null,
-                                        tint = Color.Gray.copy(alpha = 0.5f)
+                                        tint = Color.Gray.copy(alpha = 0.5f),
+                                        modifier = modifier.padding(top=2.dp)
                                     )
                                 }
                             }
@@ -166,6 +179,7 @@ fun SongListDetail(
 
                         //.border(20.dp,Color.Black, RoundedCornerShape(20.dp,20.dp,0.dp,0.dp)
                         Spacer(modifier = Modifier.height(50.dp))
+
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween,
@@ -173,45 +187,58 @@ fun SongListDetail(
                                 .fillMaxWidth()
                                 .padding(start = 20.dp, end = 20.dp)
                         ) {
-                            ElevatedButton(onClick = { /*TODO*/ },
-                            modifier = modifier.background(Color.Transparent)) {
+                            androidx.compose.material.Button(
+                                onClick = { /*TODO*/ },
+                                modifier = modifier.background(Color.Transparent),
+                                colors = ButtonDefaults.buttonColors(lightBottom)
+                            ) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.baseline_screen_share_24),
                                     contentDescription = "分享"
                                 )
-                                Text(text = "分享")
+                                Text(text = "分享",
+                                    modifier=modifier.padding(start = 2.dp)
+                                )
                             }
-                            ElevatedButton(
+
+                            androidx.compose.material.Button(
                                 onClick = { songListViewModel.isShowComments.value = !songListViewModel.isShowComments.value },
-                                modifier = modifier.background(Color.Transparent)) {
+                                modifier = modifier.background(Color.Transparent),
+                                colors = ButtonDefaults.buttonColors(lightBottom)
+                            ) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.baseline_comment_24),
                                     contentDescription = "评论"
                                 )
-                                Text(text = "评论")
+                                Text(text = "评论",
+                                    modifier=modifier.padding(start = 2.dp)
+                                )
                             }
-                            ElevatedButton(
+                            androidx.compose.material.Button(
                                 onClick = { songListViewModel.collectPlayList() },
-                                modifier = modifier.background(Color.Transparent)) {
+                                colors = ButtonDefaults.buttonColors(lightBottom)
+                            ) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.baseline_create_new_folder_24),
                                     contentDescription = "收藏"
                                 )
-                                Text(text = "收藏")
+                                Text(text = "收藏",
+                                    modifier=modifier.padding(start = 2.dp)
+                                )
                             }
-                            
-                            Spacer(modifier = modifier.height(30.dp))
-
                         }
+                        Spacer(modifier = modifier.height(20.dp))
                         Text(
                             text = "",
                             modifier
                                 .fillMaxWidth()
                                 .height(20.dp)
                                 .clip(RoundedCornerShape(20.dp, 20.dp))
-                                .background(GrayLight)
+                                .background(GrayGradient)
+                                .padding(top = 20.dp)
                         )
-                        Divider(thickness = 0.5.dp)
+                        Divider(thickness = 0.5.dp,
+                        color = Color.LightGray)
                     }
                 }
                 itemsIndexed(songListViewModel.songList) { index, songlist ->
@@ -225,9 +252,11 @@ fun SongListDetail(
                             findviewModel.currentMusic.value.name = songlist.name
                             findviewModel.currentMusic.value.picUrl = songListViewModel.coverImgUrl.value
                             findviewModel.currentMusic.value.artist = songlist.artist
+                            songListViewModel.selectedSongIndex.value = index
                             mediaPlayerViewModel.play(songlist.url)
                             println("当前选中音乐的URL:" + songlist.url)
-                        })
+                        },
+                        isSelected = index == songListViewModel.selectedSongIndex.value)
                 }
             }
         }
@@ -245,8 +274,16 @@ fun SongItem(
     name : String,
     author : String,
     fee : Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isSelected : Boolean
 ){
+    val songTextStyle = if (isSelected) {
+        TextStyle(
+            color = Color.Red
+        )
+    } else {
+        TextStyle()
+    }
     Row(modifier = modifier
         .fillMaxWidth()
         .background(Color.White),
@@ -257,33 +294,44 @@ fun SongItem(
 
         Row {
             Text(
-                (no+1).toString(),
+                text = (no+1).toString(),
                 modifier = Modifier
                     .padding(start = 12.dp)
                     .align(Alignment.CenterVertically),
+                style = songTextStyle
             )
 
             Column(modifier = Modifier.padding(start = 12.dp)) {
-                Text(text = name)
-                /*Row() {
+                Text(text = name,
+                    style = songTextStyle
+                )
+                Row() {
 
                     if(fee == 1) {
                         Box(
                             modifier = modifier
-                                .background(Color(250, 65, 64))
-                                .height(10.dp)
-                                .height(10.dp)
-                                .clip(RoundedCornerShape(20.dp))
+                                .padding(top = 5.dp)
+                                .background(Color.White)
+                                .drawBehind {
+                                    // 绘制圆角矩形边界线
+                                    drawRoundRect(
+                                        color = Color(250, 65, 64),
+                                        size = size,
+                                        cornerRadius = CornerRadius(4.dp.toPx(), 4.dp.toPx())
+                                    )
+                                }
                         ) {
                             Text(
                                 text = "VIP",
+                                fontSize = 10.sp,
                                 color = Color.White,
                             )
                         }
                     }else{
                         Box(
                             modifier = modifier
-                                .background(Color.Transparent)
+                                .padding(top = 5.dp)
+                                .background(Color.White)
                                 .drawBehind {
                                     // 绘制圆角矩形边界线
                                     drawRoundRect(
@@ -296,7 +344,7 @@ fun SongItem(
                             Text(
                                 text = "免费",
                                 fontSize = 10.sp,
-                                color = Color(192, 142, 68, 255),
+                                color = Color.White,
                             )
                         }
                     }
@@ -307,7 +355,7 @@ fun SongItem(
                         117,
                         255
                     ))
-                }*/
+                }
             }
         }
 

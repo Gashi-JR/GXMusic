@@ -28,6 +28,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -127,17 +128,19 @@ fun TagItem(
                 color = Color.Gray
             )
         }
-        Text(text = txt,
-        style = tagTextStyle)
-        if (isSelected) {
-            Spacer(modifier = Modifier.height(4.dp))
-            Box(
+        Text(text = txt, style = tagTextStyle)
+        //if (isSelected) {
+        if(isSelected) {
+            Spacer(
                 modifier = Modifier
-                    .height(2.dp)
-                    .fillMaxWidth()
+                    .padding(top = 2.dp, bottom = 2.dp)
                     .background(Color.Red)
+                    .height(3.dp)
+                    .width(25.dp)
+                    .align(Alignment.CenterHorizontally)
             )
         }
+
     }
 }
 @Preview
