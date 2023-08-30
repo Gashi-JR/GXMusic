@@ -18,34 +18,56 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.launch
+import org.w3c.dom.Comment
+
 // "/login/cellphone?phone=18178364626&password=shunjianbaozha1,"
 
 class SongListViewModel(private val repository: Repository = Repository()) : ViewModel() {
     //创建 MutableList 对象来存储列表数据。
     @SuppressLint("MutableCollectionMutableState")
+    //TODO 歌单的所有歌曲
     private val _songList =
         mutableStateOf<MutableList<gnonSongList>>(mutableStateListOf())
     val songList: List<gnonSongList> get() = _songList.value //歌单对外的接口
+
+
+    //TODO 当前歌单相关的信息
+    var id : MutableState<Long> = mutableStateOf(705123491)
     var coverImgUrl = mutableStateOf("")
     var name = mutableStateOf("")
+    val userAvatar = mutableStateOf("http://p1.music.126.net/SUeqMM8HOIpHv9Nhl9qt9w==/109951165647004069.jpg")
+    //var author = mutableStateOf("")
+
+    //TODO 专辑列表
     private val _songlistData =
         mutableStateOf<MutableList<SongListItem>>(mutableStateListOf())
     val songlistData: List<SongListItem> get() = _songlistData.value
 
+    //TODO 专辑列表（推荐）
     private val _hotPlayList =
         mutableStateOf<MutableList<HotPlayListItem>>(mutableStateListOf())
     val hotPlayList: List<HotPlayListItem> get() = _hotPlayList.value //歌单对外的接口
 
+    //TODO 热门标签
     private val _tagsPlayList = mutableStateOf<MutableList<HotPlayListItem>>(mutableListOf())
     val tagPlayList get() = _tagsPlayList.value
-    val selectedTagIndex = mutableStateOf<Int>(0)
 
+    //TODO 歌单广场顶部导航栏相关
+    val selectedTagIndex = mutableStateOf<Int>(0)
     val tagList : List<String> = listOf("推荐","古风","蓝调","欧美","轻音乐","摇滚","民谣","电子")
     val isRec = mutableStateOf(true)
+    var nowTag : MutableState<String> = mutableStateOf("推荐")
+
+
     //TODO 歌单广场和歌单详情之间的切换状态
     var isShowDetail = mutableStateOf(false)
-    var nowTag : MutableState<String> = mutableStateOf("推荐")
+    var isShowComments = mutableStateOf(false)
     var detailId : MutableState<Long> = mutableStateOf(0)
+
+    //TODO 评论相关
+
+    private val _commentsData = mutableStateOf<MutableList<Comments>>(mutableListOf())
+    val commentsData get() = _commentsData.value
 
     fun fetchSongLists() {
         viewModelScope.launch {
@@ -56,7 +78,8 @@ class SongListViewModel(private val repository: Repository = Repository()) : Vie
                         id = item.id,
                         url = item.url,
                         name = item.name,
-                        artist = item.artist
+                        artist = item.artist,
+                        fee = item.fee
                     )
                 }
 
@@ -112,6 +135,29 @@ class SongListViewModel(private val repository: Repository = Repository()) : Vie
         }
     }
 
+    fun fetchComments(){
+        viewModelScope.launch {
+            try {
+                val commentsList = repository.getComments(detailId.value)
+                _commentsData.value = commentsList.toMutableList()
+                Log.d(TAG, "fetchHotPlaylist: $commentsList")
+            } catch (e: Exception) {
+                // 处理异常情况
+                Log.e(TAG, "fetchHotPlaylistError: $e")
+            }
+        }
+    }
+
+    fun collectPlayList(){
+        viewModelScope.launch {
+            try {
+                NetworkUtils.https("/playlist/subscribe?t=1&id=$detailId","GET")
+                Log.d(TAG,"收藏成功!")
+            }catch (e : Exception){
+                Log.e(TAG,"收藏失败: $e")
+            }
+        }
+    }
 }
 
 
@@ -179,14 +225,10 @@ class Repository() {
                 id = data[i].id,
                 url=data[i].url,
                 name=name[i].name,
-                artist=_author), index = i)
+                artist=_author,
+                fee = name[i].fee), index = i)
 
         }
-/*        try {
-            Log.d(TAG, "res:$res")
-        }catch (e : Exception){
-            Log.e(TAG, "getSongList() error: $e")
-        }*/
         return res
     }
     suspend fun getRecommendSonglistData(): List<SongListItem> {
@@ -207,7 +249,6 @@ class Repository() {
             gson.fromJson(songlistJsonArray, object : TypeToken<List<HotPlayListItem>>() {}.type)
         return songlist
     }
-
     suspend fun getTagsPlayList(tag : String) : List<HotPlayListItem>{
         val result = NetworkUtils.https("/top/playlist/highquality?cat=$tag","GET")
         val response = gson.fromJson(result, JsonObject::class.java)
@@ -215,5 +256,14 @@ class Repository() {
         val tagList : List<HotPlayListItem> =
             gson.fromJson(tagListJsonArray, object : TypeToken<List<HotPlayListItem>>() {}.type)
         return tagList
+    }
+    suspend fun getComments(id : Long) : List<Comments>{
+
+
+        val result = NetworkUtils.https("/comment/playlist?id=$id", "GET")
+        val response = gson.fromJson(result, JsonObject::class.java)
+        val commentsJsonArray = response.getAsJsonArray("comments")
+        val comments : List<Comments> = gson.fromJson(commentsJsonArray,object : TypeToken<List<Comments>>() {}.type)
+        return comments
     }
 }

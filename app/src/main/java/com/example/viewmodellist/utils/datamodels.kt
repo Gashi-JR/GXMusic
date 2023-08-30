@@ -1,5 +1,7 @@
 package com.example.viewmodellist.utils
 
+import com.google.gson.JsonObject
+
 class Datamodels {
 
     // TODO: 轮播图相关数据类
@@ -43,7 +45,8 @@ class Datamodels {
         val url : String  // 歌曲URL
     )
     data class Names(
-        val name: String  // 歌曲URL
+        val name: String,
+        val fee : Int
     )
     data class Artists(
         val name : String
@@ -54,6 +57,7 @@ class Datamodels {
         var url : String,
         var name : String,
         var artist : String,
+        var fee : Int
     )
 
     data class HotPlayListItem(
@@ -63,10 +67,16 @@ class Datamodels {
         val coverImgUrl: String,
     )
 
-    data class Tag(
-        val tag : String
+    data class HotComments(
+        val content: String,
+        val user : JsonObject
     )
-
+    data class Comments(
+        val content: String,
+        val user : JsonObject,
+        val timeStr : String,
+        val ipLocation : JsonObject
+    )
     //TODO njl 的类
 
 

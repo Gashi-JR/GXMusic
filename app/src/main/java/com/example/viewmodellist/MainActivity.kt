@@ -168,7 +168,6 @@ fun Myapp(modifier: Modifier = Modifier) {
         val pagerState = rememberPagerState(initialPage = selectedTabIndex)
 
 
-        //TODO njl
         val songListViewModel by remember{ mutableStateOf(SongListViewModel()) }
 
         val name = findviewModel.currentMusic.value.name
