@@ -50,7 +50,7 @@ object NetworkUtils {
         .build()
 
     private val retrofit = Retrofit.Builder()
-        .baseUrl("http://8rihcq.natappfree.cc") // 设置基本 URL
+        .baseUrl("http://shms9t.natappfree.cc") // 设置基本 URL
         .addConverterFactory(GsonConverterFactory.create()) // 设置 Gson 转换器
         .client(client)
         .build()
@@ -66,7 +66,12 @@ object NetworkUtils {
                 "DELETE" -> apiService.deleteData(url).execute()
                 else -> null
             }
-            if (response != null && response.isSuccessful) {
+            if (response != null && response.code() == 403) {
+                val responseBody = "{\"code\":403}"
+                val res = responseBody
+                Log.d("responseBody", "responseBody: $responseBody")
+                res // 返回响应体的字符串内容
+            } else if (response != null && response.isSuccessful) {
                 val responseBody = response.body()
                 val res = responseBody?.string()
                 Log.d("getData", "getData: $res")
