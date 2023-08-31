@@ -40,7 +40,7 @@ fun SonglistCover(
     title: String,
     playCount: Long,
     id: Long,
-    copywriter: String,
+    copywriter: String?,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -59,13 +59,15 @@ fun SonglistCover(
                         contentScale = ContentScale.Crop,
                         contentDescription = null
                     )
-                    if (copywriter != "") {
-                       Tag(
+                    if (!copywriter.isNullOrBlank()) {
+                        Tag(
                             onClick = {},
                             modifier = Modifier
                                 .height(14.dp)
                                 .align(Alignment.BottomStart)
                         ) {
+
+
                             Text(
                                 text = copywriter,
                                 color = Color(250, 65, 64),
