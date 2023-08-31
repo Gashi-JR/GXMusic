@@ -293,7 +293,7 @@ fun Find(
 
             FindCard(
                 R.string.find_mysub, true, true, true,
-                   modifier = Modifier.background(findcardGradient)
+                modifier = Modifier.background(findcardGradient)
             ) {
                 LazyRow(
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
