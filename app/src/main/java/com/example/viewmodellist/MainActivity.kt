@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.dokar.amlv.rememberLyricsViewState
 import com.example.viewmodellist.ui.components.BottomBar
+import com.example.viewmodellist.ui.components.Message
 import com.example.viewmodellist.ui.components.PlayButton
 import com.example.viewmodellist.ui.components.find.MediaPlayerViewModel
 import com.example.viewmodellist.ui.screens.find.Find
@@ -77,7 +78,10 @@ class MainActivity : ComponentActivity() {
 }
 
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "SuspiciousIndentation")
+@SuppressLint(
+    "UnusedMaterial3ScaffoldPaddingParameter", "SuspiciousIndentation",
+    "UnrememberedMutableState"
+)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun Myapp(modifier: Modifier = Modifier) {
@@ -168,7 +172,7 @@ fun Myapp(modifier: Modifier = Modifier) {
         val pagerState = rememberPagerState(initialPage = selectedTabIndex)
 
 
-        val songListViewModel by remember{ mutableStateOf(SongListViewModel()) }
+        val songListViewModel by remember { mutableStateOf(SongListViewModel()) }
 
         val name = findviewModel.currentMusic.value.name
         val artist = findviewModel.currentMusic.value.artist
@@ -233,7 +237,7 @@ fun Myapp(modifier: Modifier = Modifier) {
                 }
 
                 1 -> LyricPage(findviewModel, mediaPlayerViewModel, state)
-                2 -> SongList(songListViewModel,mediaPlayerViewModel,findviewModel)
+                2 -> SongList(songListViewModel, mediaPlayerViewModel, findviewModel)
                 3 -> Top()
                 4 -> AnimatedVisibility(visible = !showSearch.value && !isLogin) {
                     Mine(
@@ -246,15 +250,38 @@ fun Myapp(modifier: Modifier = Modifier) {
                 }
             }
         }
+
         AnimatedVisibility(!isLogin) {
             PlayButton(
                 extended = extended,
-                onClick = { extended = !extended },
+                onClick = {
+                    extended = !extended
+                },
                 findviewModel = findviewModel,
                 state = state,
                 mediaPlayerViewModel = mediaPlayerViewModel
             )
         }
+
+
+        var show = remember {
+            mutableStateOf(false)
+        }
+
+        if (show.value) {
+            val countDownTimer = object : CountDownTimer(2000, 2000) {
+                override fun onTick(millisUntilFinished: Long) {}
+                override fun onFinish() {
+                    // 计时结束后触发的逻辑处理
+                    show.value = false
+                }
+            }
+            // 启动计时器
+            countDownTimer.start()
+        }
+
+        //type: 0成功，1警告，2错误
+        Message(show = show.value, type = 1, message = "发放服务器而4444444444444")
     }
 }
 
