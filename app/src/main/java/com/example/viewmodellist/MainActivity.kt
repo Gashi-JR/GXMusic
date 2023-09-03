@@ -129,7 +129,7 @@ fun Myapp(modifier: Modifier = Modifier) {
 
     var selectedTabIndex by remember { mutableStateOf(0) }
     var isLogin by rememberSaveable {
-        mutableStateOf(true)
+        mutableStateOf(false)
     }
     var showSearch = rememberSaveable {
         mutableStateOf(false)

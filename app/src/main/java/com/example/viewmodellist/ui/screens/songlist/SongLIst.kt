@@ -2,6 +2,7 @@ package com.example.viewmodellist.ui.screens.songlist
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import com.example.viewmodellist.ui.components.find.MediaPlayerViewModel
 import com.example.viewmodellist.ui.components.songlist.SongListDetail
@@ -20,7 +21,7 @@ fun SongList(
 
     //歌单广场
     AnimatedVisibility(visible = !songListViewModel.isShowDetail.value) {
-        SongListSquare(findviewModel,mediaPlayerViewModel,songListViewModel)
+        SongListSquare(findviewModel,mediaPlayerViewModel,songListViewModel,loginviewModel)
     }
 
     //歌单详情

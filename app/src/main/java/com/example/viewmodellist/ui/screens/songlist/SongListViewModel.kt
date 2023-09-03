@@ -59,6 +59,11 @@ class SongListViewModel(private val repository: Repository = Repository()) : Vie
     private val _tagsPlayList = mutableStateOf<MutableList<HotPlayListItem>>(mutableListOf())
     val tagPlayList get() = _tagsPlayList.value
 
+    fun CleartagPlayList() {
+        _tagsPlayList.value.clear()
+    }
+
+
     //TODO 歌单广场顶部导航栏相关
     val selectedTagIndex = mutableStateOf<Int>(0)
     val tagList: List<String> = listOf(
@@ -143,6 +148,7 @@ class SongListViewModel(private val repository: Repository = Repository()) : Vie
     }
 
     fun fetchTagPlayList() {
+        CleartagPlayList()
         viewModelScope.launch {
             if (nowTag.value != "推荐") {
                 try {

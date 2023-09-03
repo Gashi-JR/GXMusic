@@ -164,7 +164,7 @@ class Datamodels {
     // TODO: 用户信息
     data class UserInfo(
         val uid: Long,
-        val nickname: String,
+        val nickname: String="",
         val level: Int,
         val followeds: Int,
         val follows: Int,

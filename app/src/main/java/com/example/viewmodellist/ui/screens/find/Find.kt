@@ -103,12 +103,18 @@ fun Find(
     }
 
     LaunchedEffect(Unit) {
-        findviewModel.fetchTopCardData()
-        findviewModel.fetchBannerData()
-        findviewModel.fetchRecommendSonglistData()
-        findviewModel.fetchNewSongData()
-        loginviewModel.fetchUserInfo()
-        searchviewModel.fetchSearchHotData()
+        if (findviewModel.topcardData.isEmpty())
+            findviewModel.fetchTopCardData()
+        if (findviewModel.bannerData.isEmpty())
+            findviewModel.fetchBannerData()
+        if (findviewModel.songlistData.isEmpty())
+            findviewModel.fetchRecommendSonglistData()
+        if (findviewModel.newsongData.isEmpty())
+            findviewModel.fetchNewSongData()
+        if (loginviewModel.User.value.nickname == "")
+            loginviewModel.fetchUserInfo()
+        if (searchviewModel.searchHotData.isEmpty())
+            searchviewModel.fetchSearchHotData()
         isFixed.value = true
     }
     LaunchedEffect(findviewModel.topcardData) {
