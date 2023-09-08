@@ -3,10 +3,12 @@ package com.example.viewmodellist.ui.components.songlist
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -36,16 +38,17 @@ import com.example.viewmodellist.ui.components.find.FindCard
 import com.example.viewmodellist.ui.components.find.MediaPlayerViewModel
 import com.example.viewmodellist.ui.components.find.TopCard
 import com.example.viewmodellist.ui.screens.find.FindviewModel
+import com.example.viewmodellist.ui.screens.login.LoginviewModel
 import com.example.viewmodellist.ui.screens.songlist.SongListViewModel
 
 //TODO 歌单广场的主页面
 
 @Composable
 fun RecSongList(
-
-    findviewModel : FindviewModel = FindviewModel(),
-    mediaPlayerViewModel : MediaPlayerViewModel = MediaPlayerViewModel(),
+    findviewModel: FindviewModel = FindviewModel(),
+    mediaPlayerViewModel: MediaPlayerViewModel = MediaPlayerViewModel(),
     songListViewModel: SongListViewModel = SongListViewModel(),
+    loginviewModel: LoginviewModel,
     modifier: Modifier = Modifier
 ) {
 
@@ -59,18 +62,25 @@ fun RecSongList(
         item {
             Row {
                 if (songListViewModel.songlistData.isNotEmpty()) {
-                    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(6.dp),
+                        modifier = modifier.padding(horizontal = 15.dp)
+                    ) {
                         Text(
-                            text = "Hi gnon2002，快来听听",
+                            text = "Hi ${loginviewModel.User.value.nickname}，快来听听",
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
-                            modifier = modifier.padding(bottom = 5.dp)
+                            modifier = modifier.padding(start = 5.dp, bottom = 5.dp)
                         )
 
-                        Spacer(modifier = modifier.height(5.dp))
-                        
-                        RowThree1(albumArts = songListViewModel.songlistData.subList(0, 3), songListViewModel = songListViewModel)
-                        RowThree1(albumArts = songListViewModel.songlistData.subList(3, 6), songListViewModel = songListViewModel)
+                        RowThree1(
+                            albumArts = songListViewModel.songlistData.subList(0, 3),
+                            songListViewModel = songListViewModel
+                        )
+                        RowThree1(
+                            albumArts = songListViewModel.songlistData.subList(3, 6),
+                            songListViewModel = songListViewModel
+                        )
                     }
                 } else
                     println("失败捏")
@@ -82,10 +92,16 @@ fun RecSongList(
                 text = "今日达人推荐",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = modifier.padding(bottom = 5.dp)
+                modifier = modifier.padding(start = 15.dp, bottom = 5.dp)
             )
-            if (songListViewModel.hotPlayList.isNotEmpty()) {
-                LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalAlignment = Alignment.Top,
+                contentPadding = PaddingValues(horizontal = 15.dp),
+                modifier = Modifier.height(160.dp)
+            ) {
+                if (songListViewModel.hotPlayList.isNotEmpty()) {
                     items(songListViewModel.hotPlayList.take(6)) { item ->
                         AlbumArt(
                             id = item.id,
@@ -95,23 +111,43 @@ fun RecSongList(
                             songListViewModel = songListViewModel
                         )
                     }
+                } else {
+                    items(List(4) { 1 }) {
+                        LoadingAnimation(
+                            modifier = Modifier
+                                .width(120.dp)
+                                .height(160.dp)
+                                .clip(MaterialTheme.shapes.small)
+                        )
+                    }
                 }
-            } else
-                println("等待")
+            }
+
         }
         item {
 
             Text(
-                text =  if (songListViewModel.currentTime.value<8){stringResource(id = R.string.greet_morning)}
-                else if (songListViewModel.currentTime.value<14){stringResource(id = R.string.greet_noon)}
-                else if (songListViewModel.currentTime.value<19){stringResource(id = R.string.greet_afternoon)}
-                else{stringResource(id = R.string.greet_night)},
+                text = if (songListViewModel.currentTime.value < 8) {
+                    stringResource(id = R.string.greet_morning)
+                } else if (songListViewModel.currentTime.value < 14) {
+                    stringResource(id = R.string.greet_noon)
+                } else if (songListViewModel.currentTime.value < 19) {
+                    stringResource(id = R.string.greet_afternoon)
+                } else {
+                    stringResource(id = R.string.greet_night)
+                },
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = modifier.padding(bottom = 5.dp)
+                modifier = modifier.padding(bottom = 5.dp, start = 15.dp)
             )
-            if (songListViewModel.hotPlayList.isNotEmpty()) {
-                LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalAlignment = Alignment.Top,
+                contentPadding = PaddingValues(horizontal = 15.dp),
+                modifier = Modifier.height(160.dp)
+            ) {
+                if (songListViewModel.hotPlayList.isNotEmpty()) {
                     items(songListViewModel.hotPlayList.subList(6, 12)) { item ->
                         AlbumArt(
                             id = item.id,
@@ -121,66 +157,80 @@ fun RecSongList(
                             songListViewModel = songListViewModel
                         )
                     }
+                } else {
+                    items(List(4) { 1 }) {
+                        LoadingAnimation(
+                            modifier = Modifier
+                                .width(120.dp)
+                                .height(160.dp)
+                                .clip(MaterialTheme.shapes.small)
+                        )
+                    }
                 }
             }
         }
         item {
-            FindCard(
-                title = R.string.app_top,
-                true, true, true,
-            ) {
-                LazyRow(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.Top,
-                ) {
-                    if (findviewModel.topcardData.isNotEmpty())
-                        itemsIndexed(findviewModel.topcardData) { index, item ->
-                            TopCard(
-                                item.name,
-                                item.id,
-                                topsong = if (findviewModel.topsongData.size >= 3 * index + 3) findviewModel.topsongData.subList(
-                                    3 * index,
-                                    3 * index + 3
-                                ) else listOf(),
-                                findviewModel,
-                                mediaPlayerViewModel,
-                            )
+            Text(
+                text = "这些歌单，你一定在找",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = modifier.padding(bottom = 5.dp, start = 15.dp)
+            )
 
-                        }
-                    else {
-                        items(List(5) { 1 }) {
+            Column(
+                modifier = modifier.padding(horizontal = 15.dp),
+                verticalArrangement = Arrangement.spacedBy(5.dp)
+            ) {
+                if (songListViewModel.hotPlayList.isNotEmpty()) {
+                    RowThree2(
+                        albumArts = songListViewModel.hotPlayList.subList(13, 16),
+                        songListViewModel
+                    )
+                    RowThree2(
+                        albumArts = songListViewModel.hotPlayList.subList(16, 19),
+                        songListViewModel
+                    )
+                    RowThree2(
+                        albumArts = songListViewModel.hotPlayList.subList(7, 10),
+                        songListViewModel
+                    )
+                    RowThree2(
+                        albumArts = songListViewModel.hotPlayList.subList(10, 13),
+                        songListViewModel
+                    )
+                } else {
+                    List(4) { 1 }.forEach { _ ->
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = modifier
+                                .fillMaxWidth()
+                        ) {
                             LoadingAnimation(
                                 modifier = Modifier
-                                    .width(350.dp)
-                                    .height(380.dp)
-                                    .padding(horizontal = 15.dp)
-                                    .clip(MaterialTheme.shapes.medium)
+                                    .width(120.dp)
+                                    .height(160.dp)
+                                    .clip(MaterialTheme.shapes.small)
+                            )
+                            LoadingAnimation(
+                                modifier = Modifier
+                                    .width(120.dp)
+                                    .height(160.dp)
+                                    .clip(MaterialTheme.shapes.small)
+                            )
+                            LoadingAnimation(
+                                modifier = Modifier
+                                    .width(120.dp)
+                                    .height(160.dp)
+                                    .clip(MaterialTheme.shapes.small)
                             )
                         }
                     }
 
                 }
-
             }
         }
-        item{
-            Text(
-                text = "这些歌单，你一定在找",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = modifier.padding(bottom = 5.dp)
-            )
-            if (songListViewModel.hotPlayList.isNotEmpty()) {
-                Column{
-                    RowThree2(albumArts = songListViewModel.hotPlayList.subList(13, 16),songListViewModel)
-                    RowThree2(albumArts = songListViewModel.hotPlayList.subList(16, 19),songListViewModel)
-                    RowThree2(albumArts = songListViewModel.hotPlayList.subList(7, 10),songListViewModel)
-                    RowThree2(albumArts = songListViewModel.hotPlayList.subList(10, 13),songListViewModel)
-                }
-            }
-        }
-        item{
-            Text(text = "暂无更多歌单")
+        item {
+            Spacer(modifier = Modifier.height(55.dp))
         }
     }
 

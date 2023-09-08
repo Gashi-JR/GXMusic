@@ -2,6 +2,7 @@ package com.example.viewmodellist.ui.components.songlist
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -12,11 +13,17 @@ import com.example.viewmodellist.ui.theme.songListGradient
 import com.example.viewmodellist.utils.Datamodels
 
 @Composable
-fun RowThree1(albumArts : List<Datamodels.SongListItem>,
-modifier : Modifier = Modifier,
-songListViewModel : SongListViewModel) {
-    Row(horizontalArrangement = Arrangement.spacedBy(5.dp),
-    modifier = modifier.padding(start = 7.dp)) {
+fun RowThree1(
+    albumArts: List<Datamodels.SongListItem>,
+    modifier: Modifier = Modifier,
+    songListViewModel: SongListViewModel
+) {
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = modifier
+            .fillMaxWidth()
+
+    ) {
         AlbumArt(
             id = albumArts[0].id,
             imageUrl = albumArts[0].picUrl,
@@ -43,12 +50,14 @@ songListViewModel : SongListViewModel) {
 }
 
 @Composable
-fun RowThree2(albumArts : List<Datamodels.HotPlayListItem>,
-              songListViewModel : SongListViewModel,
-              modifier : Modifier = Modifier) {
+fun RowThree2(
+    albumArts: List<Datamodels.HotPlayListItem>,
+    songListViewModel: SongListViewModel,
+    modifier: Modifier = Modifier
+) {
     Row(
-        horizontalArrangement = Arrangement.spacedBy(5.dp),
-        modifier = modifier.padding(start = 7.dp)
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = modifier.fillMaxWidth()
     ) {
         AlbumArt(
             id = albumArts[0].id,

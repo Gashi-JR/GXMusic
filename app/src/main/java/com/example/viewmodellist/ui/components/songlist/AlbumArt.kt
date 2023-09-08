@@ -36,7 +36,7 @@ import com.example.viewmodellist.utils.formatter
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun AlbumArt(
-    id : Long,
+    id: Long,
     imageUrl: String,
     title: String,
     playCounts: Long,
@@ -46,17 +46,20 @@ fun AlbumArt(
     Column(//Column用于专辑封面和Title的上下布局
         modifier = Modifier
             .width(120.dp)
-            .clickable {
-                songListViewModel.detailId.value = id
-                songListViewModel.fetchSongLists()
-                songListViewModel.isShowDetail.value = !songListViewModel.isShowDetail.value
-            }
+
     ) {
         Card(shape = MaterialTheme.shapes.small) {
             Box {
                 Image(
                     painter = rememberAsyncImagePainter(imageUrl),
-                    modifier = modifier.size(120.dp),
+                    modifier = modifier
+                        .size(120.dp)
+                        .clickable {
+                            songListViewModel.detailId.value = id
+                            songListViewModel.fetchSongLists()
+                            songListViewModel.isShowDetail.value =
+                                !songListViewModel.isShowDetail.value
+                        },
                     contentScale = ContentScale.Crop,
                     contentDescription = null
                 )
