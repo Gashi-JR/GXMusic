@@ -4,11 +4,19 @@ package com.example.viewmodellist.ui.components.search
 import android.service.controls.ControlsProviderService.TAG
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.TweenSpec
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
@@ -29,6 +37,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.viewmodellist.ui.components.LoadingAnimation
 import com.example.viewmodellist.ui.components.find.MediaPlayerViewModel
 import com.example.viewmodellist.ui.screens.find.FindviewModel
 import com.example.viewmodellist.ui.screens.find.Repository
@@ -98,49 +107,77 @@ fun SearchResult(
                 })
         }
 
-        AnimatedVisibility(visible = index == 0) {
+        AnimatedVisibility(
+            visible = index == 0,
+
+            ) {
             val scope = rememberCoroutineScope() // 获取关联的协程作用域
             LazyColumn() {
-                itemsIndexed(searchviewModel.resultSongData) { index, item ->
-                    ResultSong(item, modifier = Modifier.clickable {
-                        scope.launch {
-                            findviewModel.currentMusic.value.id = item.id
-                            findviewModel.currentMusic.value.name = item.name
-                            findviewModel.currentMusic.value.artist = item.artist
-                            findviewModel.fetchCurrentMusicUrl(item.id)
-                            findviewModel.fetchCurrentMusicPic(item.id)
+                if (searchviewModel.resultSongData.isNotEmpty())
+                    itemsIndexed(searchviewModel.resultSongData) { index, item ->
+                        ResultSong(item, modifier = Modifier.clickable {
+                            scope.launch {
+                                findviewModel.currentMusic.value.id = item.id
+                                findviewModel.currentMusic.value.name = item.name
+                                findviewModel.currentMusic.value.artist = item.artist
+                                findviewModel.fetchCurrentMusicUrl(item.id)
+                                findviewModel.fetchCurrentMusicPic(item.id)
 
-                            mediaPlayerViewModel.play(
-                                Repository().getCurrentMusicUrl(
-                                    item.id
+                                mediaPlayerViewModel.play(
+                                    Repository().getCurrentMusicUrl(
+                                        item.id
+                                    )
                                 )
-                            )
 
+                            }
+                        })
+
+                        LaunchedEffect(searchviewModel.resultSongData.size) {
+                            if (searchviewModel.resultSongData.size - index < 5) {
+                                page++
+
+                            }
                         }
-                    })
-
-                    LaunchedEffect(searchviewModel.resultSongData.size) {
-                        if (searchviewModel.resultSongData.size - index < 5) {
-                            page++
-
-                        }
+                    }
+                else {
+                    items(List(10) { 1 }) {
+                        LoadingAnimation(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(80.dp)
+                                .padding(10.dp)
+                                .clip(MaterialTheme.shapes.small)
+                        )
                     }
                 }
             }
 
         }
-        AnimatedVisibility(visible = index == 1) {
-
+        AnimatedVisibility(
+            visible = index == 1,
+        ) {
             LazyColumn(
                 modifier = Modifier.padding(start = 15.dp, top = 8.dp, end = 15.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                itemsIndexed(searchviewModel.resultSonglistData) { index, item ->
-                    ResultSonglist(item)
-                    LaunchedEffect(searchviewModel.resultSonglistData.size) {
-                        if (searchviewModel.resultSonglistData.size - index < 5) {
-                            page++
+                if (searchviewModel.resultSonglistData.isNotEmpty())
+                    itemsIndexed(searchviewModel.resultSonglistData) { index, item ->
+                        ResultSonglist(item)
+                        LaunchedEffect(searchviewModel.resultSonglistData.size) {
+                            if (searchviewModel.resultSonglistData.size - index < 5) {
+                                page++
+                            }
                         }
+                    }
+                else {
+                    items(List(10) { 1 }) {
+                        LoadingAnimation(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(80.dp)
+                                .padding(10.dp)
+                                .clip(MaterialTheme.shapes.small)
+                        )
                     }
                 }
             }

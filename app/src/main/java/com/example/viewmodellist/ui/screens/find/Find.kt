@@ -1,8 +1,10 @@
 package com.example.viewmodellist.ui.screens.find
 
 import Banner
+import android.content.Context
 import android.service.controls.ControlsProviderService.TAG
 import android.util.Log
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -122,9 +124,17 @@ fun Find(
     }
 
 
-
+    val h = formatter.mainActivity?.getStatusBarHeight()
 
     LazyColumn() {
+        item {
+            Spacer(
+                modifier = Modifier
+                    .height(h!!.dp)
+                    .fillMaxWidth()
+                    .background(cardGradient)
+            )
+        }
         item {
             Card(
                 colors = CardDefaults.cardColors(containerColor = Color(0, 0, 0, 0)),

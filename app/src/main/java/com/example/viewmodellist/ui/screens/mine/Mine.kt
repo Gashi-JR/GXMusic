@@ -159,6 +159,13 @@ fun Mine(
                 .background(Color(245, 245, 245)),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            item{
+                Spacer(
+                    modifier = Modifier
+                        .height(formatter.mainActivity?.getStatusBarHeight()!!.dp)
+                        .fillMaxWidth()
+                )
+            }
             item {
                 Box() {
                     Image(
@@ -635,10 +642,17 @@ fun Mine(
         Column(
             verticalArrangement = Arrangement.spacedBy(15.dp), modifier = Modifier
                 .padding(
-                    top = 15.dp, start = 15.dp, end = 15.dp, bottom = 8.dp
+                    start = 15.dp, end = 15.dp, bottom = 8.dp
                 )
                 .fillMaxSize()
         ) {
+
+                Spacer(
+                    modifier = Modifier
+                        .height(formatter.mainActivity?.getStatusBarHeight()!!.dp)
+                        .fillMaxWidth()
+                )
+
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -712,10 +726,17 @@ fun Mine(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(
-                    top = 15.dp, start = 15.dp, end = 15.dp, bottom = 8.dp
+                    start = 15.dp, end = 15.dp, bottom = 8.dp
                 )
 
         ) {
+
+                Spacer(
+                    modifier = Modifier
+                        .height(formatter.mainActivity?.getStatusBarHeight()!!.dp)
+                        .fillMaxWidth()
+                )
+
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(10.dp)

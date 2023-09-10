@@ -8,7 +8,9 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
@@ -22,6 +24,8 @@ import com.example.viewmodellist.ui.components.find.MediaPlayerViewModel
 import com.example.viewmodellist.ui.screens.find.FindviewModel
 import com.example.viewmodellist.ui.screens.login.LoginviewModel
 import com.example.viewmodellist.ui.screens.songlist.SongListViewModel
+import com.example.viewmodellist.ui.theme.cardGradient
+import com.example.viewmodellist.utils.formatter
 import java.util.Collections.list
 
 @Composable
@@ -48,6 +52,12 @@ fun SongListSquare(
         modifier = modifier.fillMaxWidth()
 
     ) {
+        Spacer(
+            modifier = Modifier
+                .height(formatter.mainActivity?.getStatusBarHeight()!!.dp)
+                .fillMaxWidth()
+        )
+
         TopBar(songListViewModel)
 
         AnimatedVisibility(

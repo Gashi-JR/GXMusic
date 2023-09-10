@@ -254,22 +254,23 @@ class Repository() {
 
         }
 
-
-        //Log.d(TAG, "alltopsongs: $alltopsongs")
         return alltopsongs
     }
 
     suspend fun getCurrentMusicUrl(id: Long): String {
 
         val result = NetworkUtils.https("/song/url/v1?id=$id&level=standard", "GET")
-        val response = gson.fromJson(result, JsonObject::class.java)
-        val JsonArray = response.getAsJsonArray("data")
-        val songJsonObject = JsonArray[0].asJsonObject
+        try {
+            val response = gson.fromJson(result, JsonObject::class.java)
+            val JsonArray = response.getAsJsonArray("data")
+            val songJsonObject = JsonArray[0].asJsonObject
+            return songJsonObject.get("url").asString
+        } catch (err: Exception) {
+            Log.e(TAG, "getCurrentMusicUrl: $err")
+            return ""
+        }
 
 
-
-
-        return songJsonObject.get("url").asString
     }
 
 

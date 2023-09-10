@@ -9,16 +9,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.viewmodellist.utils.Datamodels.*
 import com.google.gson.Gson
+import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.launch
-import org.w3c.dom.Comment
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -37,13 +35,17 @@ class SongListViewModel(private val repository: Repository = Repository()) : Vie
 
     //TODO 当前歌单相关的信息
     var id: MutableState<Long> = mutableStateOf(705123491)
-    var coverImgUrl = mutableStateOf("")
+    var coverImgUrl =
+        mutableStateOf("")
     var name = mutableStateOf("")
     val userAvatar =
-        mutableStateOf("http://p1.music.126.net/SUeqMM8HOIpHv9Nhl9qt9w==/109951165647004069.jpg")
-    val selectedSongIndex = mutableStateOf<Int>(-1)
-
-    //var author = mutableStateOf("")
+        mutableStateOf("")
+    val userName =
+        mutableStateOf("")
+    val selectedSongIndex = mutableStateOf(-1)
+    var commentCount = mutableStateOf(0)
+    var shareCount = mutableStateOf(0)
+    var bookedCount = mutableStateOf(0)
 
     //TODO 专辑列表
     private val _songlistData =
@@ -58,10 +60,6 @@ class SongListViewModel(private val repository: Repository = Repository()) : Vie
     //TODO 热门标签
     private val _tagsPlayList = mutableStateOf<MutableList<HotPlayListItem>>(mutableListOf())
     val tagPlayList get() = _tagsPlayList.value
-
-    fun CleartagPlayList() {
-        _tagsPlayList.value.clear()
-    }
 
 
     //TODO 歌单广场顶部导航栏相关
@@ -95,10 +93,42 @@ class SongListViewModel(private val repository: Repository = Repository()) : Vie
     private val _commentsData = mutableStateOf<MutableList<Comments>>(mutableListOf())
     val commentsData get() = _commentsData.value
 
+
+    private fun cleartagPlayList() {
+        _tagsPlayList.value.clear()
+    }
+
+    private fun clearSongList() {
+        _songList.value.clear()
+        userAvatar.value = ""
+        userName.value = ""
+        coverImgUrl.value =
+            ""
+        name.value = ""
+        commentCount.value = 0
+        shareCount.value = 0
+        bookedCount.value = 0
+    }
+
+    private fun clearcommentsData() {
+        _commentsData.value.clear()
+    }
+
+
     fun fetchSongLists() {
+        clearSongList()
         viewModelScope.launch {
             try {
-                val list = repository.getSongList(detailId.value)
+                repository.getSongListDetail(detailId.value)
+                userAvatar.value = repository.creatorUrl
+                userName.value = repository.creatornickname
+                coverImgUrl.value = repository.coverImgUrl
+                name.value = repository.name
+                commentCount.value = repository.commentCount.value
+                shareCount.value = repository.shareCount.value
+                bookedCount.value = repository.bookedCount.value
+
+                val list = repository.getSongList()
                 val Mylist = list.map { item ->
                     gnonSongList(
                         id = item.id,
@@ -109,9 +139,8 @@ class SongListViewModel(private val repository: Repository = Repository()) : Vie
                     )
                 }
 
+
                 _songList.value = Mylist.toMutableList()
-                coverImgUrl.value = repository.coverImgUrl
-                name.value = repository.name
                 Log.d(TAG, "SongList: $songList")
                 Log.d(TAG, "coverImgUrl.value:" + coverImgUrl.value)
             } catch (e: Exception) {
@@ -148,7 +177,7 @@ class SongListViewModel(private val repository: Repository = Repository()) : Vie
     }
 
     fun fetchTagPlayList() {
-        CleartagPlayList()
+        cleartagPlayList()
         viewModelScope.launch {
             if (nowTag.value != "推荐") {
                 try {
@@ -164,6 +193,7 @@ class SongListViewModel(private val repository: Repository = Repository()) : Vie
     }
 
     fun fetchComments() {
+        clearcommentsData()
         viewModelScope.launch {
             try {
                 val commentsList = repository.getComments(detailId.value)
@@ -191,36 +221,65 @@ class SongListViewModel(private val repository: Repository = Repository()) : Vie
 }
 
 
-class Repository() {
-    val gson = Gson()
+class Repository {
+    private val gson = Gson()
     var coverImgUrl: String = ""
     var name: String = ""
-    suspend fun getSongList(detailId: Long): List<gnonSongList> {
-        // TODO 传入歌单ID获取歌单详情
-        var result = NetworkUtils.https(url = "/playlist/detail?id=$detailId", method = "GET")
+    var creatorUrl by mutableStateOf("")
+    var creatornickname by mutableStateOf("")
+    var commentCount = mutableStateOf(0)
+    var shareCount = mutableStateOf(0)
+    var bookedCount = mutableStateOf(0)
 
-        var response = gson.fromJson(result, JsonObject::class.java)  // 转为Json对象
+    private var result: String? = ""
+    private var response: JsonObject = JsonObject()
+
+    private var tracksJsonArray: JsonArray = JsonArray()
+    private var tracks: List<Tracks> = listOf()
+
+    suspend fun getSongListDetail(detailId: Long) {
+        // TODO 传入歌单ID获取歌单详情
+        result = NetworkUtils.https(url = "/playlist/detail?id=$detailId", method = "GET")
+        response = gson.fromJson(result, JsonObject::class.java)  // 转为Json对象
+
+        val result2 =
+            NetworkUtils.https(url = "/playlist/detail/dynamic?id=$detailId", method = "GET")
+        val response2 = gson.fromJson(result2, JsonObject::class.java)  // 转为Json对象
+        commentCount.value = response2.get("commentCount").asInt
+        shareCount.value = response2.get("shareCount").asInt
+        bookedCount.value = response2.get("bookedCount").asInt
+
+
         val playlistJsonObject = response.getAsJsonObject("playlist")  // 将playList转化为Json对象
         coverImgUrl = playlistJsonObject.get("coverImgUrl").asString
         name = playlistJsonObject.get("name").asString
-
-        val tracksJsonArray =
+        val creator = playlistJsonObject.get("creator").asJsonObject
+        creatorUrl = creator.get("avatarUrl").asString
+        creatornickname = creator.get("nickname").asString
+        Log.d(TAG, "creatorUrl:$creatorUrl ")
+        tracksJsonArray =
             playlistJsonObject.getAsJsonArray("tracks") // playList中的tracks转为Json数组
 
-        val tracks: List<Tracks> =
+        tracks =
             gson.fromJson(
                 tracksJsonArray,
                 object : TypeToken<List<Tracks>>() {}.type
             )  // Json数组转为自定义列表
-        println("tracks:$tracks")
-        var songIdList: String = ""
+
+    }
+
+
+    suspend fun getSongList(): List<gnonSongList> {
+
+
+        var songIdList = ""
         for (i in 0 until tracksJsonArray.size()) {
             songIdList += tracks[i].id
             if (i != tracksJsonArray.size() - 1) {
                 songIdList += ","
             }
         }
-        result = NetworkUtils.https("/song/url?id=$songIdList", "GET")
+        result = NetworkUtils.https("/song/url/v1?id=$songIdList&level=standard", "GET")
         response = gson.fromJson(result, JsonObject::class.java)
         val songListJsonArray = response.getAsJsonArray("data")
         val data: List<SongList> =

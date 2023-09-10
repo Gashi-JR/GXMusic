@@ -63,6 +63,7 @@ import com.example.viewmodellist.ui.components.search.SearchResult
 import com.example.viewmodellist.ui.screens.find.FindviewModel
 import com.example.viewmodellist.ui.theme.ViewModelListTheme
 import com.example.viewmodellist.ui.theme.borderGradient
+import com.example.viewmodellist.utils.formatter
 
 @OptIn(
     ExperimentalMaterial3Api::class,
@@ -105,9 +106,15 @@ fun Search(
 
     Box(modifier = modifier.fillMaxHeight()) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(20.dp),
+            verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
+            Spacer(
+                modifier = Modifier
+                    .height(formatter.mainActivity?.getStatusBarHeight()!!.dp)
+                    .fillMaxWidth()
+            )
 
             Row(
                 modifier = Modifier.padding(top = 10.dp),
@@ -222,13 +229,11 @@ fun Search(
                 }
             }
 
-
-
-
-
-
-
-
+            Spacer(
+                modifier = Modifier
+                    .height(formatter.mainActivity?.getStatusBarHeight()!!.dp)
+                    .fillMaxWidth()
+            )
 
             if (!isResult) {
                 LazyColumn(
@@ -321,7 +326,7 @@ fun Search(
         Column(
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .absoluteOffset(y = 60.dp)
+                .absoluteOffset(y = 91.dp)
         ) {
 
             if (searchviewModel.searchSuggestData.isNotEmpty())
