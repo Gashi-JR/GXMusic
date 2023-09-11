@@ -168,9 +168,9 @@ fun CommentItem(
 
             Spacer(modifier = Modifier.height(10.dp))
             Divider(
-                modifier = Modifier.padding(horizontal = 10.dp),
-                thickness = 0.5.dp,
-                color = Color.Gray.copy(0.5f)
+                modifier = Modifier.padding(horizontal = 15.dp),
+                thickness = 0.15.dp,
+                color = Color.Gray.copy(0.2f)
             )
         }
     }

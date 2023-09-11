@@ -10,8 +10,10 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -32,13 +34,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.viewmodellist.ui.components.LoadingAnimation
 import com.example.viewmodellist.ui.components.find.MediaPlayerViewModel
+import com.example.viewmodellist.ui.components.songlist.TagItem
 import com.example.viewmodellist.ui.screens.find.FindviewModel
 import com.example.viewmodellist.ui.screens.find.Repository
 import com.example.viewmodellist.ui.screens.search.SearchviewModel
@@ -78,34 +86,30 @@ fun SearchResult(
 
     LaunchedEffect(page, index) {
         if (index == 0) {
-            searchviewModel.fetchResultSongData(keyword, page.toLong())
+            if (searchviewModel.resultSongData.isEmpty())
+                searchviewModel.fetchResultSongData(keyword, page.toLong())
         }
         if (index == 1) {
-            searchviewModel.fetchResultSonglistData(keyword, page.toLong())
+            if (searchviewModel.resultSonglistData.isEmpty())
+                searchviewModel.fetchResultSonglistData(keyword, page.toLong())
         }
     }
 
     Column() {
-        TabRow(selectedTabIndex = index, indicator = { tabPositions ->
-            TabRowDefaults.Indicator(
-                modifier = Modifier
-                    .tabIndicatorOffset(tabPositions[index])
-                    .clip(MaterialTheme.shapes.large),
-                color = Color.Red, // Customize the indicator color
-                height = 1.dp // Customize the indicator height
-            )
-        }) {
-            Tab(
-                selected = true, onClick = { index = 0 },
-                text = {
-                    Text(text = "单曲", color = Color.Black)
-                },
-            )
-            Tab(selected = true, onClick = { index = 1 },
-                text = {
-                    Text(text = "歌单", color = Color.Black)
-                })
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceAround
+        ) {
+            TagItem(txt = "单曲", isSelected = index == 0) {
+                index = 0
+            }
+            TagItem(txt = "歌单", isSelected = index == 1) {
+                index = 1
+            }
         }
+
 
         AnimatedVisibility(
             visible = index == 0,

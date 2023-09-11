@@ -3,6 +3,7 @@ package com.example.viewmodellist.ui.components.search
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -52,13 +53,17 @@ import java.util.Date
 
 @Composable
 fun ResultSonglist(
-    songlist: Datamodels.ResultSonglist ,
+    songlist: Datamodels.ResultSonglist,
+    onClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
             .height(60.dp)
             .clip(shape = MaterialTheme.shapes.small)
+            .clickable {
+
+            }
 
     ) {
 

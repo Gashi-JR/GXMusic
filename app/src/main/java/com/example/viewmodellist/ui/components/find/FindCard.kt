@@ -3,6 +3,7 @@ package com.example.viewmodellist.ui.components.find
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -37,6 +39,7 @@ fun FindCard(
     showmore: Boolean,
     showarrow: Boolean,
     showline: Boolean,
+    onClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
@@ -53,7 +56,12 @@ fun FindCard(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+            )
+
+            {
                 Text(
                     text = stringResource(id = title),
                     fontSize = 18.sp,
@@ -69,7 +77,7 @@ fun FindCard(
                     )
             }
             if (showmore)
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = { onClick() }) {
                     Icon(
                         painter = painterResource(id = R.drawable.baseline_more_vert_24),
                         contentDescription = stringResource(

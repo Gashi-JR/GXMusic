@@ -45,12 +45,12 @@ var cookieJar: CookieJar = object : CookieJar {
 
 
 object NetworkUtils {
-    val client = OkHttpClient.Builder()
+    private val client = OkHttpClient.Builder()
         .cookieJar(cookieJar)
         .build()
 
     private val retrofit = Retrofit.Builder()
-        .baseUrl("http://9vs9n8.natappfree.cc") // 设置基本 URL
+        .baseUrl("http://w8ci7d.natappfree.cc") // 设置基本 URL
         .addConverterFactory(GsonConverterFactory.create()) // 设置 Gson 转换器
         .client(client)
         .build()
