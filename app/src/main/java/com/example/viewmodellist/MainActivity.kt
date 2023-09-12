@@ -22,13 +22,17 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
 
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
@@ -55,6 +59,10 @@ import com.example.viewmodellist.ui.screens.songlist.SongListViewModel
 import com.example.viewmodellist.ui.screens.top.Top
 import com.example.viewmodellist.ui.theme.ViewModelListTheme
 import com.example.viewmodellist.utils.formatter
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
 
 
 class MainActivity : ComponentActivity() {
@@ -167,7 +175,7 @@ fun Myapp() {
         countDownTimer.start()
     })
 
-    var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
+
     var isLogin by rememberSaveable {
         mutableStateOf(false)
     }
@@ -175,13 +183,19 @@ fun Myapp() {
         mutableStateOf(false)
     }
 
-
+    var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
     val pagerState = rememberPagerState(initialPage = selectedTabIndex)
+    var shouldUpdateIndex by remember { mutableStateOf(true) }
+
     LaunchedEffect(selectedTabIndex) {
-        pagerState.animateScrollToPage(selectedTabIndex)
+        pagerState.scrollToPage(selectedTabIndex)
+        // pagerState.animateScrollToPage(selectedTabIndex)
     }
     LaunchedEffect(pagerState.currentPage) {
-        selectedTabIndex = pagerState.currentPage
+        if (shouldUpdateIndex) {
+            selectedTabIndex = pagerState.currentPage
+        }
+        shouldUpdateIndex = false
     }
     Scaffold(
         bottomBar = {
@@ -288,19 +302,45 @@ fun Myapp() {
                             { showSearch.value = true },
                         )
                     }
+                    SideEffect {
+                        shouldUpdateIndex = true
+                    }
                 }
 
-                1 -> LyricPage(findviewModel, mediaPlayerViewModel, state)
-                2 -> SongList(songListViewModel, mediaPlayerViewModel, findviewModel)
-                3 -> Top()
-                4 -> AnimatedVisibility(visible = !showSearch.value && !isLogin) {
-                    Mine(
-                        loginViewModel,
-                        mineviewModel,
-                        onLogin = {
-                            isLogin = true
-                            loginViewModel.qrimg.value = ""
-                        })
+                1 -> {
+                    LyricPage(findviewModel, mediaPlayerViewModel, state)
+                    SideEffect {
+                        shouldUpdateIndex = true
+                    }
+                }
+
+                2 -> {
+                    SongList(songListViewModel, mediaPlayerViewModel, findviewModel)
+                    SideEffect {
+                        shouldUpdateIndex = true
+                    }
+                }
+
+                3 -> {
+                    Top()
+                    SideEffect {
+                        shouldUpdateIndex = true
+                    }
+                }
+
+                4 -> {
+                    AnimatedVisibility(visible = !showSearch.value && !isLogin) {
+                        Mine(
+                            loginViewModel,
+                            mineviewModel,
+                            onLogin = {
+                                isLogin = true
+                                loginViewModel.qrimg.value = ""
+                            })
+                    }
+                    SideEffect {
+                        shouldUpdateIndex = true
+                    }
                 }
             }
         }
