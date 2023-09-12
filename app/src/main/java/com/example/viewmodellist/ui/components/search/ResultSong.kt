@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.example.viewmodellist.R
 import com.example.viewmodellist.ui.components.Tag
+import com.example.viewmodellist.ui.components.songlist.SongItem
 import com.example.viewmodellist.utils.Datamodels
 import com.example.viewmodellist.utils.formatter
 import java.util.Date
@@ -52,82 +53,90 @@ import java.util.Date
 
 @Composable
 fun ResultSong(
+    index: Int,
     song: Datamodels.ResultSong,
+    isSelected: Boolean = false,
+
     modifier: Modifier = Modifier
 ) {
-    Row(
+//    Row(
+//        modifier = modifier
+//            .height(60.dp)
+//            .clip(shape = MaterialTheme.shapes.small)
+//
+//    ) {
+//
+//        Row(
+//            verticalAlignment = Alignment.CenterVertically,
+//            horizontalArrangement = Arrangement.SpaceBetween,
+//            modifier = Modifier
+//                .fillMaxWidth()
+//
+//        ) {
+//            Column(
+//                modifier = Modifier
+//                    .fillMaxHeight()
+//                    .padding(start = 10.dp),
+//                verticalArrangement = Arrangement.Center,
+//                horizontalAlignment = Alignment.Start
+//            ) {
+//                Text(
+//                    text = song.name,
+//                    fontSize = 16.sp,
+//                    maxLines = 1,
+//                    modifier = Modifier.width(120.dp)
+//                )
+//                Spacer(modifier = Modifier.height(5.dp))
+//                Row() {
+//                    Tag(onClick = { /*TODO*/ }, modifier = Modifier.height(14.dp)) {
+//                        Text(
+//                            text = formatter.convertTimestampToDateString(song.publishTime),
+//                            color = Color.Red,
+//                            fontSize = 10.sp
+//                        )
+//                    }
+//                    Text(
+//                        text = song.artist + "-" + song.al,
+//                        fontSize = 12.sp,
+//                        overflow = TextOverflow.Ellipsis,
+//                        maxLines = 2,
+//                        modifier = Modifier.width(150.dp),
+//                        color = Color.Gray
+//                    )
+//                }
+//
+//            }
+//            Row() {
+//                Icon(
+//                    painter = painterResource(id = R.drawable.baseline_smart_display_24),
+//                    contentDescription = null,
+//                    tint = Color.Black.copy(alpha = 0.2f),
+//
+//                    )
+//                Spacer(modifier = Modifier.width(25.dp))
+//                Icon(
+//                    painter = painterResource(id = R.drawable.baseline_more_vert_24),
+//                    contentDescription = null,
+//                    tint = Color.Black.copy(alpha = 0.2f),
+//
+//                    )
+//                Spacer(modifier = Modifier.width(25.dp))
+//            }
+//
+//        }
+//
+//    }
+//    Spacer(modifier = Modifier.width(25.dp))
+
+    SongItem(
+        no = index,
+        name = song.name,
+        author = song.artist,
+        fee = -1,
+        isSelected = isSelected,
         modifier = modifier
-            .height(60.dp)
-            .clip(shape = MaterialTheme.shapes.small)
-
-    ) {
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier
-                .fillMaxWidth()
-
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .padding(start = 10.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.Start
-            ) {
-                Text(
-                    text = song.name,
-                    fontSize = 16.sp,
-                    maxLines = 1,
-                    modifier = Modifier.width(120.dp)
-                )
-                Spacer(modifier = Modifier.height(5.dp))
-                Row() {
-                    Tag(onClick = { /*TODO*/ }, modifier = Modifier.height(14.dp)) {
-                        Text(
-                            text = formatter.convertTimestampToDateString(song.publishTime),
-                            color = Color.Red,
-                            fontSize = 10.sp
-                        )
-                    }
-                    Text(
-                        text = song.artist + "-" + song.al,
-                        fontSize = 12.sp,
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 2,
-                        modifier = Modifier.width(150.dp),
-                        color = Color.Gray
-                    )
-                }
-
-            }
-            Row() {
-                Icon(
-                    painter = painterResource(id = R.drawable.baseline_smart_display_24),
-                    contentDescription = null,
-                    tint = Color.Black.copy(alpha = 0.2f),
-
-                    )
-                Spacer(modifier = Modifier.width(25.dp))
-                Icon(
-                    painter = painterResource(id = R.drawable.baseline_more_vert_24),
-                    contentDescription = null,
-                    tint = Color.Black.copy(alpha = 0.2f),
-
-                    )
-                Spacer(modifier = Modifier.width(25.dp))
-            }
-
-        }
-
-    }
-    Spacer(modifier = Modifier.width(25.dp))
-    Divider(
-        modifier = Modifier.padding(horizontal = 15.dp),
-        thickness = 0.15.dp,
-        color = Color.Gray.copy(0.2f)
     )
+
 }
 
 
@@ -135,6 +144,7 @@ fun ResultSong(
 @Composable
 fun ResultSongPreview() {
     ResultSong(
+        0,
         Datamodels.ResultSong(1, 17994578437, 1, ",", "d", "")
     )
 }

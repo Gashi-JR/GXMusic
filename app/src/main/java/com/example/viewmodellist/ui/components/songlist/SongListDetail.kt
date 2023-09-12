@@ -337,13 +337,15 @@ fun SongItem(
     modifier: Modifier = Modifier,
     isSelected: Boolean
 ) {
-    val songTextStyle = if (isSelected) {
+    var songTextStyle = if (isSelected) {
         TextStyle(
             color = Color(250, 65, 64)
         )
     } else {
-        TextStyle(color = Color.Gray)
+        TextStyle(color = Color.Black)
     }
+
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -360,6 +362,7 @@ fun SongItem(
                     .padding(start = 12.dp)
                     .width(25.dp)
                     .align(Alignment.CenterVertically),
+                color = Color.Gray,
                 style = songTextStyle,
                 textAlign = TextAlign.Center
             )
@@ -369,7 +372,6 @@ fun SongItem(
                     text = name,
                     style = songTextStyle,
                     fontSize = 16.sp,
-                    color = Color.Black
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -396,6 +398,7 @@ fun SongItem(
                                 color = Color.White,
                             )
                         }
+                    } else if (fee == -1) {
                     } else {
                         Box(
                             modifier = modifier
@@ -416,7 +419,6 @@ fun SongItem(
                             )
                         }
                     }
-
                     Text(
                         text = author, fontWeight = FontWeight.Light, color = Color(
                             121,
@@ -424,7 +426,8 @@ fun SongItem(
                             117,
                             255
                         ),
-                        fontSize = 12.sp
+                        fontSize = 12.sp,
+                        style = songTextStyle
                     )
                 }
             }

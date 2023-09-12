@@ -49,7 +49,9 @@ import com.example.viewmodellist.ui.components.find.MediaPlayerViewModel
 import com.example.viewmodellist.ui.components.songlist.TagItem
 import com.example.viewmodellist.ui.screens.find.FindviewModel
 import com.example.viewmodellist.ui.screens.find.Repository
+import com.example.viewmodellist.ui.screens.login.LoginviewModel
 import com.example.viewmodellist.ui.screens.search.SearchviewModel
+import com.example.viewmodellist.ui.screens.songlist.SongListViewModel
 import kotlinx.coroutines.launch
 
 
@@ -59,15 +61,19 @@ fun SearchResult(
     keyword: String,
     findviewModel: FindviewModel = FindviewModel(),
     mediaPlayerViewModel: MediaPlayerViewModel = MediaPlayerViewModel(),
+    songListViewModel: SongListViewModel,
+    loginviewModel: LoginviewModel = LoginviewModel(),
     modifier: Modifier = Modifier
 ) {
-    var index by remember {
+    var index by rememberSaveable {
         mutableStateOf(0)
     }
     var page by rememberSaveable {
         mutableStateOf(0)
     }
-
+    var sel by rememberSaveable {
+        mutableStateOf(-1)
+    }
     LaunchedEffect(keyword, index) {
 
         if (index == 0) {
@@ -86,12 +92,12 @@ fun SearchResult(
 
     LaunchedEffect(page, index) {
         if (index == 0) {
-            if (searchviewModel.resultSongData.isEmpty())
-                searchviewModel.fetchResultSongData(keyword, page.toLong())
+            //    if (searchviewModel.resultSongData.isEmpty())
+            searchviewModel.fetchResultSongData(keyword, page.toLong())
         }
         if (index == 1) {
-            if (searchviewModel.resultSonglistData.isEmpty())
-                searchviewModel.fetchResultSonglistData(keyword, page.toLong())
+            // if (searchviewModel.resultSonglistData.isEmpty())
+            searchviewModel.fetchResultSonglistData(keyword, page.toLong())
         }
     }
 
@@ -119,22 +125,27 @@ fun SearchResult(
             LazyColumn() {
                 if (searchviewModel.resultSongData.isNotEmpty())
                     itemsIndexed(searchviewModel.resultSongData) { index, item ->
-                        ResultSong(item, modifier = Modifier.clickable {
-                            scope.launch {
-                                findviewModel.currentMusic.value.id = item.id
-                                findviewModel.currentMusic.value.name = item.name
-                                findviewModel.currentMusic.value.artist = item.artist
-                                findviewModel.fetchCurrentMusicUrl(item.id)
-                                findviewModel.fetchCurrentMusicPic(item.id)
+                        ResultSong(
+                            index,
+                            item,
+                            index == sel,
+                            modifier = Modifier.clickable {
+                                sel = index
+                                scope.launch {
+                                    findviewModel.currentMusic.value.id = item.id
+                                    findviewModel.currentMusic.value.name = item.name
+                                    findviewModel.currentMusic.value.artist = item.artist
+                                    findviewModel.fetchCurrentMusicUrl(item.id)
+                                    findviewModel.fetchCurrentMusicPic(item.id)
 
-                                mediaPlayerViewModel.play(
-                                    Repository().getCurrentMusicUrl(
-                                        item.id
+                                    mediaPlayerViewModel.play(
+                                        Repository().getCurrentMusicUrl(
+                                            item.id
+                                        )
                                     )
-                                )
 
-                            }
-                        })
+                                }
+                            })
 
                         LaunchedEffect(searchviewModel.resultSongData.size) {
                             if (searchviewModel.resultSongData.size - index < 5) {
@@ -166,7 +177,12 @@ fun SearchResult(
             ) {
                 if (searchviewModel.resultSonglistData.isNotEmpty())
                     itemsIndexed(searchviewModel.resultSonglistData) { index, item ->
-                        ResultSonglist(item)
+                        ResultSonglist(item, onClick = {
+                            songListViewModel.detailId.value = item.id
+                            songListViewModel.fetchSongLists()
+                            songListViewModel.isShowDetail.value = true
+                            Log.d(TAG, "SearchResult: $songListViewModel.isShowDetail.value")
+                        })
                         LaunchedEffect(searchviewModel.resultSonglistData.size) {
                             if (searchviewModel.resultSonglistData.size - index < 5) {
                                 page++
@@ -194,8 +210,8 @@ fun SearchResult(
 @Preview(showBackground = true)
 @Composable
 fun SearchResultPreview() {
-    SearchResult(
-        searchviewModel = SearchviewModel(),
-        keyword = "ad",
-    )
+//    SearchResult(
+//        searchviewModel = SearchviewModel(),
+//        keyword = "ad",
+//    )
 }

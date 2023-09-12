@@ -60,9 +60,10 @@ fun ResultSonglist(
     Row(
         modifier = modifier
             .height(60.dp)
+            .fillMaxWidth()
             .clip(shape = MaterialTheme.shapes.small)
             .clickable {
-
+                onClick()
             }
 
     ) {

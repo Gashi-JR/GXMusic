@@ -257,7 +257,10 @@ fun Myapp() {
                     searchViewModel,
                     findviewModel = findviewModel,
                     mediaPlayerViewModel = mediaPlayerViewModel,
-                    onBack = { showSearch.value = false })
+                    songListViewModel=songListViewModel,
+                    onBack = { showSearch.value = false }
+
+                    )
             }
 
             when (page) {
