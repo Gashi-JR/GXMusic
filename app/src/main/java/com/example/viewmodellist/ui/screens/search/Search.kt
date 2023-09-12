@@ -163,8 +163,10 @@ fun Search(
                             },
                             leadingIcon = {
                                 Icon(
-                                    painter = painterResource(id = R.drawable.baseline_search_24),
-                                    contentDescription = "search"
+                                    painter = painterResource(id = R.drawable.search),
+                                    contentDescription = "search",
+                                    tint = Color.Unspecified,
+                                    modifier = Modifier.size(24.dp)
                                 )
                             },
                             trailingIcon = {
@@ -176,8 +178,10 @@ fun Search(
 
                                 ) {
                                     Icon(
-                                        painter = painterResource(id = R.drawable.baseline_clear_24),
+                                        painter = painterResource(id = R.drawable.close),
                                         contentDescription = "clear",
+                                        tint = Color.Unspecified,
+                                        modifier = Modifier.size(18.dp)
                                     )
                                 }
                             },
@@ -283,7 +287,15 @@ fun Search(
                                 false,
                                 false,
                                 true,
-                                modifier = Modifier.padding(horizontal = 15.dp)
+                                modifier = Modifier.padding(horizontal = 15.dp),
+                                icon = {
+                                    androidx.compose.material3.Icon(
+                                        painter = painterResource(id = R.drawable.hot),
+                                        contentDescription = null,
+                                        tint = Color.Unspecified,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
                             ) {
                                 Spacer(modifier = Modifier.height(15.dp))
                                 Column(

@@ -110,25 +110,16 @@ fun PlayButton(
                         contentDescription = null
                     )
                 }
-                if (extended)
-                    Icon(
-                        painter = painterResource(id = R.drawable.baseline_chevron_left_24),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(35.dp)
-                            .align(Alignment.Center)
 
-                    )
-                else {
-                    Icon(
-                        painter = painterResource(id = R.drawable.baseline_chevron_right_24),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(35.dp)
-                            .align(Alignment.Center)
+                Icon(
+                    painter = painterResource(id = R.drawable.rotatemusic),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(35.dp)
+                        .align(Alignment.Center),
+                    tint = Color.Unspecified
 
-                    )
-                }
+                )
 
             }
 
@@ -151,6 +142,6 @@ fun PlayButton(
 @Preview
 @Composable
 fun PlayButtonPreview() {
-   // PlayButton(onClick = {}, true, FindviewModel(), MediaPlayerViewModel())
+    // PlayButton(onClick = {}, true, FindviewModel(), MediaPlayerViewModel())
 }
 

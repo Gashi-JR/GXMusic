@@ -345,7 +345,13 @@ fun SongItem(
         TextStyle(color = Color.Black)
     }
 
-
+    var songTextGrayStyle = if (isSelected) {
+        TextStyle(
+            color = Color(250, 65, 64)
+        )
+    } else {
+        TextStyle(color = Color.Gray)
+    }
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -362,8 +368,8 @@ fun SongItem(
                     .padding(start = 12.dp)
                     .width(25.dp)
                     .align(Alignment.CenterVertically),
-                color = Color.Gray,
-                style = songTextStyle,
+
+                style = songTextGrayStyle,
                 textAlign = TextAlign.Center
             )
 
@@ -420,14 +426,9 @@ fun SongItem(
                         }
                     }
                     Text(
-                        text = author, fontWeight = FontWeight.Light, color = Color(
-                            121,
-                            119,
-                            117,
-                            255
-                        ),
+                        text = author, fontWeight = FontWeight.Light,
                         fontSize = 12.sp,
-                        style = songTextStyle
+                        style = songTextGrayStyle
                     )
                 }
             }
@@ -438,7 +439,7 @@ fun SongItem(
             Icon(
                 painter = painterResource(id = R.drawable.baseline_more_vert_24),
                 contentDescription = "",
-                tint = Color.Black.copy(alpha = 0.5f)
+                tint = Color.Black.copy(alpha = 0.2f)
             )
         }
     }

@@ -95,9 +95,11 @@ fun SongCover(
             }
 
             Icon(
-                painter = painterResource(id = R.drawable.baseline_smart_display_24),
+                painter = painterResource(id = R.drawable.video),
                 contentDescription = null,
-                tint = Color.Black.copy(alpha = 0.2f),
+                tint = Color.Unspecified,
+                modifier = Modifier.size(24.dp),
+
 
                 )
         }

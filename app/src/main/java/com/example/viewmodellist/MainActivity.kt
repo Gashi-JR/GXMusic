@@ -5,6 +5,8 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.service.controls.ControlsProviderService.TAG
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
@@ -165,12 +167,21 @@ fun Myapp() {
         countDownTimer.start()
     })
 
-    var selectedTabIndex by remember { mutableStateOf(0) }
+    var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
     var isLogin by rememberSaveable {
         mutableStateOf(false)
     }
     val showSearch = rememberSaveable {
         mutableStateOf(false)
+    }
+
+
+    val pagerState = rememberPagerState(initialPage = selectedTabIndex)
+    LaunchedEffect(selectedTabIndex) {
+        pagerState.animateScrollToPage(selectedTabIndex)
+    }
+    LaunchedEffect(pagerState.currentPage) {
+        selectedTabIndex = pagerState.currentPage
     }
     Scaffold(
         bottomBar = {
@@ -207,7 +218,6 @@ fun Myapp() {
         val mineviewModel by remember {
             mutableStateOf(MineviewModel())
         }
-        val pagerState = rememberPagerState(initialPage = selectedTabIndex)
 
 
         val songListViewModel by remember { mutableStateOf(SongListViewModel()) }
@@ -242,9 +252,9 @@ fun Myapp() {
         LaunchedEffect(lycState.value) {
             state.play()
         }
-        LaunchedEffect(selectedTabIndex) {
-            pagerState.animateScrollToPage(selectedTabIndex)
-        }
+
+
+
         AnimatedVisibility(visible = isLogin) {
             Login(loginviewModel = loginViewModel, onLogin = {
                 isLogin = false
@@ -257,10 +267,10 @@ fun Myapp() {
                     searchViewModel,
                     findviewModel = findviewModel,
                     mediaPlayerViewModel = mediaPlayerViewModel,
-                    songListViewModel=songListViewModel,
+                    songListViewModel = songListViewModel,
                     onBack = { showSearch.value = false }
 
-                    )
+                )
             }
 
             when (page) {

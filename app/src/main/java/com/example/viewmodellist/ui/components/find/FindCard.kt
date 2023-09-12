@@ -40,6 +40,7 @@ fun FindCard(
     showarrow: Boolean,
     showline: Boolean,
     onClick: () -> Unit = {},
+    icon: @Composable () -> Unit = {},
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
@@ -67,6 +68,7 @@ fun FindCard(
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
+                icon()
                 if (showarrow)
                     Icon(
                         painter = painterResource(id = R.drawable.baseline_chevron_right_24),
