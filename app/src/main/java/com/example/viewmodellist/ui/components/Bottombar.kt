@@ -36,12 +36,21 @@ fun BottomBar(
         BottomNavigationItem(
             selected = selectedTabIndex == 0, onClick = toFind,
             icon = {
-                Icon(
-                    painterResource(id = R.drawable.find),
-                    contentDescription = null,
-                    tint = Color(250, 65, 64),
-                    modifier = Modifier.size(24.dp)
-                )
+                if (selectedTabIndex == 0)
+                    Icon(
+                        painterResource(id = R.drawable.find),
+                        contentDescription = null,
+                        tint = Color(250, 65, 64),
+                        modifier = Modifier.size(24.dp)
+                    )
+                else {
+                    Icon(
+                        painterResource(id = R.drawable.find1),
+                        contentDescription = null,
+                        tint = Color.Gray,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
             },
             label = {
                 Text(
@@ -59,7 +68,7 @@ fun BottomBar(
                 Icon(
                     painter = painterResource(id = R.drawable.lyc),
                     contentDescription = null,
-                    tint = Color(250, 65, 64),
+                    tint = if (selectedTabIndex == 1) Color(250, 65, 64) else Color.Gray,
                     modifier = Modifier.size(24.dp)
                 )
             },
@@ -78,7 +87,7 @@ fun BottomBar(
                 Icon(
                     painter = painterResource(id = R.drawable.list),
                     contentDescription = null,
-                    tint = Color(250, 65, 64),
+                    tint = if (selectedTabIndex == 2) Color(250, 65, 64) else Color.Gray,
                     modifier = Modifier.size(24.dp)
                 )
             },
@@ -98,7 +107,7 @@ fun BottomBar(
                 Icon(
                     painter = painterResource(id = R.drawable.top),
                     contentDescription = null,
-                    tint = Color(250, 65, 64),
+                    tint = if (selectedTabIndex == 3) Color(250, 65, 64) else Color.Gray,
                     modifier = Modifier.size(24.dp)
                 )
             },
@@ -117,7 +126,7 @@ fun BottomBar(
                 Icon(
                     painterResource(id = R.drawable.mine),
                     contentDescription = null,
-                    tint = Color(250, 65, 64),
+                    tint = if (selectedTabIndex == 4) Color(250, 65, 64) else Color.Gray,
                     modifier = Modifier.size(24.dp)
                 )
             },

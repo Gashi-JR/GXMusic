@@ -2,6 +2,8 @@ package com.example.viewmodellist.ui.components.find
 
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -41,6 +44,7 @@ fun SonglistCover(
     playCount: Long,
     id: Long,
     copywriter: String?,
+    onClick: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -55,7 +59,11 @@ fun SonglistCover(
 
                     Image(
                         painter = rememberAsyncImagePainter(imageUrl),
-                        modifier = modifier.size(120.dp),
+                        modifier = modifier
+                            .size(120.dp)
+                            .clickable(onClick = {
+                                onClick()
+                            }),
                         contentScale = ContentScale.Crop,
                         contentDescription = null
                     )
@@ -117,7 +125,17 @@ fun SonglistCover(
             lineHeight = 17.sp,
             overflow = TextOverflow.Ellipsis,
             maxLines = 2,
-            modifier = Modifier.width(120.dp)
+            modifier = Modifier
+                .width(120.dp)
+                .pointerInput(Unit) {
+                    detectTapGestures(
+                        // 长按事件
+                        onLongPress = {},
+                        // 点击事件
+                        onTap = {
+                            onClick()
+                        })
+                }
         )
 
 

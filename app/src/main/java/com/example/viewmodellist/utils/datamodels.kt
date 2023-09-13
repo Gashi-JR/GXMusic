@@ -24,40 +24,40 @@ class Datamodels {
     )
 
 
-
-
-
     //TODO njl 的类
 
     //TODO 用户歌单列表  传入用户id获取的歌单列表  user/playlist?uid
     data class Playlist(
-        val listID : Long  //歌单id
+        val listID: Long  //歌单id
     )
+
     //TODO 歌单详情     传入歌单id获取的歌单详情，返回：歌单中音乐的id
     data class Tracks(
-        val name : String,
-        val id : Long
+        val name: String,
+        val id: Long
     )
 
     //TODO 音乐详情     传入音乐id获取音乐URL
     data class SongList(
-        val id : Long,
-        val url : String  // 歌曲URL
+        val id: Long,
+        val url: String  // 歌曲URL
     )
+
     data class Names(
         val name: String,
-        val fee : Int
+        val fee: Int
     )
+
     data class Artists(
-        val name : String
+        val name: String
     )
 
     data class gnonSongList(
-        var id : Long,
-        var url : String,
-        var name : String,
-        var artist : String,
-        var fee : Int
+        var id: Long,
+        var url: String,
+        var name: String,
+        var artist: String,
+        var fee: Int
     )
 
     data class HotPlayListItem(
@@ -69,18 +69,16 @@ class Datamodels {
 
     data class HotComments(
         val content: String,
-        val user : JsonObject
+        val user: JsonObject
     )
+
     data class Comments(
         val content: String,
-        val user : JsonObject,
-        val timeStr : String,
-        val ipLocation : JsonObject
+        val user: JsonObject,
+        val timeStr: String,
+        val ipLocation: JsonObject
     )
     //TODO njl 的类
-
-
-
 
 
     // TODO: 新歌数据类
@@ -96,6 +94,9 @@ class Datamodels {
     data class TopcardItem(
         val id: Long,
         val name: String,
+        val updateFrequency: String,
+        val coverImgUrl: String,
+        val description: String
     )
 
     data class TopSongItem(
@@ -164,7 +165,7 @@ class Datamodels {
     // TODO: 用户信息
     data class UserInfo(
         val uid: Long,
-        val nickname: String="",
+        val nickname: String = "",
         val level: Int,
         val followeds: Int,
         val follows: Int,

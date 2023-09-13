@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -19,12 +20,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
+import com.example.viewmodellist.R
 import com.example.viewmodellist.ui.components.Tag
 
 
@@ -93,9 +96,10 @@ fun SearchHotTopItem(
                 }
                 if (!iconUrl.isNullOrBlank())
                     Icon(
-                        painter = rememberAsyncImagePainter(iconUrl),
+                        painter = painterResource(id = R.drawable.h),
                         contentDescription = null,
-                        tint = Color.Black.copy(alpha = 0.2f),
+                        tint = Color.Unspecified,
+                        modifier = Modifier.size(18.dp)
                     )
             }
         }

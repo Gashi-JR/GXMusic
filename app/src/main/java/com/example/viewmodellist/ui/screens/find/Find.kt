@@ -13,6 +13,7 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -21,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -31,6 +33,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,6 +45,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -59,6 +64,7 @@ import com.example.viewmodellist.ui.components.find.TopAppBar
 import com.example.viewmodellist.ui.components.find.TopCard
 import com.example.viewmodellist.ui.screens.login.LoginviewModel
 import com.example.viewmodellist.ui.screens.search.SearchviewModel
+import com.example.viewmodellist.ui.screens.songlist.SongListViewModel
 import com.example.viewmodellist.ui.theme.ViewModelListTheme
 import com.example.viewmodellist.ui.theme.cardGradient
 import com.example.viewmodellist.ui.theme.findcardGradient
@@ -81,6 +87,9 @@ fun Find(
     state: LyricsViewState,
     searchviewModel: SearchviewModel,
     loginviewModel: LoginviewModel = LoginviewModel(),
+    songListViewModel: SongListViewModel = SongListViewModel(),
+    toSonglist: () -> Unit = {},
+    toTop: () -> Unit = {},
     showSearch: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -174,7 +183,7 @@ fun Find(
 
         item {
             FindCard(
-                R.string.find_recommendsonglist, true, true, true,
+                R.string.find_recommendsonglist, true, true, true, onClick = toSonglist,
                 modifier = Modifier.background(findcardGradient)
             ) {
                 LazyRow(
@@ -193,9 +202,13 @@ fun Find(
                                 playCount = if (item.playCount > 0) item.playCount else item.playCount,
                                 id = item.id,
                                 copywriter = item.copywriter,
-                                modifier = Modifier
-                                    .clickable(onClick = {})
-
+                                onClick = {
+                                    songListViewModel.detailId.value = item.id
+                                    songListViewModel.fetchSongLists()
+                                    songListViewModel.isShowDetail.value =
+                                        true
+                                    toSonglist()
+                                },
                             )
                         }
                     else {
@@ -270,6 +283,7 @@ fun Find(
             FindCard(
                 title = R.string.app_top,
                 true, true, true,
+                onClick = toTop
             ) {
                 LazyRow(
                     horizontalArrangement = Arrangement.Center,
@@ -305,41 +319,7 @@ fun Find(
 
             }
         }
-        item {
 
-            FindCard(
-                R.string.find_mysub, true, true, true,
-                modifier = Modifier.background(findcardGradient)
-            ) {
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    contentPadding = PaddingValues(horizontal = 15.dp)
-                ) {
-                    if (findviewModel.songlistData.isNotEmpty())
-                        items(findviewModel.songlistData) { item ->
-
-                            SonglistPreview(
-                                "https://p2.music.126.net/R2zySKjiX_hG8uFn1aCRcw==/109951165187830237.jpg",
-                                "阿发发发疯阿发复旦复华",
-                                "aaa",
-                                listOf("aaa", "bbb")
-                            )
-
-                        }
-                    else
-                        items(List(3) { 1 }) {
-                            LoadingAnimation(
-                                modifier = Modifier
-                                    .width(350.dp)
-                                    .height(630.dp)
-                                    .padding(horizontal = 15.dp)
-                                    .clip(MaterialTheme.shapes.medium)
-                            )
-                        }
-                }
-            }
-        }
 
         item {
             Row(
