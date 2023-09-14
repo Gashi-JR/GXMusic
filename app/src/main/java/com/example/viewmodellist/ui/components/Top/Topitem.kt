@@ -3,6 +3,7 @@ package com.example.viewmodellist.ui.components.top
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -51,6 +52,7 @@ fun Topitem(
     topid: Long,
     topimg: String = "",
     findviewModel: FindviewModel,
+    onClick: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
 
@@ -65,7 +67,9 @@ fun Topitem(
         Box {
             Image(
                 painter = rememberAsyncImagePainter(topimg),
-                modifier = Modifier.size(115.dp),
+                modifier = Modifier
+                    .size(115.dp)
+                    .clickable { onClick() },
                 contentScale = ContentScale.Crop,
                 contentDescription = null
             )

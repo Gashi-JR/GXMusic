@@ -59,6 +59,8 @@ fun AlbumArt(
                             songListViewModel.fetchSongLists()
                             songListViewModel.isShowDetail.value =
                                 !songListViewModel.isShowDetail.value
+                            songListViewModel.des.value = ""
+                            songListViewModel.onBack.value = {}
                         },
                     contentScale = ContentScale.Crop,
                     contentDescription = null

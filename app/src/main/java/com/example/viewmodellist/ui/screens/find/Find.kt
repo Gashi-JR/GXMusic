@@ -90,6 +90,7 @@ fun Find(
     songListViewModel: SongListViewModel = SongListViewModel(),
     toSonglist: () -> Unit = {},
     toTop: () -> Unit = {},
+    toFind: () -> Unit = {},
     showSearch: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -207,6 +208,8 @@ fun Find(
                                     songListViewModel.fetchSongLists()
                                     songListViewModel.isShowDetail.value =
                                         true
+                                    songListViewModel.des.value=""
+                                    songListViewModel.onBack.value=toFind
                                     toSonglist()
                                 },
                             )
@@ -293,6 +296,7 @@ fun Find(
                         itemsIndexed(findviewModel.topcardData) { index, item ->
                             TopCard(
                                 item.name,
+                                item.updateFrequency,
                                 item.id,
                                 topsong = if (findviewModel.topsongData.size >= 3 * index + 3) findviewModel.topsongData.subList(
                                     3 * index,
@@ -300,6 +304,14 @@ fun Find(
                                 ) else listOf(),
                                 findviewModel,
                                 mediaPlayerViewModel,
+                                onClick={
+                                    songListViewModel.detailId.value = item.id
+                                    songListViewModel.fetchSongLists()
+                                    songListViewModel.isShowDetail.value =
+                                        true
+                                    songListViewModel.des.value=item.description
+                                    toSonglist()
+                                }
                             )
 
                         }

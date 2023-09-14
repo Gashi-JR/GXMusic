@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -81,11 +82,12 @@ fun FindCard(
             if (showmore)
                 IconButton(onClick = { onClick() }) {
                     Icon(
-                        painter = painterResource(id = R.drawable.baseline_more_vert_24),
+                        painter = painterResource(id = R.drawable._4gl_extractright),
                         contentDescription = stringResource(
                             id = title
                         ),
-                        tint = Color.Black.copy(alpha = 0.5f)
+                        tint = Color.Black.copy(alpha = 0.5f),
+                        modifier = Modifier.size(18.dp)
                     )
                 }
 

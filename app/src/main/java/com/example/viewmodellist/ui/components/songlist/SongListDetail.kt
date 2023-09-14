@@ -61,6 +61,7 @@ fun SongListDetail(
     songListViewModel: SongListViewModel = SongListViewModel(),
     mediaPlayerViewModel: MediaPlayerViewModel = MediaPlayerViewModel(),
     findviewModel: FindviewModel = FindviewModel(),
+    onBack: () -> Unit = {},
     @SuppressLint("ModifierParameter")
     modifier: Modifier = Modifier
 ) {
@@ -100,6 +101,7 @@ fun SongListDetail(
                         IconButton(onClick = {
                             songListViewModel.isShowDetail.value =
                                 !songListViewModel.isShowDetail.value
+                            songListViewModel.onBack.value()
                         }) {
                             Icon(
                                 painter = painterResource(id = R.drawable.baseline_keyboard_backspace_24),
@@ -122,7 +124,7 @@ fun SongListDetail(
 
                             Column(
                                 modifier = Modifier.padding(7.dp),
-                                verticalArrangement = Arrangement.SpaceBetween
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
                                 Text(
                                     text = songListViewModel.name.value,
@@ -133,7 +135,7 @@ fun SongListDetail(
                                     overflow = TextOverflow.Ellipsis
                                 )
                                 Row(
-                                    modifier = Modifier.padding(top = 15.dp),
+                                    // modifier = Modifier.padding(top = 15.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
 
@@ -142,8 +144,8 @@ fun SongListDetail(
                                         contentDescription = "用户头像",
                                         modifier = modifier
                                             .clip(CircleShape)
-                                            .height(40.dp)
-                                            .width(40.dp)
+                                            .height(30.dp)
+                                            .width(30.dp)
                                     )
 
                                     Text(
@@ -158,6 +160,15 @@ fun SongListDetail(
                                         tint = Color.White.copy(alpha = 0.5f),
                                     )
                                 }
+                                if (songListViewModel.des.value != "")
+                                    Text(
+                                        text = songListViewModel.des.value,
+                                        // modifier = Modifier.padding(start = 8.dp),
+                                        color = Color.White.copy(0.5f),
+                                        maxLines = 2,
+                                        overflow = TextOverflow.Ellipsis,
+                                        fontSize = 13.sp
+                                    )
                             }
                         }
 

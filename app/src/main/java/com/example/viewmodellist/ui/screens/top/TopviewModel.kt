@@ -7,7 +7,9 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.viewmodellist.utils.Datamodels.*
@@ -34,6 +36,9 @@ class TopviewModel(private val repository: Repository = Repository()) : ViewMode
         mutableStateOf<MutableList<TopSongItem>>(mutableStateListOf())
     val topsongData: List<TopSongItem> get() = _topsongData.value
 
+
+    var nowindex by mutableStateOf(-1)
+    var shouldUpdateIndex = mutableStateOf(false)
 
     fun fetchTopCardData() {
         viewModelScope.launch {
