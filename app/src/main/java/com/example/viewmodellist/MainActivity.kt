@@ -50,6 +50,7 @@ import com.example.viewmodellist.ui.screens.search.SearchviewModel
 import com.example.viewmodellist.ui.screens.songlist.SongList
 import com.example.viewmodellist.ui.screens.songlist.SongListViewModel
 import com.example.viewmodellist.ui.screens.top.Top
+import com.example.viewmodellist.ui.screens.top.TopviewModel
 import com.example.viewmodellist.ui.theme.ViewModelListTheme
 import com.example.viewmodellist.utils.formatter
 
@@ -221,7 +222,9 @@ fun Myapp() {
         val mineviewModel by remember {
             mutableStateOf(MineviewModel())
         }
-
+        val topviewModel by remember {
+            mutableStateOf(TopviewModel())
+        }
 
         val songListViewModel by remember { mutableStateOf(SongListViewModel()) }
 
@@ -286,9 +289,12 @@ fun Myapp() {
                             searchviewModel = searchViewModel,
                             loginviewModel = loginViewModel,
                             songListViewModel = songListViewModel,
-                            { selectedTabIndex = 2 },
-                            { selectedTabIndex = 3 },
-                            { showSearch.value = true },
+                            toSonglist = { selectedTabIndex = 2 },
+                            toTop = { selectedTabIndex = 3 },
+                            showSearch = { showSearch.value = true },
+                            toFind = {
+                                selectedTabIndex = 0
+                            }
                         )
                     }
                     SideEffect {
@@ -311,7 +317,14 @@ fun Myapp() {
                 }
 
                 3 -> {
-                    Top(findviewModel, mediaPlayerViewModel, songListViewModel)
+                    Top(
+                        findviewModel,
+                        mediaPlayerViewModel,
+                        topviewModel,
+                        songListViewModel = songListViewModel,
+                        toSonglist = { selectedTabIndex = 2 },
+                        toTop = { selectedTabIndex = 3 },
+                    )
                     SideEffect {
                         shouldUpdateIndex = true
                     }

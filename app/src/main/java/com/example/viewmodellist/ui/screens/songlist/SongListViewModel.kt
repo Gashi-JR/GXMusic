@@ -38,6 +38,7 @@ class SongListViewModel(private val repository: Repository = Repository()) : Vie
     var coverImgUrl =
         mutableStateOf("")
     var name = mutableStateOf("")
+    var des = mutableStateOf("")
     val userAvatar =
         mutableStateOf("")
     val userName =
@@ -46,6 +47,8 @@ class SongListViewModel(private val repository: Repository = Repository()) : Vie
     var commentCount = mutableStateOf(0)
     var shareCount = mutableStateOf(0)
     var bookedCount = mutableStateOf(0)
+    var onBack: MutableState<() -> Unit> = mutableStateOf({})
+
 
     //TODO 专辑列表
     private val _songlistData =

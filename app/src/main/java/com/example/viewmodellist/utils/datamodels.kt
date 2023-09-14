@@ -95,7 +95,8 @@ class Datamodels {
         val id: Long,
         val name: String,
         val updateFrequency: String,
-        val coverImgUrl: String
+        val coverImgUrl: String,
+        val description: String
     )
 
     data class TopSongItem(

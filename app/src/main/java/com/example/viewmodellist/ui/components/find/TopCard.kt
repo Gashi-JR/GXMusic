@@ -4,6 +4,7 @@ package com.example.viewmodellist.ui.components.find
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -44,10 +46,12 @@ import kotlinx.coroutines.launch
 @Composable
 fun TopCard(
     title: String,
+    des: String,
     topid: Long,
     topsong: List<TopSongItem>,
     findviewModel: FindviewModel,
     mediaPlayerViewModel: MediaPlayerViewModel,
+    onClick: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -73,7 +77,16 @@ fun TopCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.pointerInput(Unit) {
+                        detectTapGestures(
+                            onTap = {
+                                onClick()
+                            }
+                        )
+
+                    }) {
                     Text(
                         text = title,
                         fontSize = 18.sp,
@@ -85,7 +98,7 @@ fun TopCard(
                     )
                 }
                 Text(
-                    text = "大家都在听",
+                    text = des,
                     fontSize = 14.sp,
                     color = Color.Gray
                 )
@@ -204,6 +217,7 @@ fun TopCardPreview() {
 
     TopCard(
         "云音乐说唱榜",
+        "ada",
         424,
         listOf(
             TopSongItem(15, "adad", "ada", "adad"),
