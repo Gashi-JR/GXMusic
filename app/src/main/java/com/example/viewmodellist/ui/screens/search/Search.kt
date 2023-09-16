@@ -1,6 +1,7 @@
 package com.example.viewmodellist.ui.screens.search
 
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -17,7 +18,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -30,7 +30,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -40,7 +39,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -70,7 +68,6 @@ import com.example.viewmodellist.ui.theme.borderGradient
 import com.example.viewmodellist.utils.formatter
 
 @OptIn(
-    ExperimentalMaterial3Api::class,
     ExperimentalLayoutApi::class
 )
 @Composable
@@ -81,7 +78,7 @@ fun Search(
     mediaPlayerViewModel: MediaPlayerViewModel = MediaPlayerViewModel(),
     songListViewModel: SongListViewModel,
     loginviewModel: LoginviewModel = LoginviewModel(),
-    modifier: Modifier = Modifier
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
 ) {
     var searchValue by rememberSaveable {
         mutableStateOf("")
@@ -100,8 +97,8 @@ fun Search(
 
 
     LaunchedEffect(Unit) {
-        //  searchviewModel.fetchSearchHotData()
-        searchviewModel.fetchSearchHotTopData()
+        if (searchviewModel.searchHotTopData.isEmpty())
+            searchviewModel.fetchSearchHotTopData()
     }
 
 
@@ -154,6 +151,7 @@ fun Search(
 
                         ) {
 
+                        val containerColor = Color(0, 0, 0, 0)
                         TextField(
                             value = searchValue,
                             onValueChange = {
@@ -186,11 +184,13 @@ fun Search(
                                 }
                             },
                             maxLines = 1,
-                            colors = TextFieldDefaults.textFieldColors(
-                                containerColor = Color(0, 0, 0, 0),
+                            colors = TextFieldDefaults.colors(
+                                focusedContainerColor = containerColor,
+                                unfocusedContainerColor = containerColor,
+                                disabledContainerColor = containerColor,
                                 cursorColor = Color.Gray,
                                 focusedIndicatorColor = Color.Transparent,
-                                unfocusedIndicatorColor = Color.Transparent
+                                unfocusedIndicatorColor = Color.Transparent,
                             ),
                             modifier = Modifier
                                 .fillMaxHeight()
@@ -245,9 +245,9 @@ fun Search(
                         item {
                             FindCard(
                                 title = R.string.search_hotkey,
-                                false,
-                                false,
-                                true,
+                                showmore = false,
+                                showarrow = false,
+                                showline = true,
                                 modifier = Modifier.padding(horizontal = 15.dp)
                             ) {
                                 Spacer(modifier = Modifier.height(15.dp))
@@ -284,9 +284,9 @@ fun Search(
                         item {
                             FindCard(
                                 title = R.string.search_hottop,
-                                false,
-                                false,
-                                true,
+                                showmore = false,
+                                showarrow = false,
+                                showline = true,
                                 modifier = Modifier.padding(horizontal = 15.dp),
                                 icon = {
                                     androidx.compose.material3.Icon(

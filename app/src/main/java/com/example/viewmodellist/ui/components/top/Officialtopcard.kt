@@ -1,6 +1,7 @@
 package com.example.viewmodellist.ui.components.top
 
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,7 +21,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment.Companion.BottomEnd
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
@@ -36,8 +36,6 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.example.viewmodellist.R
 import com.example.viewmodellist.ui.components.LoadingAnimation
-import com.example.viewmodellist.ui.components.find.MediaPlayerViewModel
-import com.example.viewmodellist.ui.screens.find.FindviewModel
 import com.example.viewmodellist.utils.Datamodels.TopSongItem
 
 
@@ -45,12 +43,9 @@ import com.example.viewmodellist.utils.Datamodels.TopSongItem
 fun Officialtopcard(
     title: String,
     updatetime: String = "",
-    topid: Long,
     topimg: String = "",
     topsong: List<TopSongItem>,
-    findviewModel: FindviewModel,
-    mediaPlayerViewModel: MediaPlayerViewModel,
-    modifier: Modifier = Modifier,
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
 ) {
     Card(
         colors = CardDefaults.cardColors(containerColor = Color.White),
@@ -120,7 +115,6 @@ fun Officialtopcard(
 
                 }
                 Column(modifier = Modifier.padding(end = 15.dp)) {
-                    val scope = rememberCoroutineScope() // 获取关联的协程作用域
                     if (topsong.isNotEmpty())
                         topsong.forEachIndexed { index, item ->
                             Row(
@@ -137,15 +131,21 @@ fun Officialtopcard(
                                 Icon(
                                     painter = painterResource(id = if (index == 0) R.drawable.one else if (index == 1) R.drawable.two else R.drawable.three),
                                     contentDescription = null,
-                                    tint = if (index == 0) Color(
-                                        255,
-                                        215,
-                                        0
-                                    ) else if (index == 1) Color(
-                                        192,
-                                        192,
-                                        192
-                                    ) else Color(205, 133, 63),
+                                    tint = when (index) {
+                                        0 -> Color(
+                                            255,
+                                            215,
+                                            0
+                                        )
+
+                                        1 -> Color(
+                                            192,
+                                            192,
+                                            192
+                                        )
+
+                                        else -> Color(205, 133, 63)
+                                    },
                                     modifier = Modifier.size(15.dp)
                                 )
                                 Row(
@@ -187,8 +187,6 @@ fun Officialtopcard(
 
             }
 
-
-
             Spacer(modifier = Modifier.height(20.dp))
 
         }
@@ -203,15 +201,12 @@ fun OfficialtopcardPreview() {
 
     Officialtopcard(
         "云音乐说唱榜", "",
-        424,
         "",
         listOf(
             TopSongItem(15, "adad", "ada", "adad"),
             TopSongItem(15, "adad", "ada", "adad"),
             TopSongItem(15, "adad", "ada", "adad")
         ),
-        FindviewModel(),
-        MediaPlayerViewModel(),
     )
 }
 

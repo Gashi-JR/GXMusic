@@ -1,14 +1,11 @@
 package com.example.viewmodellist.ui.screens.search
 
-import NetworkUtils
+import com.example.viewmodellist.utils.NetworkUtils
 import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
 import android.util.Log
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.viewmodellist.utils.Datamodels.*
@@ -25,10 +22,12 @@ class SearchviewModel(private val repository: Repository = Repository()) : ViewM
         mutableStateOf<MutableList<SearchHot>>(mutableStateListOf())
     val searchHotData: List<SearchHot> get() = _searchHotData.value
 
+    @SuppressLint("MutableCollectionMutableState")
     private val _searchHotTopData =
         mutableStateOf<MutableList<SearchHotTop>>(mutableStateListOf())
     val searchHotTopData: List<SearchHotTop> get() = _searchHotTopData.value
 
+    @SuppressLint("MutableCollectionMutableState")
     private val _searchSuggestData =
         mutableStateOf<MutableList<SearchSuggest>>(mutableStateListOf())
     val searchSuggestData: List<SearchSuggest> get() = _searchSuggestData.value
@@ -177,11 +176,7 @@ class Repository {
         val hotsarry = hotsobj.get("hots").asJsonArray
 
 
-        val hots: List<SearchHot> =
-            gson.fromJson(hotsarry, object : TypeToken<List<SearchHot>>() {}.type)
-
-
-        return hots
+        return gson.fromJson(hotsarry, object : TypeToken<List<SearchHot>>() {}.type)
     }
 
     suspend fun getSearchHotTopData(): List<SearchHotTop> {
@@ -192,11 +187,7 @@ class Repository {
         val data = response.getAsJsonArray("data")
 
 
-        val hots: List<SearchHotTop> =
-            gson.fromJson(data, object : TypeToken<List<SearchHotTop>>() {}.type)
-
-
-        return hots
+        return gson.fromJson(data, object : TypeToken<List<SearchHotTop>>() {}.type)
     }
 
 
@@ -209,11 +200,7 @@ class Repository {
         val allMatch = obj.get("allMatch").asJsonArray
 
 
-        val suggests: List<SearchSuggest> =
-            gson.fromJson(allMatch, object : TypeToken<List<SearchSuggest>>() {}.type)
-
-
-        return suggests
+        return gson.fromJson(allMatch, object : TypeToken<List<SearchSuggest>>() {}.type)
     }
 
     suspend fun getResultSongData(keyword: String, page: Long): List<ResultSong> {

@@ -14,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.example.viewmodellist.ui.components.LoadingAnimation
-import com.example.viewmodellist.ui.components.find.AlbumArt
 import com.example.viewmodellist.ui.screens.songlist.SongListViewModel
 
 

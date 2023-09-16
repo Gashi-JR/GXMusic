@@ -1,6 +1,6 @@
 package com.example.viewmodellist.ui.screens.songlist
 
-import NetworkUtils
+import com.example.viewmodellist.utils.NetworkUtils
 import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
 import android.util.Log
@@ -31,6 +31,7 @@ class SongListViewModel(private val repository: Repository = Repository()) : Vie
     val songList: List<gnonSongList> get() = _songList.value //歌单对外的接口
 
     //TODO 获取系统时间
+    @SuppressLint("SimpleDateFormat")
     val currentTime = mutableStateOf(SimpleDateFormat("HH").format(Date()).toInt())
 
     //TODO 当前歌单相关的信息
@@ -51,22 +52,25 @@ class SongListViewModel(private val repository: Repository = Repository()) : Vie
 
 
     //TODO 专辑列表
+    @SuppressLint("MutableCollectionMutableState")
     private val _songlistData =
         mutableStateOf<MutableList<SongListItem>>(mutableStateListOf())
     val songlistData: List<SongListItem> get() = _songlistData.value
 
     //TODO 专辑列表（推荐）
+    @SuppressLint("MutableCollectionMutableState")
     private val _hotPlayList =
         mutableStateOf<MutableList<HotPlayListItem>>(mutableStateListOf())
     val hotPlayList: List<HotPlayListItem> get() = _hotPlayList.value //歌单对外的接口
 
     //TODO 热门标签
+    @SuppressLint("MutableCollectionMutableState")
     private val _tagsPlayList = mutableStateOf<MutableList<HotPlayListItem>>(mutableListOf())
     val tagPlayList get() = _tagsPlayList.value
 
 
     //TODO 歌单广场顶部导航栏相关
-    val selectedTagIndex = mutableStateOf<Int>(0)
+    val selectedTagIndex = mutableStateOf(0)
     val tagList: List<String> = listOf(
         "推荐",
         "古风",
@@ -93,6 +97,7 @@ class SongListViewModel(private val repository: Repository = Repository()) : Vie
 
     //TODO 评论相关
 
+    @SuppressLint("MutableCollectionMutableState")
     private val _commentsData = mutableStateOf<MutableList<Comments>>(mutableListOf())
     val commentsData get() = _commentsData.value
 
@@ -305,7 +310,7 @@ class Repository {
 
         for (i in 0 until songListJsonArray.size()) {
 
-            var _author: String = "";
+            var _author = ""
 
             val artistsJsonArray = tracksJsonArray[i].asJsonObject.getAsJsonArray("ar")
             val artists: List<Artists> =
@@ -339,27 +344,21 @@ class Repository {
         Log.d(TAG, "getRecommendSonglistData: $result")
         val response = gson.fromJson(result, JsonObject::class.java)
         val songlistJsonArray = response.getAsJsonArray("result")
-        val songlist: List<SongListItem> =
-            gson.fromJson(songlistJsonArray, object : TypeToken<List<SongListItem>>() {}.type)
-        return songlist
+        return gson.fromJson(songlistJsonArray, object : TypeToken<List<SongListItem>>() {}.type)
     }
 
     suspend fun getHotPlaylist(): List<HotPlayListItem> {
         val result = NetworkUtils.https("/top/playlist", "GET")
         val response = gson.fromJson(result, JsonObject::class.java)
         val songlistJsonArray = response.getAsJsonArray("playlists")
-        val songlist: List<HotPlayListItem> =
-            gson.fromJson(songlistJsonArray, object : TypeToken<List<HotPlayListItem>>() {}.type)
-        return songlist
+        return gson.fromJson(songlistJsonArray, object : TypeToken<List<HotPlayListItem>>() {}.type)
     }
 
     suspend fun getTagsPlayList(tag: String): List<HotPlayListItem> {
         val result = NetworkUtils.https("/top/playlist/highquality?cat=$tag", "GET")
         val response = gson.fromJson(result, JsonObject::class.java)
         val tagListJsonArray = response.getAsJsonArray("playlists")
-        val tagList: List<HotPlayListItem> =
-            gson.fromJson(tagListJsonArray, object : TypeToken<List<HotPlayListItem>>() {}.type)
-        return tagList
+        return gson.fromJson(tagListJsonArray, object : TypeToken<List<HotPlayListItem>>() {}.type)
     }
 
     suspend fun getComments(id: Long): List<Comments> {
@@ -368,19 +367,16 @@ class Repository {
         val result = NetworkUtils.https("/comment/playlist?id=$id&limit=100", "GET")
         val response = gson.fromJson(result, JsonObject::class.java)
         val commentsJsonArray = response.getAsJsonArray("comments")
-        val comments: List<Comments> =
-            gson.fromJson(commentsJsonArray, object : TypeToken<List<Comments>>() {}.type)
-        return comments
+        return gson.fromJson(commentsJsonArray, object : TypeToken<List<Comments>>() {}.type)
     }
 
     suspend fun Subscribe(id: Long): Int {
 
 
-        Log.d(TAG, "id: ${id}")
+        Log.d(TAG, "id: $id")
         val result = NetworkUtils.https("/playlist/subscribe?t=1&id=$id", "GET")
         val response = gson.fromJson(result, JsonObject::class.java)  // 转为Json对象
         Log.d(TAG, "Subscribe: $response")
-        val code = response.get("code").asInt  // 将playList转化为Json对象
-        return code
+        return response.get("code").asInt
     }
 }

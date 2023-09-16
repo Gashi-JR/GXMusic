@@ -1,19 +1,10 @@
 package com.example.viewmodellist.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.TweenSpec
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -22,14 +13,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Card
@@ -49,15 +38,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -67,7 +49,6 @@ import coil.compose.rememberAsyncImagePainter
 import com.dokar.amlv.FadingEdges
 import com.dokar.amlv.Lyrics
 import com.dokar.amlv.LyricsViewState
-import com.dokar.amlv.rememberLyricsViewState
 import com.example.viewmodellist.R
 import com.example.viewmodellist.ui.components.amlv.src.main.java.com.dokar.amlv.LyricsView
 import com.example.viewmodellist.ui.components.find.MediaPlayerViewModel
@@ -76,7 +57,6 @@ import com.example.viewmodellist.ui.screens.find.FindviewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
-import kotlin.math.sqrt
 
 @Composable
 fun LyricsViewPage(
@@ -161,10 +141,8 @@ fun LyricsViewPage(
                 modifier = Modifier,
                 contentColor = Color.White,
                 showLyc = showLyc,
-                findviewModel,
-                mediaPlayerViewModel,
-                onClick = { showLyc = !showLyc }
-            )
+                mediaPlayerViewModel
+            ) { showLyc = !showLyc }
         }
     }
 
@@ -207,7 +185,6 @@ fun PlaybackControls(
     modifier: Modifier = Modifier,
     contentColor: Color = MaterialTheme.colorScheme.onBackground,
     showLyc: Boolean,
-    findviewModel: FindviewModel,
     mediaPlayerViewModel: MediaPlayerViewModel,
     onClick: () -> Unit
 ) {

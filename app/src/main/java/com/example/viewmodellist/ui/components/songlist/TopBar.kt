@@ -4,6 +4,7 @@ package com.example.viewmodellist.ui.components.songlist
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -90,27 +91,31 @@ fun TagItem(
                 color = Color.Gray
             )
         }
-        Text(text = txt, style = tagTextStyle)
+        Box {
 
-        if (isSelected) {
-            Spacer(
-                modifier = Modifier
-                    .clip(MaterialTheme.shapes.extraLarge)
-                    .padding(top = 2.dp, bottom = 2.dp)
-                    .background(Color.Red)
-                    .height(3.dp)
-                    .width(25.dp)
-                    .align(Alignment.CenterHorizontally)
-            )
-        } else {
-            Spacer(
-                modifier = Modifier
-                    .padding(top = 2.dp, bottom = 2.dp)
-                    .height(3.dp)
-                    .width(25.dp)
-                    .align(Alignment.CenterHorizontally)
-            )
+
+            if (isSelected) {
+                Spacer(
+                    modifier = Modifier
+                        .clip(MaterialTheme.shapes.extraLarge)
+                        .padding(top = 2.dp, bottom = 2.dp)
+                        .background(Color(252, 92, 90))
+                        .height(5.dp)
+                        .width(35.dp)
+                        .align(Alignment.BottomCenter)
+                )
+            } else {
+                Spacer(
+                    modifier = Modifier
+                        .padding(top = 2.dp, bottom = 2.dp)
+                        .height(5.dp)
+                        .width(35.dp)
+                        .align(Alignment.BottomCenter)
+                )
+            }
+            Text(text = txt, style = tagTextStyle)
         }
+
     }
 }
 

@@ -25,7 +25,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
@@ -71,7 +71,6 @@ import androidx.compose.ui.zIndex
 import coil.compose.rememberAsyncImagePainter
 import com.example.viewmodellist.R
 import com.example.viewmodellist.ui.components.mine.MySonglists
-import com.example.viewmodellist.ui.components.search.ResultSonglist
 import com.example.viewmodellist.ui.screens.login.LoginviewModel
 import com.example.viewmodellist.ui.theme.ViewModelListTheme
 import com.example.viewmodellist.ui.theme.mylikemusicGradient
@@ -133,7 +132,7 @@ fun Mine(
             )
                 loginviewModel.User.value.birthday
             else
-            0
+                0
         )
 
     val confirmEnabled = remember {
@@ -159,15 +158,8 @@ fun Mine(
                 .background(Color(245, 245, 245)),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            item{
-                Spacer(
-                    modifier = Modifier
-                        .height(formatter.mainActivity?.getStatusBarHeight()!!.dp)
-                        .fillMaxWidth()
-                )
-            }
-            item {
-                Box() {
+            item(key = 0) {
+                Box {
                     Image(
                         painter = rememberAsyncImagePainter(loginviewModel.User.value.avatarUrl),
                         contentDescription = null,
@@ -331,7 +323,7 @@ fun Mine(
 
                 }
             }
-            item {
+            item(key = 1) {
                 Spacer(modifier = Modifier.height(190.dp))
                 Card(
                     modifier = Modifier.width(370.dp),
@@ -384,7 +376,7 @@ fun Mine(
                                         Text(text = "0首", fontSize = 15.sp)
                                     }
 
-                                    Row() {
+                                    Row {
                                         Icon(
                                             painter = painterResource(id = R.drawable.aixin_shixin),
                                             tint = Color.Gray.copy(0.7f),
@@ -430,7 +422,7 @@ fun Mine(
                                         Text(text = "0首", fontSize = 15.sp)
                                     }
 
-                                    Row() {
+                                    Row {
                                         Icon(
                                             painter = painterResource(id = R.drawable.pcbofangye_paihangbang),
                                             tint = Color.Gray.copy(0.7f),
@@ -477,7 +469,7 @@ fun Mine(
                                         Text(text = "属于你的音乐档案", fontSize = 14.sp)
                                     }
 
-                                    Row() {
+                                    Row {
                                         Icon(
                                             painter = painterResource(id = R.drawable.hourglass_fill),
                                             tint = Color.Gray.copy(0.7f),
@@ -497,7 +489,7 @@ fun Mine(
 
                 }
             }
-            item {
+            item(key = 2) {
                 Spacer(modifier = Modifier.height(20.dp))
                 Card(
                     modifier = Modifier.width(370.dp),
@@ -553,7 +545,7 @@ fun Mine(
             }
 
 
-            item {
+            item(key = 3) {
                 Spacer(modifier = Modifier.height(20.dp))
                 Card(
                     modifier = Modifier.width(370.dp),
@@ -628,7 +620,7 @@ fun Mine(
             }
 
 
-            item { Spacer(modifier = Modifier.height(65.dp)) }
+            item(key = 4) { Spacer(modifier = Modifier.height(65.dp)) }
         }
     }
 
@@ -647,11 +639,11 @@ fun Mine(
                 .fillMaxSize()
         ) {
 
-                Spacer(
-                    modifier = Modifier
-                        .height(formatter.mainActivity?.getStatusBarHeight()!!.dp)
-                        .fillMaxWidth()
-                )
+            Spacer(
+                modifier = Modifier
+                    .height(formatter.mainActivity?.getStatusBarHeight()!!.dp)
+                    .fillMaxWidth()
+            )
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -731,11 +723,11 @@ fun Mine(
 
         ) {
 
-                Spacer(
-                    modifier = Modifier
-                        .height(formatter.mainActivity?.getStatusBarHeight()!!.dp)
-                        .fillMaxWidth()
-                )
+            Spacer(
+                modifier = Modifier
+                    .height(formatter.mainActivity?.getStatusBarHeight()!!.dp)
+                    .fillMaxWidth()
+            )
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -1109,7 +1101,7 @@ fun Mine(
                     .fillMaxWidth()
                     .height(250.dp)
             ) {
-                items(
+                itemsIndexed(
                     listOf(
                         "北京市",
                         "天津市",
@@ -1145,8 +1137,9 @@ fun Mine(
                         "台湾省",
                         "香港特别行政区",
                         "澳门特别行政区"
-                    )
-                ) {
+                    ),
+                    key = { index, _ -> index }
+                ) { _, it ->
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Row(
                             modifier = Modifier

@@ -1,28 +1,20 @@
 package com.example.viewmodellist.ui.screens.find
 
 import Banner
-import android.content.Context
-import android.service.controls.ControlsProviderService.TAG
-import android.util.Log
-import androidx.activity.compose.ManagedActivityResultLauncher
+import android.annotation.SuppressLint
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -33,9 +25,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -45,21 +35,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.annotation.ExperimentalCoilApi
-import com.dokar.amlv.LyricsViewState
-import com.dokar.amlv.rememberLyricsViewState
 import com.example.viewmodellist.R
 import com.example.viewmodellist.ui.components.LoadingAnimation
 import com.example.viewmodellist.ui.components.find.FindCard
 import com.example.viewmodellist.ui.components.find.MediaPlayerViewModel
 import com.example.viewmodellist.ui.components.find.SongCover
 import com.example.viewmodellist.ui.components.find.SonglistCover
-import com.example.viewmodellist.ui.components.find.SonglistPreview
 import com.example.viewmodellist.ui.components.find.TopAppBar
 import com.example.viewmodellist.ui.components.find.TopCard
 import com.example.viewmodellist.ui.screens.login.LoginviewModel
@@ -68,14 +52,9 @@ import com.example.viewmodellist.ui.screens.songlist.SongListViewModel
 import com.example.viewmodellist.ui.theme.ViewModelListTheme
 import com.example.viewmodellist.ui.theme.cardGradient
 import com.example.viewmodellist.ui.theme.findcardGradient
-import com.example.viewmodellist.utils.Datamodels
 import com.example.viewmodellist.utils.formatter
 import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.gson.JsonObject
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.regex.Pattern
 
 
@@ -84,7 +63,6 @@ import java.util.regex.Pattern
 fun Find(
     findviewModel: FindviewModel,
     mediaPlayerViewModel: MediaPlayerViewModel,
-    state: LyricsViewState,
     searchviewModel: SearchviewModel,
     loginviewModel: LoginviewModel = LoginviewModel(),
     songListViewModel: SongListViewModel = SongListViewModel(),
@@ -92,7 +70,7 @@ fun Find(
     toTop: () -> Unit = {},
     toFind: () -> Unit = {},
     showSearch: () -> Unit = {},
-    modifier: Modifier = Modifier
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
 ) {
     LaunchedEffect(loginviewModel.result.value.cookie) {
         if (loginviewModel.result.value.cookie != "") {
@@ -136,8 +114,8 @@ fun Find(
 
     val h = formatter.mainActivity?.getStatusBarHeight()
 
-    LazyColumn() {
-        item {
+    LazyColumn {
+        item(key = 0) {
             Spacer(
                 modifier = Modifier
                     .height(h!!.dp)
@@ -145,7 +123,7 @@ fun Find(
                     .background(cardGradient)
             )
         }
-        item {
+        item(key = 1) {
             Card(
                 colors = CardDefaults.cardColors(containerColor = Color(0, 0, 0, 0)),
                 modifier = Modifier.background(cardGradient)
@@ -182,9 +160,12 @@ fun Find(
 
         }
 
-        item {
+        item(key = 2) {
             FindCard(
-                R.string.find_recommendsonglist, true, true, true, onClick = toSonglist,
+                R.string.find_recommendsonglist,
+                showmore = true,
+                showarrow = true,
+                showline = true, onClick = toSonglist,
                 modifier = Modifier.background(findcardGradient)
             ) {
                 LazyRow(
@@ -195,21 +176,22 @@ fun Find(
 
                 ) {
                     if (findviewModel.songlistData.isNotEmpty())
-                        items(findviewModel.songlistData) { item ->
+                        items(
+                            items = findviewModel.songlistData,
+                            key = { item -> item.id }) { item ->
 
                             SonglistCover(
                                 imageUrl = item.picUrl,
                                 title = item.name,
                                 playCount = if (item.playCount > 0) item.playCount else item.playCount,
-                                id = item.id,
                                 copywriter = item.copywriter,
                                 onClick = {
                                     songListViewModel.detailId.value = item.id
                                     songListViewModel.fetchSongLists()
                                     songListViewModel.isShowDetail.value =
                                         true
-                                    songListViewModel.des.value=""
-                                    songListViewModel.onBack.value=toFind
+                                    songListViewModel.des.value = ""
+                                    songListViewModel.onBack.value = toFind
                                     toSonglist()
                                 },
                             )
@@ -228,11 +210,11 @@ fun Find(
                 }
             }
         }
-        item {
+        item(key = 3) {
             val scope = rememberCoroutineScope() // 获取关联的协程作用域
             FindCard(
                 title = R.string.find_newsong,
-                true, true, true,
+                showmore = true, showarrow = true, showline = true,
             ) {
                 LazyHorizontalGrid(
                     rows = GridCells.Fixed(3),
@@ -242,12 +224,12 @@ fun Find(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     if (findviewModel.newsongData.isNotEmpty())
-                        items(findviewModel.newsongData) { item ->
+                        items(findviewModel.newsongData, key = { item ->
+                            item.id
+                        }) { item ->
                             SongCover(
                                 picUrl = item.picUrl,
                                 name = item.name,
-                                id = item.id,
-                                mvid = item.mvid,
                                 artist = item.artist,
                                 modifier = Modifier.clickable {
 
@@ -282,10 +264,10 @@ fun Find(
                 }
             }
         }
-        item {
+        item(key = 4) {
             FindCard(
                 title = R.string.app_top,
-                true, true, true,
+                showmore = true, showarrow = true, showline = true,
                 onClick = toTop
             ) {
                 LazyRow(
@@ -293,23 +275,24 @@ fun Find(
                     verticalAlignment = Alignment.Top,
                 ) {
                     if (findviewModel.topcardData.isNotEmpty())
-                        itemsIndexed(findviewModel.topcardData) { index, item ->
+                        itemsIndexed(findviewModel.topcardData, key = { _, item ->
+                            item.id
+                        }) { index, item ->
                             TopCard(
                                 item.name,
                                 item.updateFrequency,
-                                item.id,
                                 topsong = if (findviewModel.topsongData.size >= 3 * index + 3) findviewModel.topsongData.subList(
                                     3 * index,
                                     3 * index + 3
                                 ) else listOf(),
                                 findviewModel,
                                 mediaPlayerViewModel,
-                                onClick={
+                                onClick = {
                                     songListViewModel.detailId.value = item.id
                                     songListViewModel.fetchSongLists()
                                     songListViewModel.isShowDetail.value =
                                         true
-                                    songListViewModel.des.value=item.description
+                                    songListViewModel.des.value = item.description
                                     toSonglist()
                                 }
                             )
@@ -333,20 +316,8 @@ fun Find(
         }
 
 
-        item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(id = R.string.find_nomore),
-                    color = Color.Gray.copy(alpha = 0.5f)
-                )
-            }
-
+        item(key = 5) {
             Spacer(modifier = Modifier.height(55.dp))
-
         }
     }
 
@@ -361,7 +332,6 @@ fun FindPreview() {
         Find(
             FindviewModel(),
             MediaPlayerViewModel(),
-            rememberLyricsViewState(lrcContent = "", mediaPlayerViewModel = MediaPlayerViewModel()),
             SearchviewModel()
         )
 

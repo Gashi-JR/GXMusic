@@ -1,6 +1,7 @@
 package com.example.viewmodellist.ui.components.find
 
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -47,12 +48,11 @@ import kotlinx.coroutines.launch
 fun TopCard(
     title: String,
     des: String,
-    topid: Long,
     topsong: List<TopSongItem>,
     findviewModel: FindviewModel,
     mediaPlayerViewModel: MediaPlayerViewModel,
     onClick: () -> Unit = {},
-    modifier: Modifier = Modifier,
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
 ) {
     Card(
         colors = CardDefaults.cardColors(containerColor = Color.White),
@@ -156,11 +156,16 @@ fun TopCard(
                         Icon(
                             painter = painterResource(id = if (index == 0) R.drawable.one else if (index == 1) R.drawable.two else R.drawable.three),
                             contentDescription = null,
-                            tint = if (index == 0) Color(255, 215, 0) else if (index == 1) Color(
-                                192,
-                                192,
-                                192
-                            ) else Color(205, 133, 63),
+                            tint = when (index) {
+                                0 -> Color(255, 215, 0)
+                                1 -> Color(
+                                    192,
+                                    192,
+                                    192
+                                )
+
+                                else -> Color(205, 133, 63)
+                            },
                             modifier = Modifier.size(15.dp)
                         )
                         Column(
@@ -218,7 +223,6 @@ fun TopCardPreview() {
     TopCard(
         "云音乐说唱榜",
         "ada",
-        424,
         listOf(
             TopSongItem(15, "adad", "ada", "adad"),
             TopSongItem(15, "adad", "ada", "adad"),

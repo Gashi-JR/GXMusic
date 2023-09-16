@@ -61,6 +61,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         formatter.mainActivity = this
+
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
@@ -70,7 +71,7 @@ class MainActivity : ComponentActivity() {
 
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Column() {
+                    Column {
 
 
                         Myapp()
@@ -123,7 +124,26 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Myapp() {
+    val findviewModel by remember {
+        mutableStateOf(FindviewModel())
+    }
+    val mediaPlayerViewModel by remember {
+        mutableStateOf(MediaPlayerViewModel())
+    }
+    val searchViewModel by remember {
+        mutableStateOf(SearchviewModel())
+    }
+    val loginViewModel by remember {
+        mutableStateOf(LoginviewModel())
+    }
+    val mineviewModel by remember {
+        mutableStateOf(MineviewModel())
+    }
+    val topviewModel by remember {
+        mutableStateOf(TopviewModel())
+    }
 
+    val songListViewModel by remember { mutableStateOf(SongListViewModel()) }
 
     var backPressedCount by remember {  //记录返回键点击次数
         mutableStateOf(0)
@@ -207,27 +227,6 @@ fun Myapp() {
         }
 
 
-        val findviewModel by remember {
-            mutableStateOf(FindviewModel())
-        }
-        val mediaPlayerViewModel by remember {
-            mutableStateOf(MediaPlayerViewModel())
-        }
-        val searchViewModel by remember {
-            mutableStateOf(SearchviewModel())
-        }
-        val loginViewModel by remember {
-            mutableStateOf(LoginviewModel())
-        }
-        val mineviewModel by remember {
-            mutableStateOf(MineviewModel())
-        }
-        val topviewModel by remember {
-            mutableStateOf(TopviewModel())
-        }
-
-        val songListViewModel by remember { mutableStateOf(SongListViewModel()) }
-
         val name = findviewModel.currentMusic.value.name
         val artist = findviewModel.currentMusic.value.artist
         val duration = mediaPlayerViewModel.durationText
@@ -285,16 +284,15 @@ fun Myapp() {
                         Find(
                             findviewModel,
                             mediaPlayerViewModel,
-                            state = state,
                             searchviewModel = searchViewModel,
                             loginviewModel = loginViewModel,
                             songListViewModel = songListViewModel,
                             toSonglist = { selectedTabIndex = 2 },
                             toTop = { selectedTabIndex = 3 },
-                            showSearch = { showSearch.value = true },
                             toFind = {
                                 selectedTabIndex = 0
-                            }
+                            },
+                            showSearch = { showSearch.value = true }
                         )
                     }
                     SideEffect {
@@ -319,12 +317,10 @@ fun Myapp() {
                 3 -> {
                     Top(
                         findviewModel,
-                        mediaPlayerViewModel,
                         topviewModel,
                         songListViewModel = songListViewModel,
                         toSonglist = { selectedTabIndex = 2 },
-                        toTop = { selectedTabIndex = 3 },
-                    )
+                    ) { selectedTabIndex = 3 }
                     SideEffect {
                         shouldUpdateIndex = true
                     }
@@ -360,7 +356,7 @@ fun Myapp() {
         }
 
 
-        var show = remember {
+        val show = remember {
             mutableStateOf(false)
         }
 

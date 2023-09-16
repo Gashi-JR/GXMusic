@@ -61,7 +61,6 @@ fun SongListDetail(
     songListViewModel: SongListViewModel = SongListViewModel(),
     mediaPlayerViewModel: MediaPlayerViewModel = MediaPlayerViewModel(),
     findviewModel: FindviewModel = FindviewModel(),
-    onBack: () -> Unit = {},
     @SuppressLint("ModifierParameter")
     modifier: Modifier = Modifier
 ) {
@@ -78,7 +77,7 @@ fun SongListDetail(
         LazyColumn(
             modifier = Modifier.background(Color.White)
         ) {
-            item {
+            item(key = 0) {
                 Box(
                     modifier = Modifier
 
@@ -295,7 +294,9 @@ fun SongListDetail(
                 }
             }
             if (songListViewModel.songList.isNotEmpty()) {
-                itemsIndexed(songListViewModel.songList) { index, songlist ->
+                itemsIndexed(
+                    songListViewModel.songList,
+                    key = { _, item -> item.id }) { index, songlist ->
                     SongItem(
                         index,
                         songlist.name,
@@ -314,7 +315,7 @@ fun SongListDetail(
                         isSelected = index == songListViewModel.selectedSongIndex.value
                     )
                 }
-                item {
+                item(key = 1) {
                     Spacer(modifier = Modifier.height(55.dp))
                 }
             } else {
@@ -348,7 +349,7 @@ fun SongItem(
     modifier: Modifier = Modifier,
     isSelected: Boolean
 ) {
-    var songTextStyle = if (isSelected) {
+    val songTextStyle = if (isSelected) {
         TextStyle(
             color = Color(250, 65, 64)
         )
@@ -356,7 +357,7 @@ fun SongItem(
         TextStyle(color = Color.Black)
     }
 
-    var songTextGrayStyle = if (isSelected) {
+    val songTextGrayStyle = if (isSelected) {
         TextStyle(
             color = Color(250, 65, 64)
         )
@@ -395,45 +396,50 @@ fun SongItem(
                     horizontalArrangement = Arrangement.spacedBy(5.dp)
                 ) {
 
-                    if (fee == 1) {
-                        Box(
-                            modifier = modifier
-
-                                .background(Color.White)
-                                .drawBehind {
-                                    // 绘制圆角矩形边界线
-                                    drawRoundRect(
-                                        color = Color(250, 65, 64),
-                                        size = size,
-                                        cornerRadius = CornerRadius(4.dp.toPx(), 4.dp.toPx())
-                                    )
-                                }
-                        ) {
-                            Text(
-                                text = "VIP",
-                                fontSize = 10.sp,
-                                color = Color.White,
-                            )
+                    when (fee) {
+                        1 -> {
+                            Box(
+                                modifier = modifier
+                                    .background(Color.White)
+                                    .drawBehind {
+                                        // 绘制圆角矩形边界线
+                                        drawRoundRect(
+                                            color = Color(250, 65, 64),
+                                            size = size,
+                                            cornerRadius = CornerRadius(4.dp.toPx(), 4.dp.toPx())
+                                        )
+                                    }
+                            ) {
+                                Text(
+                                    text = "VIP",
+                                    fontSize = 10.sp,
+                                    color = Color.White,
+                                )
+                            }
                         }
-                    } else if (fee == -1) {
-                    } else {
-                        Box(
-                            modifier = modifier
-                                .background(Color.White)
-                                .drawBehind {
-                                    // 绘制圆角矩形边界线
-                                    drawRoundRect(
-                                        color = Color(192, 142, 68, 255),
-                                        size = size,
-                                        cornerRadius = CornerRadius(4.dp.toPx(), 4.dp.toPx())
-                                    )
-                                }
-                        ) {
-                            Text(
-                                text = "免费",
-                                fontSize = 10.sp,
-                                color = Color.White,
-                            )
+
+                        -1 -> {
+                        }
+
+                        else -> {
+                            Box(
+                                modifier = modifier
+                                    .background(Color.White)
+                                    .drawBehind {
+                                        // 绘制圆角矩形边界线
+                                        drawRoundRect(
+                                            color = Color(192, 142, 68, 255),
+                                            size = size,
+                                            cornerRadius = CornerRadius(4.dp.toPx(), 4.dp.toPx())
+                                        )
+                                    }
+                            ) {
+                                Text(
+                                    text = "免费",
+                                    fontSize = 10.sp,
+                                    color = Color.White,
+                                )
+                            }
                         }
                     }
                     Text(

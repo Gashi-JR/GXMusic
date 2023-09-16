@@ -1,5 +1,6 @@
 package com.example.viewmodellist.ui.components.songlist
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -24,7 +25,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.viewmodellist.R
 import com.example.viewmodellist.ui.components.LoadingAnimation
-import com.example.viewmodellist.ui.components.find.AlbumArt
 import com.example.viewmodellist.ui.screens.login.LoginviewModel
 import com.example.viewmodellist.ui.screens.songlist.SongListViewModel
 
@@ -34,7 +34,7 @@ import com.example.viewmodellist.ui.screens.songlist.SongListViewModel
 fun RecSongList(
     songListViewModel: SongListViewModel = SongListViewModel(),
     loginviewModel: LoginviewModel,
-    modifier: Modifier = Modifier
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
 ) {
 
 
@@ -44,7 +44,7 @@ fun RecSongList(
     ) {
 
         //专属的推荐歌单 一共六个推荐（3*2）
-        item {
+        item(key = 0) {
             Row {
                 if (songListViewModel.songlistData.isNotEmpty()) {
                     Column(
@@ -71,7 +71,7 @@ fun RecSongList(
                     println("失败捏")
             }
         }
-        item {
+        item(key = 1) {
 
             Text(
                 text = "今日达人推荐",
@@ -87,7 +87,9 @@ fun RecSongList(
                 modifier = Modifier.height(160.dp)
             ) {
                 if (songListViewModel.hotPlayList.isNotEmpty()) {
-                    items(songListViewModel.hotPlayList.take(6)) { item ->
+                    items(
+                        songListViewModel.hotPlayList.take(6),
+                        key = { item -> item.id }) { item ->
                         AlbumArt(
                             id = item.id,
                             imageUrl = item.coverImgUrl,
@@ -109,7 +111,7 @@ fun RecSongList(
             }
 
         }
-        item {
+        item(key = 2) {
 
             Text(
                 text = if (songListViewModel.currentTime.value < 8) {
@@ -133,7 +135,9 @@ fun RecSongList(
                 modifier = Modifier.height(160.dp)
             ) {
                 if (songListViewModel.hotPlayList.isNotEmpty()) {
-                    items(songListViewModel.hotPlayList.subList(6, 12)) { item ->
+                    items(
+                        songListViewModel.hotPlayList.subList(6, 12),
+                        key = { item -> item.id }) { item ->
                         AlbumArt(
                             id = item.id,
                             imageUrl = item.coverImgUrl,
@@ -154,7 +158,7 @@ fun RecSongList(
                 }
             }
         }
-        item {
+        item(key = 3) {
             Text(
                 text = "这些歌单，你一定在找",
                 fontSize = 18.sp,
@@ -214,7 +218,7 @@ fun RecSongList(
                 }
             }
         }
-        item {
+        item(key = 4) {
             Spacer(modifier = Modifier.height(55.dp))
         }
     }

@@ -26,10 +26,6 @@ class Datamodels {
 
     //TODO njl 的类
 
-    //TODO 用户歌单列表  传入用户id获取的歌单列表  user/playlist?uid
-    data class Playlist(
-        val listID: Long  //歌单id
-    )
 
     //TODO 歌单详情     传入歌单id获取的歌单详情，返回：歌单中音乐的id
     data class Tracks(
@@ -65,11 +61,6 @@ class Datamodels {
         val name: String,
         val playCount: Long,
         val coverImgUrl: String,
-    )
-
-    data class HotComments(
-        val content: String,
-        val user: JsonObject
     )
 
     data class Comments(

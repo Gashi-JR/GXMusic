@@ -1,9 +1,9 @@
 package com.example.viewmodellist.ui.components.find
 
 
+import android.annotation.SuppressLint
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -42,14 +41,12 @@ fun FindCard(
     showline: Boolean,
     onClick: () -> Unit = {},
     icon: @Composable () -> Unit = {},
-    modifier: Modifier = Modifier,
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
-
     Column(
         modifier = modifier
             .fillMaxWidth()
-
     ) {
         Row(
             modifier = Modifier
@@ -105,7 +102,7 @@ fun FindCard(
 @Composable
 fun FindCardPreview() {
 
-    FindCard(R.string.find_recommendsonglist, true, true, true) {
+    FindCard(R.string.find_recommendsonglist, showmore = true, showarrow = true, showline = true) {
         LazyRow(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
@@ -116,7 +113,6 @@ fun FindCardPreview() {
                     imageUrl = item.picUrl,
                     title = item.name,
                     playCount = item.playCount,
-                    id = item.id,
                     copywriter = item.copywriter,
                     modifier = Modifier
                         .clickable(onClick = {})

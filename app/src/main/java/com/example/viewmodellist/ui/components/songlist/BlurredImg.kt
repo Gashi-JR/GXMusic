@@ -1,7 +1,7 @@
 package com.example.viewmodellist.ui.components.songlist
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -19,7 +19,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 @Composable
-fun BlurredImage(imageUrl: String, type: Int = 0, modifier: Modifier = Modifier) {
+fun BlurredImage(
+    imageUrl: String,
+    type: Int = 0,
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
+) {
     val context = LocalContext.current
     val bitmap = remember { mutableStateOf<ImageBitmap?>(null) }
 
@@ -29,7 +33,7 @@ fun BlurredImage(imageUrl: String, type: Int = 0, modifier: Modifier = Modifier)
 
             val loadedBitmap = Glide.with(context)
                 .asBitmap()
-                .load(if (imageUrl != "" ) imageUrl else "https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png")
+                .load(if (imageUrl != "") imageUrl else "https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png")
                 .apply(requestOptions)
                 .transition(BitmapTransitionOptions.withCrossFade())
                 .submit()

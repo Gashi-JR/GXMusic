@@ -1,6 +1,7 @@
 package com.example.viewmodellist.ui.components.find
 
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -12,9 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Chip
-import androidx.compose.material.ChipDefaults
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -42,17 +40,16 @@ fun SonglistCover(
     imageUrl: String,
     title: String,
     playCount: Long,
-    id: Long,
     copywriter: String?,
     onClick: () -> Unit = {},
-    modifier: Modifier = Modifier,
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = Modifier
             .width(120.dp)
 
     ) {
-        Row() {
+        Row {
             Card(shape = MaterialTheme.shapes.small) {
 
                 Box {
@@ -150,7 +147,6 @@ fun SonglistcoverPreview() {
         "https://p2.music.126.net/R2zySKjiX_hG8uFn1aCRcw==/109951165187830237.jpg",
         "阿发发发疯阿发复旦复华",
         6346363636,
-        1515455,
         "播放过万"
     )
 }

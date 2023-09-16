@@ -1,9 +1,8 @@
 package com.example.viewmodellist.ui.screens.login
 
+import android.annotation.SuppressLint
 import android.graphics.BitmapFactory
-import android.service.controls.ControlsProviderService.TAG
 import android.util.Base64
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
@@ -31,12 +30,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.viewmodellist.R
@@ -45,7 +44,11 @@ import kotlinx.coroutines.delay
 
 
 @Composable
-fun Login(loginviewModel: LoginviewModel, onLogin: () -> Unit = {}, modifier: Modifier = Modifier) {
+fun Login(
+    loginviewModel: LoginviewModel,
+    onLogin: () -> Unit = {},
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
+) {
     var isRefresh by remember {
         mutableStateOf(true)
     }
@@ -87,7 +90,7 @@ fun Login(loginviewModel: LoginviewModel, onLogin: () -> Unit = {}, modifier: Mo
     }
 
     LaunchedEffect(Unit) {
-            isEnter = true
+        isEnter = true
     }
     Column(
         modifier = modifier

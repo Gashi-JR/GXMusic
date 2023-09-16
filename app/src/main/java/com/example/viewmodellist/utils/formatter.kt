@@ -1,10 +1,6 @@
 package com.example.viewmodellist.utils
 
 import com.example.viewmodellist.MainActivity
-import okhttp3.Cookie
-import org.json.JSONArray
-import org.json.JSONException
-import org.json.JSONObject
 import java.lang.Float.parseFloat
 import java.lang.Integer.parseInt
 import java.time.Instant

@@ -1,4 +1,4 @@
-package com.example.viewmodellist.ui.components.find
+package com.example.viewmodellist.ui.components.songlist
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -33,7 +32,6 @@ import com.example.viewmodellist.utils.formatter
 
 //TODO 传入专辑信息，显示效果
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun AlbumArt(
     id: Long,

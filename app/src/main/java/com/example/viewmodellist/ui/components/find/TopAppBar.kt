@@ -1,6 +1,7 @@
 package com.example.viewmodellist.ui.components.find
 
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -47,7 +48,7 @@ fun TopAppBar(
     searchviewModel: SearchviewModel = SearchviewModel(),
     loginviewModel: LoginviewModel = LoginviewModel(),
     onClick: () -> Unit = {},
-    modifier: Modifier = Modifier,
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
 ) {
     var i by remember {
         mutableStateOf(0)
