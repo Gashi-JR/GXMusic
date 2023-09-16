@@ -1,43 +1,30 @@
 package com.example.viewmodellist.ui.components.songlist
 
-import androidx.compose.foundation.clickable
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.viewmodellist.R
 import com.example.viewmodellist.ui.components.LoadingAnimation
-import com.example.viewmodellist.ui.components.find.AlbumArt
-import com.example.viewmodellist.ui.components.find.FindCard
-import com.example.viewmodellist.ui.components.find.MediaPlayerViewModel
-import com.example.viewmodellist.ui.components.find.TopCard
-import com.example.viewmodellist.ui.screens.find.FindviewModel
 import com.example.viewmodellist.ui.screens.login.LoginviewModel
 import com.example.viewmodellist.ui.screens.songlist.SongListViewModel
 
@@ -45,11 +32,9 @@ import com.example.viewmodellist.ui.screens.songlist.SongListViewModel
 
 @Composable
 fun RecSongList(
-    findviewModel: FindviewModel = FindviewModel(),
-    mediaPlayerViewModel: MediaPlayerViewModel = MediaPlayerViewModel(),
     songListViewModel: SongListViewModel = SongListViewModel(),
     loginviewModel: LoginviewModel,
-    modifier: Modifier = Modifier
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
 ) {
 
 
@@ -59,7 +44,7 @@ fun RecSongList(
     ) {
 
         //专属的推荐歌单 一共六个推荐（3*2）
-        item {
+        item(key = 0) {
             Row {
                 if (songListViewModel.songlistData.isNotEmpty()) {
                     Column(
@@ -86,7 +71,7 @@ fun RecSongList(
                     println("失败捏")
             }
         }
-        item {
+        item(key = 1) {
 
             Text(
                 text = "今日达人推荐",
@@ -102,7 +87,9 @@ fun RecSongList(
                 modifier = Modifier.height(160.dp)
             ) {
                 if (songListViewModel.hotPlayList.isNotEmpty()) {
-                    items(songListViewModel.hotPlayList.take(6)) { item ->
+                    items(
+                        songListViewModel.hotPlayList.take(6),
+                        key = { item -> item.id }) { item ->
                         AlbumArt(
                             id = item.id,
                             imageUrl = item.coverImgUrl,
@@ -124,7 +111,7 @@ fun RecSongList(
             }
 
         }
-        item {
+        item(key = 2) {
 
             Text(
                 text = if (songListViewModel.currentTime.value < 8) {
@@ -148,7 +135,9 @@ fun RecSongList(
                 modifier = Modifier.height(160.dp)
             ) {
                 if (songListViewModel.hotPlayList.isNotEmpty()) {
-                    items(songListViewModel.hotPlayList.subList(6, 12)) { item ->
+                    items(
+                        songListViewModel.hotPlayList.subList(6, 12),
+                        key = { item -> item.id }) { item ->
                         AlbumArt(
                             id = item.id,
                             imageUrl = item.coverImgUrl,
@@ -169,7 +158,7 @@ fun RecSongList(
                 }
             }
         }
-        item {
+        item(key = 3) {
             Text(
                 text = "这些歌单，你一定在找",
                 fontSize = 18.sp,
@@ -229,7 +218,7 @@ fun RecSongList(
                 }
             }
         }
-        item {
+        item(key = 4) {
             Spacer(modifier = Modifier.height(55.dp))
         }
     }

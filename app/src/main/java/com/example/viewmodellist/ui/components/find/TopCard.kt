@@ -1,9 +1,11 @@
 package com.example.viewmodellist.ui.components.find
 
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -44,11 +47,12 @@ import kotlinx.coroutines.launch
 @Composable
 fun TopCard(
     title: String,
-    topid: Long,
+    des: String,
     topsong: List<TopSongItem>,
     findviewModel: FindviewModel,
     mediaPlayerViewModel: MediaPlayerViewModel,
-    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
 ) {
     Card(
         colors = CardDefaults.cardColors(containerColor = Color.White),
@@ -73,7 +77,16 @@ fun TopCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.pointerInput(Unit) {
+                        detectTapGestures(
+                            onTap = {
+                                onClick()
+                            }
+                        )
+
+                    }) {
                     Text(
                         text = title,
                         fontSize = 18.sp,
@@ -85,7 +98,7 @@ fun TopCard(
                     )
                 }
                 Text(
-                    text = "大家都在听",
+                    text = des,
                     fontSize = 14.sp,
                     color = Color.Gray
                 )
@@ -143,11 +156,16 @@ fun TopCard(
                         Icon(
                             painter = painterResource(id = if (index == 0) R.drawable.one else if (index == 1) R.drawable.two else R.drawable.three),
                             contentDescription = null,
-                            tint = if (index == 0) Color(255, 215, 0) else if (index == 1) Color(
-                                192,
-                                192,
-                                192
-                            ) else Color(205, 133, 63),
+                            tint = when (index) {
+                                0 -> Color(255, 215, 0)
+                                1 -> Color(
+                                    192,
+                                    192,
+                                    192
+                                )
+
+                                else -> Color(205, 133, 63)
+                            },
                             modifier = Modifier.size(15.dp)
                         )
                         Column(
@@ -204,7 +222,7 @@ fun TopCardPreview() {
 
     TopCard(
         "云音乐说唱榜",
-        424,
+        "ada",
         listOf(
             TopSongItem(15, "adad", "ada", "adad"),
             TopSongItem(15, "adad", "ada", "adad"),

@@ -1,6 +1,7 @@
 package com.example.viewmodellist.ui.components.find
 
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -47,7 +48,7 @@ fun TopAppBar(
     searchviewModel: SearchviewModel = SearchviewModel(),
     loginviewModel: LoginviewModel = LoginviewModel(),
     onClick: () -> Unit = {},
-    modifier: Modifier = Modifier,
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
 ) {
     var i by remember {
         mutableStateOf(0)
@@ -98,8 +99,10 @@ fun TopAppBar(
                 ) {
 
                     androidx.compose.material.Icon(
-                        painter = painterResource(id = R.drawable.baseline_search_24),
-                        contentDescription = "search"
+                        painter = painterResource(id = R.drawable.search),
+                        contentDescription = "search",
+                        tint = Color.Unspecified,
+                        modifier = Modifier.size(24.dp)
                     )
 
                     Text(
@@ -110,8 +113,11 @@ fun TopAppBar(
                 }
 
                 androidx.compose.material.Icon(
-                    painter = painterResource(id = R.drawable.baseline_clear_24),
-                    contentDescription = "clear"
+                    painter = painterResource(id = R.drawable.close),
+                    contentDescription = "clear",
+                    tint = Color.Unspecified,
+                    modifier = Modifier.size(18.dp)
+
                 )
             }
 

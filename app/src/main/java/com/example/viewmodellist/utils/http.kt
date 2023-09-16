@@ -1,3 +1,5 @@
+package com.example.viewmodellist.utils
+
 import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -45,12 +47,12 @@ var cookieJar: CookieJar = object : CookieJar {
 
 
 object NetworkUtils {
-    val client = OkHttpClient.Builder()
+    private val client = OkHttpClient.Builder()
         .cookieJar(cookieJar)
         .build()
 
     private val retrofit = Retrofit.Builder()
-        .baseUrl("http://p2vb4f.natappfree.cc") // 设置基本 URL
+        .baseUrl("http://8hxukr.natappfree.cc") // 设置基本 URL
         .addConverterFactory(GsonConverterFactory.create()) // 设置 Gson 转换器
         .client(client)
         .build()
@@ -68,9 +70,8 @@ object NetworkUtils {
             }
             if (response != null && response.code() == 403) {
                 val responseBody = "{\"code\":403}"
-                val res = responseBody
                 Log.d("responseBody", "responseBody: $responseBody")
-                res // 返回响应体的字符串内容
+                responseBody // 返回响应体的字符串内容
             } else if (response != null && response.isSuccessful) {
                 val responseBody = response.body()
                 val res = responseBody?.string()

@@ -93,7 +93,7 @@ fun LyricsView(
     contentPadding: PaddingValues = PaddingValues(0.dp),
     darkTheme: Boolean = false,
     fadingEdges: FadingEdges = FadingEdges.None,
-    fontSize: TextUnit = 25.sp,
+    fontSize: TextUnit = 20.sp,
     fontWeight: FontWeight = FontWeight.Bold,
     lineHeight: TextUnit = 1.2.em,
 ) {

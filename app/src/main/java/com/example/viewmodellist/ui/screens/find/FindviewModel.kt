@@ -1,13 +1,11 @@
 package com.example.viewmodellist.ui.screens.find
 
-import NetworkUtils
+import com.example.viewmodellist.utils.NetworkUtils
 import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
 import android.util.Log
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.viewmodellist.utils.Datamodels.*
@@ -24,18 +22,22 @@ class FindviewModel(private val repository: Repository = Repository()) : ViewMod
         mutableStateOf<MutableList<BannerData>>(mutableStateListOf())
     val bannerData: List<BannerData> get() = _bannerData.value
 
+    @SuppressLint("MutableCollectionMutableState")
     private val _songlistData =
         mutableStateOf<MutableList<SongListItem>>(mutableStateListOf())
     val songlistData: List<SongListItem> get() = _songlistData.value
 
+    @SuppressLint("MutableCollectionMutableState")
     private val _newsongData =
         mutableStateOf<MutableList<NewSongItem>>(mutableStateListOf())
     val newsongData: List<NewSongItem> get() = _newsongData.value
 
+    @SuppressLint("MutableCollectionMutableState")
     private val _topcardData =
         mutableStateOf<MutableList<TopcardItem>>(mutableStateListOf())
     val topcardData: List<TopcardItem> get() = _topcardData.value
 
+    @SuppressLint("MutableCollectionMutableState")
     private val _topsongData =
         mutableStateOf<MutableList<TopSongItem>>(mutableStateListOf())
     val topsongData: List<TopSongItem> get() = _topsongData.value
@@ -145,18 +147,16 @@ class FindviewModel(private val repository: Repository = Repository()) : ViewMod
 }
 
 
-class Repository() {
-    val gson = Gson()
+class Repository {
+    private val gson = Gson()
     suspend fun getBannerData(): List<Banner> {
 
         val result = NetworkUtils.https("/banner?type=1", "GET")
         val response = gson.fromJson(result, JsonObject::class.java)
         val bannersJsonArray = response.getAsJsonArray("banners")
-        val banners: List<Banner> =
-            gson.fromJson(bannersJsonArray, object : TypeToken<List<Banner>>() {}.type)
 
 
-        return banners
+        return gson.fromJson(bannersJsonArray, object : TypeToken<List<Banner>>() {}.type)
     }
 
     suspend fun getRecommendSonglistData(): List<SongListItem> {
@@ -165,11 +165,9 @@ class Repository() {
         Log.d(TAG, "getRecommendSonglistData: $result")
         val response = gson.fromJson(result, JsonObject::class.java)
         val songlistJsonArray = response.getAsJsonArray("result")
-        val songlist: List<SongListItem> =
-            gson.fromJson(songlistJsonArray, object : TypeToken<List<SongListItem>>() {}.type)
 
 
-        return songlist
+        return gson.fromJson(songlistJsonArray, object : TypeToken<List<SongListItem>>() {}.type)
     }
 
     suspend fun getNewSongData(): List<NewSongItem> {
@@ -254,22 +252,23 @@ class Repository() {
 
         }
 
-
-        //Log.d(TAG, "alltopsongs: $alltopsongs")
         return alltopsongs
     }
 
     suspend fun getCurrentMusicUrl(id: Long): String {
 
         val result = NetworkUtils.https("/song/url/v1?id=$id&level=standard", "GET")
-        val response = gson.fromJson(result, JsonObject::class.java)
-        val JsonArray = response.getAsJsonArray("data")
-        val songJsonObject = JsonArray[0].asJsonObject
+        return try {
+            val response = gson.fromJson(result, JsonObject::class.java)
+            val JsonArray = response.getAsJsonArray("data")
+            val songJsonObject = JsonArray[0].asJsonObject
+            songJsonObject.get("url").asString
+        } catch (err: Exception) {
+            Log.e(TAG, "getCurrentMusicUrl: $err")
+            ""
+        }
 
 
-
-
-        return songJsonObject.get("url").asString
     }
 
 
@@ -278,10 +277,9 @@ class Repository() {
         val result = NetworkUtils.https("/lyric?id=$id", "GET")
         val response = gson.fromJson(result, JsonObject::class.java)
         val lycobj = response.getAsJsonObject("lrc")
-        val lyc = lycobj.get("lyric").asString
 
 
-        return lyc
+        return lycobj.get("lyric").asString
     }
 
     suspend fun getCurrentMusicPic(id: Long): String {
@@ -291,7 +289,6 @@ class Repository() {
         val songs = response.getAsJsonArray("songs")
         val obj = songs[0].asJsonObject
         val alobj = obj.get("al")
-        val picUrl = alobj.asJsonObject.get("picUrl").asString
-        return picUrl
+        return alobj.asJsonObject.get("picUrl").asString
     }
 }

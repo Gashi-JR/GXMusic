@@ -1,9 +1,6 @@
 package com.example.viewmodellist.utils
 
-import okhttp3.Cookie
-import org.json.JSONArray
-import org.json.JSONException
-import org.json.JSONObject
+import com.example.viewmodellist.MainActivity
 import java.lang.Float.parseFloat
 import java.lang.Integer.parseInt
 import java.time.Instant
@@ -13,6 +10,7 @@ import java.time.format.DateTimeFormatter
 
 
 object formatter {
+    var mainActivity: MainActivity? = null
     /**
      * 数字转整数 如 100000 转为10万
      * @param {需要转化的数} num

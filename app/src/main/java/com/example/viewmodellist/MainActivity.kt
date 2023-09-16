@@ -5,39 +5,33 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.absoluteOffset
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.rememberNavController
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import com.dokar.amlv.rememberLyricsViewState
 import com.example.viewmodellist.ui.components.BottomBar
 import com.example.viewmodellist.ui.components.Message
@@ -56,25 +50,70 @@ import com.example.viewmodellist.ui.screens.search.SearchviewModel
 import com.example.viewmodellist.ui.screens.songlist.SongList
 import com.example.viewmodellist.ui.screens.songlist.SongListViewModel
 import com.example.viewmodellist.ui.screens.top.Top
+import com.example.viewmodellist.ui.screens.top.TopviewModel
 import com.example.viewmodellist.ui.theme.ViewModelListTheme
+import com.example.viewmodellist.utils.formatter
 
 
 class MainActivity : ComponentActivity() {
+
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        formatter.mainActivity = this
+
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
         setContent {
             ViewModelListTheme {
-                // A surface container using the 'background' color from the theme
+
                 Surface(
 
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Myapp()
+                    Column {
+
+
+                        Myapp()
+
+                    }
+
                 }
+
+
             }
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        setSystemBarsTransparent()
+    }
+
+
+    @SuppressLint("WrongConstant", "RememberReturnType")
+    private fun setSystemBarsTransparent() {            //沉浸式状态栏
+        val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
+        windowInsetsController.let {
+            ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { view, insets ->
+                val systemWindowInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+                view.updatePadding(bottom = systemWindowInsets.bottom)
+                insets
+            }
+        }
+    }
+
+    @SuppressLint("DiscouragedApi", "InternalInsetResource")
+    fun getStatusBarHeight(): Int {                 //获取状态栏dp值
+        var statusBarHeight = 0
+        val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
+        if (resourceId > 0) {
+            statusBarHeight = resources.getDimensionPixelSize(resourceId)
+        }
+        val density = resources.displayMetrics.density
+        return (statusBarHeight / density).toInt()
+    }
+
 }
 
 
@@ -82,10 +121,29 @@ class MainActivity : ComponentActivity() {
     "UnusedMaterial3ScaffoldPaddingParameter", "SuspiciousIndentation",
     "UnrememberedMutableState"
 )
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun Myapp(modifier: Modifier = Modifier) {
-    val navController = rememberNavController()
+fun Myapp() {
+    val findviewModel by remember {
+        mutableStateOf(FindviewModel())
+    }
+    val mediaPlayerViewModel by remember {
+        mutableStateOf(MediaPlayerViewModel())
+    }
+    val searchViewModel by remember {
+        mutableStateOf(SearchviewModel())
+    }
+    val loginViewModel by remember {
+        mutableStateOf(LoginviewModel())
+    }
+    val mineviewModel by remember {
+        mutableStateOf(MineviewModel())
+    }
+    val topviewModel by remember {
+        mutableStateOf(TopviewModel())
+    }
+
+    val songListViewModel by remember { mutableStateOf(SongListViewModel()) }
 
     var backPressedCount by remember {  //记录返回键点击次数
         mutableStateOf(0)
@@ -127,12 +185,27 @@ fun Myapp(modifier: Modifier = Modifier) {
         countDownTimer.start()
     })
 
-    var selectedTabIndex by remember { mutableStateOf(0) }
+
     var isLogin by rememberSaveable {
         mutableStateOf(false)
     }
-    var showSearch = rememberSaveable {
+    val showSearch = rememberSaveable {
         mutableStateOf(false)
+    }
+
+    var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
+    val pagerState = rememberPagerState(initialPage = selectedTabIndex)
+    var shouldUpdateIndex by remember { mutableStateOf(true) }
+
+    LaunchedEffect(selectedTabIndex) {
+        pagerState.scrollToPage(selectedTabIndex)
+        // pagerState.animateScrollToPage(selectedTabIndex)
+    }
+    LaunchedEffect(pagerState.currentPage) {
+        if (shouldUpdateIndex) {
+            selectedTabIndex = pagerState.currentPage
+        }
+        shouldUpdateIndex = false
     }
     Scaffold(
         bottomBar = {
@@ -153,26 +226,6 @@ fun Myapp(modifier: Modifier = Modifier) {
             mutableStateOf(false)
         }
 
-
-        val findviewModel by remember {
-            mutableStateOf(FindviewModel())
-        }
-        val mediaPlayerViewModel by remember {
-            mutableStateOf(MediaPlayerViewModel())
-        }
-        val searchViewModel by remember {
-            mutableStateOf(SearchviewModel())
-        }
-        val loginViewModel by remember {
-            mutableStateOf(LoginviewModel())
-        }
-        val mineviewModel by remember {
-            mutableStateOf(MineviewModel())
-        }
-        val pagerState = rememberPagerState(initialPage = selectedTabIndex)
-
-
-        val songListViewModel by remember { mutableStateOf(SongListViewModel()) }
 
         val name = findviewModel.currentMusic.value.name
         val artist = findviewModel.currentMusic.value.artist
@@ -204,9 +257,9 @@ fun Myapp(modifier: Modifier = Modifier) {
         LaunchedEffect(lycState.value) {
             state.play()
         }
-        LaunchedEffect(selectedTabIndex) {
-            pagerState.animateScrollToPage(selectedTabIndex)
-        }
+
+
+
         AnimatedVisibility(visible = isLogin) {
             Login(loginviewModel = loginViewModel, onLogin = {
                 isLogin = false
@@ -219,7 +272,10 @@ fun Myapp(modifier: Modifier = Modifier) {
                     searchViewModel,
                     findviewModel = findviewModel,
                     mediaPlayerViewModel = mediaPlayerViewModel,
-                    onBack = { showSearch.value = false })
+                    songListViewModel = songListViewModel,
+                    onBack = { showSearch.value = false }
+
+                )
             }
 
             when (page) {
@@ -228,25 +284,61 @@ fun Myapp(modifier: Modifier = Modifier) {
                         Find(
                             findviewModel,
                             mediaPlayerViewModel,
-                            state = state,
                             searchviewModel = searchViewModel,
                             loginviewModel = loginViewModel,
-                            { showSearch.value = true },
+                            songListViewModel = songListViewModel,
+                            toSonglist = { selectedTabIndex = 2 },
+                            toTop = { selectedTabIndex = 3 },
+                            toFind = {
+                                selectedTabIndex = 0
+                            },
+                            showSearch = { showSearch.value = true }
                         )
+                    }
+                    SideEffect {
+                        shouldUpdateIndex = true
                     }
                 }
 
-                1 -> LyricPage(findviewModel, mediaPlayerViewModel, state)
-                2 -> SongList(songListViewModel, mediaPlayerViewModel, findviewModel)
-                3 -> Top()
-                4 -> AnimatedVisibility(visible = !showSearch.value && !isLogin) {
-                    Mine(
-                        loginViewModel,
-                        mineviewModel,
-                        onLogin = {
-                            isLogin = true
-                            loginViewModel.qrimg.value = ""
-                        })
+                1 -> {
+                    LyricPage(findviewModel, mediaPlayerViewModel, state)
+                    SideEffect {
+                        shouldUpdateIndex = true
+                    }
+                }
+
+                2 -> {
+                    SongList(songListViewModel, mediaPlayerViewModel, findviewModel)
+                    SideEffect {
+                        shouldUpdateIndex = true
+                    }
+                }
+
+                3 -> {
+                    Top(
+                        findviewModel,
+                        topviewModel,
+                        songListViewModel = songListViewModel,
+                        toSonglist = { selectedTabIndex = 2 },
+                    ) { selectedTabIndex = 3 }
+                    SideEffect {
+                        shouldUpdateIndex = true
+                    }
+                }
+
+                4 -> {
+                    AnimatedVisibility(visible = !showSearch.value && !isLogin) {
+                        Mine(
+                            loginViewModel,
+                            mineviewModel,
+                            onLogin = {
+                                isLogin = true
+                                loginViewModel.qrimg.value = ""
+                            })
+                    }
+                    SideEffect {
+                        shouldUpdateIndex = true
+                    }
                 }
             }
         }
@@ -264,7 +356,7 @@ fun Myapp(modifier: Modifier = Modifier) {
         }
 
 
-        var show = remember {
+        val show = remember {
             mutableStateOf(false)
         }
 

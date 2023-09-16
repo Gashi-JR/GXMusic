@@ -1,6 +1,7 @@
 package com.example.viewmodellist.ui.components.find
 
 
+import android.annotation.SuppressLint
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -37,14 +39,14 @@ fun FindCard(
     showmore: Boolean,
     showarrow: Boolean,
     showline: Boolean,
-    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
+    icon: @Composable () -> Unit = {},
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
-
     Column(
         modifier = modifier
             .fillMaxWidth()
-
     ) {
         Row(
             modifier = Modifier
@@ -53,12 +55,18 @@ fun FindCard(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+            )
+
+            {
                 Text(
                     text = stringResource(id = title),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
+                icon()
                 if (showarrow)
                     Icon(
                         painter = painterResource(id = R.drawable.baseline_chevron_right_24),
@@ -69,13 +77,14 @@ fun FindCard(
                     )
             }
             if (showmore)
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = { onClick() }) {
                     Icon(
-                        painter = painterResource(id = R.drawable.baseline_more_vert_24),
+                        painter = painterResource(id = R.drawable._4gl_extractright),
                         contentDescription = stringResource(
                             id = title
                         ),
-                        tint = Color.Black.copy(alpha = 0.5f)
+                        tint = Color.Black.copy(alpha = 0.5f),
+                        modifier = Modifier.size(18.dp)
                     )
                 }
 
@@ -93,7 +102,7 @@ fun FindCard(
 @Composable
 fun FindCardPreview() {
 
-    FindCard(R.string.find_recommendsonglist, true, true, true) {
+    FindCard(R.string.find_recommendsonglist, showmore = true, showarrow = true, showline = true) {
         LazyRow(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
@@ -104,7 +113,6 @@ fun FindCardPreview() {
                     imageUrl = item.picUrl,
                     title = item.name,
                     playCount = item.playCount,
-                    id = item.id,
                     copywriter = item.copywriter,
                     modifier = Modifier
                         .clickable(onClick = {})

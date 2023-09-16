@@ -30,14 +30,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.example.viewmodellist.R
-import com.google.gson.JsonObject
 
 
 @Composable
 fun SongCover(
-    id: Long,
     picUrl: String,
-    mvid: Long,
     name: String,
     artist: String,
     modifier: Modifier = Modifier,
@@ -95,9 +92,11 @@ fun SongCover(
             }
 
             Icon(
-                painter = painterResource(id = R.drawable.baseline_smart_display_24),
+                painter = painterResource(id = R.drawable.video),
                 contentDescription = null,
-                tint = Color.Black.copy(alpha = 0.2f),
+                tint = Color.Unspecified,
+                modifier = Modifier.size(24.dp),
+
 
                 )
         }
@@ -110,9 +109,7 @@ fun SongCover(
 @Composable
 fun SongcoverPreview() {
     SongCover(
-        1313,
         "http://pic-bucket.ws.126.net/photo/0003/2021-11-16/GOTKEOOU00AJ0003NOS.jpg",
-        64412,
         "adadadadw",
         "adadad"
     )

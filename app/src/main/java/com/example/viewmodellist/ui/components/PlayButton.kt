@@ -30,7 +30,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.consumeAllChanges
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -52,8 +51,6 @@ fun PlayButton(
     findviewModel: FindviewModel,
     mediaPlayerViewModel: MediaPlayerViewModel,
     state: LyricsViewState,
-    modifier: Modifier = Modifier
-
 ) {
     val infiniteTransition = rememberInfiniteTransition()
     val rotation by infiniteTransition.animateFloat(
@@ -74,7 +71,7 @@ fun PlayButton(
             .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
             .pointerInput(Unit) {
                 detectDragGestures { change, dragAmount ->
-                    change.consumeAllChanges()
+                    change.consume()
                     offsetX += dragAmount.x
                     offsetY += dragAmount.y
                 }
@@ -110,25 +107,16 @@ fun PlayButton(
                         contentDescription = null
                     )
                 }
-                if (extended)
-                    Icon(
-                        painter = painterResource(id = R.drawable.baseline_chevron_left_24),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(35.dp)
-                            .align(Alignment.Center)
 
-                    )
-                else {
-                    Icon(
-                        painter = painterResource(id = R.drawable.baseline_chevron_right_24),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(35.dp)
-                            .align(Alignment.Center)
+                Icon(
+                    painter = painterResource(id = R.drawable.rotatemusic),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(35.dp)
+                        .align(Alignment.Center),
+                    tint = Color.Unspecified
 
-                    )
-                }
+                )
 
             }
 
@@ -151,6 +139,6 @@ fun PlayButton(
 @Preview
 @Composable
 fun PlayButtonPreview() {
-   // PlayButton(onClick = {}, true, FindviewModel(), MediaPlayerViewModel())
+    // PlayButton(onClick = {}, true, FindviewModel(), MediaPlayerViewModel())
 }
 

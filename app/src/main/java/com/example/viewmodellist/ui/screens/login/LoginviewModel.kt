@@ -1,23 +1,23 @@
 package com.example.viewmodellist.ui.screens.login
 
-import NetworkUtils
+import com.example.viewmodellist.utils.NetworkUtils
 import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.viewmodellist.utils.Datamodels.*
+import com.example.viewmodellist.utils.Datamodels.LoginCheckResult
+import com.example.viewmodellist.utils.Datamodels.UserInfo
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
 class LoginviewModel(private val repository: Repository = Repository()) : ViewModel() {
 
     var qrimg: MutableState<String> = mutableStateOf("")
-    var key: MutableState<String> = mutableStateOf("")
+    private var key: MutableState<String> = mutableStateOf("")
     var result: MutableState<LoginCheckResult> = mutableStateOf(LoginCheckResult(0, "", ""))
     var uid: MutableState<Long> = mutableStateOf(0)
     var User: MutableState<UserInfo> = mutableStateOf(UserInfo(0, "", 0, 0, 0, "", 0, 0, 0, "", 0))
@@ -74,10 +74,9 @@ class Repository {
         val response = gson.fromJson(results, JsonObject::class.java)
 
         val data = response.getAsJsonObject("data")
-        val unikey = data.get("unikey").asString
 
 
-        return unikey
+        return data.get("unikey").asString
 
     }
 
@@ -92,10 +91,9 @@ class Repository {
 
 
         val data = response.getAsJsonObject("data")
-        val qrimg = data.get("qrimg").asString
 
 
-        return qrimg
+        return data.get("qrimg").asString
 
     }
 
@@ -107,7 +105,7 @@ class Repository {
                 "GET"
             )
 //        val results =
-//            NetworkUtils.https(
+//            com.example.viewmodellist.utils.NetworkUtils.https(
 //                "/login/qr/check?key=80b76e68-69d6-4cfa-b850-132ca3c77e2d&timestamp=1691131843929",
 //                "GET"
 //            )

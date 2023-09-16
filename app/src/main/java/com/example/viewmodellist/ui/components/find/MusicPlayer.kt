@@ -182,7 +182,7 @@ fun MusicPlayer(
                     .height(10.dp),
                 colors = SliderDefaults.colors(
                     thumbColor = Color.White,
-                    activeTrackColor = Color.Gray.copy(alpha = 0.8f),
+                    activeTrackColor = Color(250, 65, 64),
                     inactiveTrackColor = Color.Gray.copy(alpha = 0.5f),
                 ),
             )

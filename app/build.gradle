@@ -19,6 +19,7 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+
     }
 
     buildTypes {
@@ -45,6 +46,7 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+
 }
 
 dependencies {
@@ -74,4 +76,10 @@ dependencies {
     debugImplementation 'androidx.compose.ui:ui-tooling'
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
     implementation "androidx.compose.material:material:1.4.3"
+    implementation 'com.github.bumptech.glide:glide:4.15.1'
+    implementation 'jp.wasabeef:glide-transformations:4.3.0'
+    implementation "com.google.accompanist:accompanist-insets:0.15.0"
+    implementation "com.google.accompanist:accompanist-insets-ui:0.15.0"
+    implementation "com.google.accompanist:accompanist-systemuicontroller:0.15.0"
+
 }

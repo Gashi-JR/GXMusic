@@ -1,27 +1,24 @@
 package com.example.viewmodellist.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.TweenSpec
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Card
@@ -41,15 +38,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -59,15 +49,14 @@ import coil.compose.rememberAsyncImagePainter
 import com.dokar.amlv.FadingEdges
 import com.dokar.amlv.Lyrics
 import com.dokar.amlv.LyricsViewState
-import com.dokar.amlv.rememberLyricsViewState
 import com.example.viewmodellist.R
 import com.example.viewmodellist.ui.components.amlv.src.main.java.com.dokar.amlv.LyricsView
 import com.example.viewmodellist.ui.components.find.MediaPlayerViewModel
+import com.example.viewmodellist.ui.components.songlist.BlurredImage
 import com.example.viewmodellist.ui.screens.find.FindviewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
-import kotlin.math.sqrt
 
 @Composable
 fun LyricsViewPage(
@@ -88,64 +77,75 @@ fun LyricsViewPage(
     var showLyc by rememberSaveable {
         mutableStateOf(true)
     }
-    Column(
-        modifier = modifier
-            .height(800.dp)
-            .background(Color.Gray)
-            // .animatedGradient(animating = state.mediaPlayerViewModel.isPlaying)
-            .windowInsetsPadding(WindowInsets.systemBars),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        TitleBar(
-            lyrics = state.lyrics,
-            contentColor = Color.White,
+    Box {
+        BlurredImage(
+            imageUrl = findviewModel.currentMusic.value.picUrl,
+            modifier = Modifier.fillMaxSize(),
+            type = 1
         )
-        AnimatedVisibility(
-            visible = showLyc,
+        Column(
+            modifier = modifier
+                .height(800.dp)
+                .windowInsetsPadding(WindowInsets.systemBars),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Card(
-                shape = MaterialTheme.shapes.small,
-                colors = CardDefaults.cardColors(containerColor = Color(0, 0, 0, 0)),
-                modifier = Modifier
-                    .size(500.dp)
-                    .padding(15.dp)
-                    .clickable { showLyc = !showLyc },
-            ) {
-                Image(
-                    painter = rememberAsyncImagePainter(picUrl),
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize(),
-                    contentDescription = null
-                )
-
-            }
-        }
-
-        AnimatedVisibility(visible = !showLyc) {
-            LyricsView(
-                state = state,
-                modifier = Modifier
-                    .height(500.dp),
-                contentPadding = PaddingValues(
-                    start = 16.dp,
-                    top = 16.dp,
-                    end = 16.dp,
-                    bottom = 150.dp,
-                ),
-                darkTheme = true,
-                fadingEdges = FadingEdges(top = 16.dp, bottom = 150.dp),
+            TitleBar(
+                lyrics = state.lyrics,
+                contentColor = Color.White,
             )
+            AnimatedVisibility(
+                visible = showLyc,
+                enter = fadeIn(animationSpec = TweenSpec(500)),
+                exit = fadeOut(animationSpec = TweenSpec(500))
+            ) {
+                Card(
+                    shape = MaterialTheme.shapes.small,
+                    colors = CardDefaults.cardColors(containerColor = Color(0, 0, 0, 0)),
+                    modifier = Modifier
+                        .size(500.dp)
+                        .padding(15.dp)
+                        .clickable { showLyc = !showLyc },
+                ) {
+                    Image(
+                        painter = rememberAsyncImagePainter(picUrl),
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize(),
+                        contentDescription = null
+                    )
+
+                }
+            }
+
+            AnimatedVisibility(
+                visible = !showLyc,
+                enter = fadeIn(animationSpec = TweenSpec(500)),
+                exit = fadeOut(animationSpec = TweenSpec(500))
+            ) {
+                LyricsView(
+                    state = state,
+                    modifier = Modifier
+                        .height(500.dp),
+                    contentPadding = PaddingValues(
+                        start = 16.dp,
+                        top = 16.dp,
+                        end = 16.dp,
+                        bottom = 150.dp,
+                    ),
+                    darkTheme = true,
+                    fadingEdges = FadingEdges(top = 16.dp, bottom = 150.dp),
+                )
+            }
+
+            PlaybackControls(
+                state = state,
+                modifier = Modifier,
+                contentColor = Color.White,
+                showLyc = showLyc,
+                mediaPlayerViewModel
+            ) { showLyc = !showLyc }
         }
-        PlaybackControls(
-            state = state,
-            modifier = Modifier,
-            contentColor = Color.White,
-            showLyc = showLyc,
-            findviewModel,
-            mediaPlayerViewModel,
-            onClick = { showLyc = !showLyc }
-        )
     }
+
 }
 
 @Composable
@@ -185,7 +185,6 @@ fun PlaybackControls(
     modifier: Modifier = Modifier,
     contentColor: Color = MaterialTheme.colorScheme.onBackground,
     showLyc: Boolean,
-    findviewModel: FindviewModel,
     mediaPlayerViewModel: MediaPlayerViewModel,
     onClick: () -> Unit
 ) {
@@ -248,7 +247,7 @@ fun PlaybackControls(
                 valueRange = 0f..mediaPlayerViewModel.duration.toFloat(),
                 colors = SliderDefaults.colors(
                     thumbColor = Color.White,
-                    activeTrackColor = Color.White.copy(alpha = 0.8f),
+                    activeTrackColor = Color(250, 65, 64),
                     inactiveTrackColor = Color.White.copy(alpha = 0.5f),
                 ),
             )
@@ -267,7 +266,7 @@ fun PlaybackControls(
                 painter = painterResource(playIcon),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(56.dp)
+                    .size(40.dp)
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = rememberRipple(bounded = false),
@@ -286,21 +285,21 @@ fun PlaybackControls(
 
 
             val showlycbtn = if (showLyc) {
-                R.drawable.baseline_hide_image_24
+                R.drawable.hide
             } else {
-                R.drawable.baseline_image_24
+                R.drawable.show
             }
             Icon(
                 painter = painterResource(showlycbtn),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(56.dp)
+                    .size(40.dp)
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = rememberRipple(bounded = false),
                         onClick = onClick,
                     ),
-                tint = contentColor,
+                tint = Color.White,
             )
         }
     }
