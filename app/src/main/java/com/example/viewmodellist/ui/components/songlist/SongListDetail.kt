@@ -162,7 +162,6 @@ fun SongListDetail(
                                 if (songListViewModel.des.value != "")
                                     Text(
                                         text = songListViewModel.des.value,
-                                        // modifier = Modifier.padding(start = 8.dp),
                                         color = Color.White.copy(0.5f),
                                         maxLines = 2,
                                         overflow = TextOverflow.Ellipsis,
@@ -390,6 +389,9 @@ fun SongItem(
                     text = name,
                     style = songTextStyle,
                     fontSize = 16.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.width(300.dp)
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,

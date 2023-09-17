@@ -1,3 +1,5 @@
+package com.example.viewmodellist.ui.components.find
+
 import android.annotation.SuppressLint
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image

@@ -60,34 +60,22 @@ fun Top(
         topviewModel.fetchMoreTopCardData()
     }
     val h = formatter.mainActivity?.getStatusBarHeight()!!
-
     LaunchedEffect(topviewModel.nowindex) {
         if (topviewModel.shouldUpdateIndex.value) {
             topviewModel.shouldUpdateIndex.value = false
             when (topviewModel.nowindex) {
-                0 -> state.animateScrollToItem(0, 0)
-                1 -> state.animateScrollToItem(6, 350)
-                2 -> state.animateScrollToItem(8, 100)
+                0 -> state.scrollToItem(0, 0)
+                1 -> state.scrollToItem(7, 0)
+                2 -> state.scrollToItem(8, 0)
             }
-//            val scrollToPercentage = when (topviewModel.nowindex) {
-//                0 -> 0f
-//                1 -> 0.4f
-//                2 -> 0.6f
-//                else -> 0f
-//            }
-//
-//            val totalItems = 8
-//            val scrollToItem = (totalItems.toFloat() * scrollToPercentage).toInt()
-//
-//            state.animateScrollToItem(scrollToItem, /* duration */) // 替换为实际的滚动时间
         }
     }
 
     LaunchedEffect(remember { derivedStateOf { state.firstVisibleItemIndex } }.value) {
         when (state.firstVisibleItemIndex) {
             in 0..5 -> topviewModel.nowindex = 0
-            in 6..7 -> topviewModel.nowindex = 1
-            else -> topviewModel.nowindex = 2
+            7 -> topviewModel.nowindex = 1
+            8 -> topviewModel.nowindex = 2
         }
     }
 
@@ -163,7 +151,6 @@ fun Top(
                 )
             }
         }
-
 
 
         item(key = "精选") {

@@ -6,8 +6,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -43,7 +44,8 @@ fun AlbumArt(
 ) {
     Column(//Column用于专辑封面和Title的上下布局
         modifier = Modifier
-            .width(120.dp)
+            .fillMaxWidth(0.3f)
+            .aspectRatio(0.7f)
 
     ) {
         Card(shape = MaterialTheme.shapes.small) {
@@ -51,7 +53,7 @@ fun AlbumArt(
                 Image(
                     painter = rememberAsyncImagePainter(imageUrl),
                     modifier = modifier
-                        .size(120.dp)
+                        .fillMaxWidth()
                         .clickable {
                             songListViewModel.detailId.value = id
                             songListViewModel.fetchSongLists()
@@ -60,7 +62,7 @@ fun AlbumArt(
                             songListViewModel.des.value = ""
                             songListViewModel.onBack.value = {}
                         },
-                    contentScale = ContentScale.Crop,
+                    contentScale = ContentScale.FillWidth,
                     contentDescription = null
                 )
 

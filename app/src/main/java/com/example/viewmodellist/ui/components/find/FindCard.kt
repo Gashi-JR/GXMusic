@@ -79,7 +79,7 @@ fun FindCard(
             if (showmore)
                 IconButton(onClick = { onClick() }) {
                     Icon(
-                        painter = painterResource(id = R.drawable._4gl_extractright),
+                        painter = painterResource(id = R.drawable.logout),
                         contentDescription = stringResource(
                             id = title
                         ),

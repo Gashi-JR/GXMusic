@@ -43,6 +43,7 @@ import com.example.viewmodellist.ui.components.find.MediaPlayerViewModel
 import com.example.viewmodellist.ui.components.find.MusicPlayer
 import com.example.viewmodellist.ui.screens.find.FindviewModel
 import kotlin.math.roundToInt
+import androidx.compose.ui.platform.LocalDensity
 
 @Composable
 fun PlayButton(
@@ -61,19 +62,28 @@ fun PlayButton(
             repeatMode = RepeatMode.Restart
         )
     )
+    val density = LocalDensity.current
 
+    var offsetX by remember { mutableStateOf(5f) }
+    var offsetY by remember { mutableStateOf(700f) }
 
-    var offsetX by remember { mutableStateOf(20f) }
-    var offsetY by remember { mutableStateOf(2325f) }
+    val x = offsetX * density.density
+    val y = offsetY * density.density
+
     FloatingActionButton(
         onClick = { },
         modifier = Modifier
-            .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
+            .offset {
+                IntOffset(
+                    x.roundToInt(),
+                    y.roundToInt()
+                )
+            }
             .pointerInput(Unit) {
                 detectDragGestures { change, dragAmount ->
                     change.consume()
-                    offsetX += dragAmount.x
-                    offsetY += dragAmount.y
+                    offsetX += dragAmount.x / density.density
+                    offsetY += dragAmount.y / density.density
                 }
             },
         shape = CircleShape,

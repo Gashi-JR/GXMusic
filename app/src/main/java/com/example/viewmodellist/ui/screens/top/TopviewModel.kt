@@ -94,8 +94,9 @@ class Repository {
         val topcards: List<TopcardItem> =
             gson.fromJson(JsonArray, object : TypeToken<List<TopcardItem>>() {}.type)
 
-
-        return topcards.subList(14, topcards.size)
+        val top1 = topcards.subList(14, topcards.size - 7)
+        val top2 = topcards[topcards.size - 1]
+        return top1 + top2
     }
 
 
