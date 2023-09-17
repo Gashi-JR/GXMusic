@@ -331,10 +331,16 @@ fun Myapp() {
                         Mine(
                             loginViewModel,
                             mineviewModel,
+                            songListViewModel = songListViewModel,
                             onLogin = {
                                 isLogin = true
                                 loginViewModel.qrimg.value = ""
-                            })
+                            },
+                            toMine = {
+                                selectedTabIndex = 4
+                            },
+                            toSonglist = { selectedTabIndex = 2 },
+                        )
                     }
                     SideEffect {
                         shouldUpdateIndex = true

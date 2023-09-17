@@ -72,6 +72,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.viewmodellist.R
 import com.example.viewmodellist.ui.components.mine.MySonglists
 import com.example.viewmodellist.ui.screens.login.LoginviewModel
+import com.example.viewmodellist.ui.screens.songlist.SongListViewModel
 import com.example.viewmodellist.ui.theme.ViewModelListTheme
 import com.example.viewmodellist.ui.theme.mylikemusicGradient
 import com.example.viewmodellist.ui.theme.recentmusicGradient
@@ -85,7 +86,10 @@ import com.example.viewmodellist.utils.formatter
 fun Mine(
     loginviewModel: LoginviewModel = LoginviewModel(),
     mineviewModel: MineviewModel = MineviewModel(),
+    songListViewModel: SongListViewModel = SongListViewModel(),
     onLogin: () -> Unit = {},
+    toMine: () -> Unit = {},
+    toSonglist: () -> Unit = {},
 ) {
     var isDetail by remember {
         mutableStateOf(false)
@@ -530,17 +534,17 @@ fun Mine(
                                         item.creater,
                                         item.tags
                                     ),
-                                    modifier = Modifier.clickable { }
+                                    modifier = Modifier.clickable {
+                                        songListViewModel.detailId.value = item.id
+                                        songListViewModel.fetchSongLists()
+                                        songListViewModel.isShowDetail.value = true
+                                        songListViewModel.onBack.value = toMine
+                                        toSonglist()
+                                    }
                                 )
-
-
                             }
-
-
                         }
-
                     }
-
                 }
             }
 

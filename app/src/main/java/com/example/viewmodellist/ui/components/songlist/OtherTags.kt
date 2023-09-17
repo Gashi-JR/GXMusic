@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.example.viewmodellist.ui.components.LoadingAnimation
+import com.example.viewmodellist.ui.components.find.SonglistCover
 import com.example.viewmodellist.ui.screens.songlist.SongListViewModel
 
 
@@ -31,12 +32,18 @@ fun OtherTags(
 
         if (songListViewModel.tagPlayList.isNotEmpty()) {
             items(songListViewModel.tagPlayList) { item ->
-                AlbumArt(
-                    id = item.id,
+                SonglistCover(
                     imageUrl = item.coverImgUrl,
                     title = item.name,
-                    playCounts = item.playCount,
-                    songListViewModel = songListViewModel
+                    playCount = if (item.playCount > 0) item.playCount else item.playCount,
+                    copywriter = null,
+                    onClick = {
+                        songListViewModel.detailId.value = item.id
+                        songListViewModel.fetchSongLists()
+                        songListViewModel.isShowDetail.value =
+                            true
+                        songListViewModel.des.value = ""
+                    },
                 )
             }
 

@@ -94,11 +94,9 @@ fun SongCover(
             Icon(
                 painter = painterResource(id = R.drawable.video),
                 contentDescription = null,
-                tint = Color.Unspecified,
+                tint = Color.Gray,
                 modifier = Modifier.size(24.dp),
-
-
-                )
+            )
         }
 
     }

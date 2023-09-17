@@ -1,6 +1,6 @@
 package com.example.viewmodellist.ui.screens.find
 
-import Banner
+import com.example.viewmodellist.ui.components.find.Banner
 import android.annotation.SuppressLint
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -105,6 +105,8 @@ fun Find(
             loginviewModel.fetchUserInfo()
         if (searchviewModel.searchHotData.isEmpty())
             searchviewModel.fetchSearchHotData()
+        if (songListViewModel.hotPlayList.isEmpty())
+            songListViewModel.fetchHotPlaylist()
         isFixed.value = true
     }
     LaunchedEffect(findviewModel.topcardData) {

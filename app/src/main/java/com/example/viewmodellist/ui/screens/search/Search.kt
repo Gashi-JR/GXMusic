@@ -290,10 +290,10 @@ fun Search(
                                 modifier = Modifier.padding(horizontal = 15.dp),
                                 icon = {
                                     androidx.compose.material3.Icon(
-                                        painter = painterResource(id = R.drawable.hot),
+                                        painter = painterResource(id = R.drawable.h),
                                         contentDescription = null,
                                         tint = Color.Unspecified,
-                                        modifier = Modifier.size(20.dp)
+                                        modifier = Modifier.size(18.dp)
                                     )
                                 }
                             ) {

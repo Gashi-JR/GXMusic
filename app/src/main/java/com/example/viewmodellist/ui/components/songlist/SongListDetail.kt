@@ -390,6 +390,9 @@ fun SongItem(
                     text = name,
                     style = songTextStyle,
                     fontSize = 16.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.width(300.dp)
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,

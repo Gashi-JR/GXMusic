@@ -4,8 +4,9 @@ package com.example.viewmodellist.ui.components.top
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -34,15 +35,18 @@ fun Topitem(
             containerColor = Color(0, 0, 0, 0)
 
         ),
-        modifier = Modifier.padding(bottom = 10.dp)
+        modifier = Modifier
+            .padding(bottom = 10.dp)
+            .fillMaxWidth(0.3f)
+            .aspectRatio(1f)
     ) {
         Box {
             Image(
                 painter = rememberAsyncImagePainter(topimg),
                 modifier = Modifier
-                    .size(115.dp)
+                    .fillMaxWidth()
                     .clickable { onClick() },
-                contentScale = ContentScale.Crop,
+                contentScale = ContentScale.FillWidth,
                 contentDescription = null
             )
             Text(

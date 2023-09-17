@@ -73,11 +73,11 @@ fun MySonglists(
             ) {
                 Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
                     songlist.tags?.forEach { item ->
-                        Tag(onClick = { /*TODO*/ }, modifier = Modifier.height(14.dp)) {
+                        Tag(onClick = { /*TODO*/ }, modifier = Modifier.height(10.dp)) {
                             Text(
                                 text = item,
                                 color = Color.Red,
-                                fontSize = 10.sp
+                                fontSize = 8.sp
                             )
                         }
                     }
