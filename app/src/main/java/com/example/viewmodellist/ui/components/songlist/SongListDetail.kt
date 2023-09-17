@@ -162,7 +162,6 @@ fun SongListDetail(
                                 if (songListViewModel.des.value != "")
                                     Text(
                                         text = songListViewModel.des.value,
-                                        // modifier = Modifier.padding(start = 8.dp),
                                         color = Color.White.copy(0.5f),
                                         maxLines = 2,
                                         overflow = TextOverflow.Ellipsis,
