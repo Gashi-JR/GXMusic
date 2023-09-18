@@ -123,7 +123,7 @@ fun Comments(
             if (songListViewModel.commentsData.isNotEmpty()) {
                 itemsIndexed(
                     songListViewModel.commentsData,
-                    key = { index, _ -> index }) { _, item ->
+                ) { _, item ->
                     CommentItem(
                         picUrl = item.user.get("avatarUrl").asString,
                         nickname = item.user.get("nickname").asString,
