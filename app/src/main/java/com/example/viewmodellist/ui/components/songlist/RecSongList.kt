@@ -49,7 +49,7 @@ fun RecSongList(
     ) {
 
         //专属的推荐歌单 一共六个推荐（3*2）
-        item(key = 0) {
+        item {
             Row {
 
                 Column(
@@ -103,7 +103,7 @@ fun RecSongList(
                 }
             }
         }
-        item(key = 1) {
+        item{
 
             Text(
                 text = "今日达人推荐",
@@ -202,7 +202,7 @@ fun RecSongList(
                 }
             }
         }
-        item(key = 3) {
+        item{
             Text(
                 text = "这些歌单，你一定在找",
                 fontSize = 18.sp,
@@ -258,7 +258,7 @@ fun RecSongList(
                 }
             }
         }
-        item(key = 4) {
+        item {
             Spacer(modifier = Modifier.height(55.dp))
         }
     }

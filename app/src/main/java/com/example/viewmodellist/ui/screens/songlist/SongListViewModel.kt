@@ -110,8 +110,7 @@ class SongListViewModel(private val repository: Repository = Repository()) : Vie
         _songList.value.clear()
         userAvatar.value = ""
         userName.value = ""
-        coverImgUrl.value =
-            ""
+        coverImgUrl.value = ""
         name.value = ""
         commentCount.value = 0
         shareCount.value = 0

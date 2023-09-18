@@ -9,11 +9,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material3.Divider
 import androidx.compose.material3.IconButton
@@ -25,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -36,7 +39,7 @@ import com.example.viewmodellist.ui.screens.songlist.SongListViewModel
 import com.example.viewmodellist.ui.theme.GrayLight
 import com.example.viewmodellist.utils.formatter
 
-//TODO传入歌单id展示所有评论
+//TODO 传入歌单id展示所有评论
 @Composable
 fun Comments(
     songListViewModel: SongListViewModel,
@@ -47,6 +50,7 @@ fun Comments(
             songListViewModel.fetchComments()
     }
     Column {
+
         Spacer(
             modifier = Modifier
                 .height(formatter.mainActivity?.getStatusBarHeight()!!.dp)
@@ -55,7 +59,6 @@ fun Comments(
         Row(
             modifier = modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -69,39 +72,50 @@ fun Comments(
                     )
                 }
                 Text(
-                    text = "精选评论(${songListViewModel.commentsData.size})",
+                    text = "精选评论(${songListViewModel.shareCount.value})",
                     modifier = modifier.padding(start = 10.dp),
                     fontWeight = FontWeight.Bold
                 )
 
             }
         }
+
+
         LazyColumn(verticalArrangement = Arrangement.spacedBy(5.dp)) {
-            item(key = 0) {
-                Column {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+            item {
+                Column(modifier = modifier.padding(start = 8.dp)) {
+                    Row(horizontalArrangement = Arrangement.Center) {
                         AsyncImage(
                             model = songListViewModel.coverImgUrl.value,
                             contentDescription = "专辑封面",
                             modifier = modifier
-                                .height(100.dp)
-                                .width(100.dp)
-                                .clip(MaterialTheme.shapes.extraLarge)
-                                .padding(start = 4.dp, end = 4.dp, top = 10.dp, bottom = 4.dp)
+                                .size(120.dp)
+                                .clip(RoundedCornerShape(15.dp))
                         )
-                        Text(
-                            text = songListViewModel.name.value,
-                            modifier = modifier.padding(top = 4.dp)
-                        )
+                        Column(verticalArrangement = Arrangement.Center,
+                        modifier = modifier.padding(start = 8.dp,top = 18.dp)) {
+                            Text(
+                                text = "${songListViewModel.name.value}",
+                                modifier = modifier
+                                    .padding(top = 4.dp)
+                            )
+                            Row(){
+                                Text(text = "by  ",fontSize = 11.sp,modifier=modifier.padding(top=4.dp))
+                                Text(text = "${songListViewModel.userName.value}",
+                                    fontSize = 11.sp,
+                                    color = Color.Blue,
+                                    modifier = modifier
+                                        .padding(top = 4.dp))
+                            }
+                        }
                     }
+                    Spacer(modifier = modifier.height(12.dp))
                     Box(
                         modifier = modifier
                             .fillMaxWidth()
                             .background(GrayLight)
                     ) {
-                        Spacer(
-                            modifier = modifier.height(6.dp)
-                        )
+                        Spacer(modifier = modifier.height(6.dp))
                     }
                 }
 
@@ -118,7 +132,7 @@ fun Comments(
                         ipLocation = item.ipLocation.get("location").asString
                     )
                 }
-                item(key = 1) {
+                item {
                     Spacer(modifier = Modifier.height(70.dp))
                 }
             } else {
@@ -132,7 +146,6 @@ fun Comments(
                     )
                 }
             }
-
         }
     }
 }
@@ -146,16 +159,15 @@ fun CommentItem(
     ipLocation: String
 ) {
     Row(
-        modifier = Modifier.padding(start = 6.dp),
-        verticalAlignment = Alignment.CenterVertically
+        modifier = Modifier.padding(start = 6.dp)
     ) {
         AsyncImage(
             model = picUrl,
             modifier = Modifier
                 .clip(CircleShape)
-                .height(40.dp)
-                .width(40.dp),
-            contentDescription = "头像"
+                .size(40.dp),
+            contentDescription = "头像",
+            contentScale = ContentScale.Crop
         )
 
         Column(modifier = Modifier.padding(start = 4.dp, top = 2.dp)) {
@@ -167,7 +179,7 @@ fun CommentItem(
             Text(text = "$timeStr   ip:$ipLocation", fontSize = 12.sp)
 
             Spacer(modifier = Modifier.height(3.dp))
-            Text(text = content)
+            Text(text = content,fontSize = 15.sp)
 
             Spacer(modifier = Modifier.height(10.dp))
             Divider(

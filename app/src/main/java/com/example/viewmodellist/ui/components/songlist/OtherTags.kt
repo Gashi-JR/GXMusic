@@ -61,13 +61,7 @@ fun OtherTags(
         item {
             Spacer(
                 modifier = Modifier
-                    .height(55.dp)
-            )
-        }
-        item {
-            Spacer(
-                modifier = Modifier
-                    .height(55.dp)
+                    .height(120.dp)
             )
         }
     }

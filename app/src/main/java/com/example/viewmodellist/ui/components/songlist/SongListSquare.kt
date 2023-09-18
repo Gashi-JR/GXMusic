@@ -52,9 +52,7 @@ fun SongListSquare(
         TopBar(songListViewModel)
 
         AnimatedVisibility(
-            visible = showrec.value, enter = slideInVertically(
-                initialOffsetY = { -it }
-            ),
+            visible = showrec.value, enter = slideInVertically(initialOffsetY = { -it }),
             exit = slideOutVertically(targetOffsetY = { it })
         ) {
             RecSongList(
@@ -66,9 +64,7 @@ fun SongListSquare(
         songListViewModel.tagList.forEachIndexed { index, _ ->
             AnimatedVisibility(
                 visible = songListViewModel.selectedTagIndex.value == index,
-                enter = slideInVertically(
-                    initialOffsetY = { -it }
-                ),
+                enter = slideInVertically(initialOffsetY = { -it }),
                 exit = slideOutVertically(targetOffsetY = { it })
             ) {
                 OtherTags(songListViewModel = songListViewModel)
