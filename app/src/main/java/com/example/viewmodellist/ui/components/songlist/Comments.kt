@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -92,20 +91,28 @@ fun Comments(
                                 .size(120.dp)
                                 .clip(RoundedCornerShape(15.dp))
                         )
-                        Column(verticalArrangement = Arrangement.Center,
-                        modifier = modifier.padding(start = 8.dp,top = 18.dp)) {
+                        Column(
+                            verticalArrangement = Arrangement.Center,
+                            modifier = modifier.padding(start = 8.dp, top = 18.dp)
+                        ) {
                             Text(
-                                text = "${songListViewModel.name.value}",
+                                text = songListViewModel.name.value,
                                 modifier = modifier
                                     .padding(top = 4.dp)
                             )
-                            Row(){
-                                Text(text = "by  ",fontSize = 11.sp,modifier=modifier.padding(top=4.dp))
-                                Text(text = "${songListViewModel.userName.value}",
+                            Row {
+                                Text(
+                                    text = "by  ",
+                                    fontSize = 11.sp,
+                                    modifier = modifier.padding(top = 4.dp)
+                                )
+                                Text(
+                                    text = songListViewModel.userName.value,
                                     fontSize = 11.sp,
                                     color = Color.Blue,
                                     modifier = modifier
-                                        .padding(top = 4.dp))
+                                        .padding(top = 4.dp)
+                                )
                             }
                         }
                     }
@@ -179,7 +186,7 @@ fun CommentItem(
             Text(text = "$timeStr   ip:$ipLocation", fontSize = 12.sp)
 
             Spacer(modifier = Modifier.height(3.dp))
-            Text(text = content,fontSize = 15.sp)
+            Text(text = content, fontSize = 15.sp)
 
             Spacer(modifier = Modifier.height(10.dp))
             Divider(
