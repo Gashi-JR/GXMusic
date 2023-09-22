@@ -107,6 +107,10 @@ fun Find(
             searchviewModel.fetchSearchHotData()
         if (songListViewModel.hotPlayList.isEmpty())
             songListViewModel.fetchHotPlaylist()
+        if (formatter.convertTimestampToDateString(loginviewModel.User.value.birthday)
+                .split("-")[0].toInt() <= 1899
+        )
+            loginviewModel.User.value.birthday = 0
         isFixed.value = true
     }
     LaunchedEffect(findviewModel.topcardData) {

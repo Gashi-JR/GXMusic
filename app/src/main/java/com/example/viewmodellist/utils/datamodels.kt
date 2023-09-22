@@ -161,7 +161,7 @@ class Datamodels {
         val followeds: Int,
         val follows: Int,
         val avatarUrl: String,
-        val birthday: Long,
+        var birthday: Long = 0,
         val createTime: Long,
         val province: Long,
         val signature: String,
